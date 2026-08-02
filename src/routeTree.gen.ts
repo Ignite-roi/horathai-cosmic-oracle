@@ -14,6 +14,7 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PremiumRouteImport } from './routes/premium'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TransitRouteImport } from './routes/transit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const PremiumRoute = PremiumRouteImport.update({
   path: '/premium',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TransitRoute = TransitRouteImport.update({
   id: '/transit',
   path: '/transit',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/chart': typeof ChartRoute
   '/onboarding': typeof OnboardingRoute
   '/premium': typeof PremiumRoute
+  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/chart': typeof ChartRoute
   '/onboarding': typeof OnboardingRoute
   '/premium': typeof PremiumRoute
+  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
 }
 export interface FileRoutesById {
@@ -70,13 +78,28 @@ export interface FileRoutesById {
   '/chart': typeof ChartRoute
   '/onboarding': typeof OnboardingRoute
   '/premium': typeof PremiumRoute
+  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ai' | '/chart' | '/onboarding' | '/premium' | '/transit'
+  fullPaths:
+    | '/'
+    | '/ai'
+    | '/chart'
+    | '/onboarding'
+    | '/premium'
+    | '/settings'
+    | '/transit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/chart' | '/onboarding' | '/premium' | '/transit'
+  to:
+    | '/'
+    | '/ai'
+    | '/chart'
+    | '/onboarding'
+    | '/premium'
+    | '/settings'
+    | '/transit'
   id:
     | '__root__'
     | '/'
@@ -84,6 +107,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/onboarding'
     | '/premium'
+    | '/settings'
     | '/transit'
   fileRoutesById: FileRoutesById
 }
@@ -93,6 +117,7 @@ export interface RootRouteChildren {
   ChartRoute: typeof ChartRoute
   OnboardingRoute: typeof OnboardingRoute
   PremiumRoute: typeof PremiumRoute
+  SettingsRoute: typeof SettingsRoute
   TransitRoute: typeof TransitRoute
 }
 
@@ -133,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PremiumRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/transit': {
       id: '/transit'
       path: '/transit'
@@ -149,18 +181,9 @@ const rootRouteChildren: RootRouteChildren = {
   ChartRoute: ChartRoute,
   OnboardingRoute: OnboardingRoute,
   PremiumRoute: PremiumRoute,
+  SettingsRoute: SettingsRoute,
   TransitRoute: TransitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

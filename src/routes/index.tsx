@@ -1,13 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Briefcase, Coins, Flame, Gift, Heart, HeartPulse, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ChevronRight, Flame, Gift, Moon, Settings2, Sparkles } from "lucide-react";
+import { useState } from "react";
 
-import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
-import { CosmicSceneClient } from "@/components/ClientScene";
+import { AppShell, LoadingSky, PageTransition, SectionTitle } from "@/components/AppShell";
 import { ScoreRing } from "@/components/ScoreCard";
-import { dailyScores, thaiToday } from "@/lib/astro";
-import { seedKey, trialDaysLeft, useProfile } from "@/store/useProfile";
+import { useReading } from "@/hooks/useReading";
+import { moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
+import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "ดูดวงโหราศาสตร์ไทยแม่นยำ ผังดวงกำเนิด 3 มิติ ดาวย้าย และโหร AI ส่วนตัว ทดลองพรีเมียมฟรี 30 วัน",
+          "ดูดวงโหราศาสตร์ไทยแม่นยำจากตำแหน่งดาวจริง ผังดวง 3 มิติ ดาวย้าย และโหร AI ส่วนตัว ทดลองพรีเมียมฟรี 30 วัน",
       },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยสุริยยาตร์" },
       {
@@ -32,109 +32,156 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const profile = useProfile();
-  const scores = useMemo(() => dailyScores(seedKey(profile) || "guest"), [profile]);
+  const checkIn = useProfile((s) => s.checkIn);
+  const { data, isLoading } = useReading();
   const [reward, setReward] = useState<number | null>(null);
   const daysLeft = trialDaysLeft(profile.premiumTrialStartedAt);
 
+  const moon = data?.transit.planets.find((p) => p.num === 2);
+  const sun = data?.transit.planets.find((p) => p.num === 1);
+  const element = data?.natal.planets.find((p) => p.num === 1)?.element;
+  const hero = data?.highlights[0];
+
   return (
-    <AppShell>
+    <AppShell
+      {...(data ? { moonPhase: data.transit.moonPhase } : {})}
+      {...(element ? { element } : {})}
+    >
       <PageTransition>
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative h-11 w-11 shrink-0 rounded-full btn-gold p-[2px]">
+            <div className="btn-gold relative h-11 w-11 shrink-0 rounded-full p-[2px]">
               <div className="flex h-full w-full items-center justify-center rounded-full bg-card text-sm font-semibold text-primary">
                 {profile.name.slice(0, 1)}
               </div>
               <span className="absolute -inset-1 -z-10 animate-pulse-glow rounded-full bg-primary/25 blur-md" />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground">{thaiToday()}</p>
+              <p className="text-[11px] text-muted-foreground">{thaiDate()}</p>
               <h1 className="text-sm font-semibold text-foreground">สวัสดี, {profile.name}</h1>
             </div>
           </div>
-          <div className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5">
-            <Flame className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] text-foreground">{profile.points} แต้ม</span>
+          <div className="flex items-center gap-2">
+            <div className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5">
+              <Flame className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] text-foreground">{toThaiDigits(profile.points)}</span>
+            </div>
+            <Link to="/settings" className="press glass rounded-full p-2" aria-label="ตั้งค่า">
+              <Settings2 className="h-4 w-4 text-muted-foreground" />
+            </Link>
           </div>
         </header>
 
-        <section className="relative mt-4">
-          <div className="relative h-[340px] w-full overflow-hidden rounded-[28px] border border-primary/15">
-            <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_20%,oklch(0.32_0.16_305/60%),transparent_70%)]" />
-            <CosmicSceneClient />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[oklch(0.11_0.03_285)] to-transparent p-5 pt-16">
-              <p className="text-[11px] uppercase tracking-[0.34em] text-primary/80">Horathai AI</p>
-              <h2 className="display mt-1 text-2xl font-semibold leading-tight">
-                <span className="text-gold">จักรวาลของคุณ</span> กำลังเคลื่อนไหว
-              </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                คะแนนดวงวันนี้ {scores.overall}/100 · พลังดาวพฤหัสบดีเสริมการงาน
-              </p>
-            </div>
+        {/* Hero: today's real sky event */}
+        <section className="relative mt-5">
+          <div className="glass-deep grain relative overflow-hidden rounded-[30px] p-6">
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,var(--gold),transparent_65%)] opacity-25 blur-2xl" />
+            <p className="text-[10px] uppercase tracking-[0.36em] text-primary/80">ท้องฟ้าวันนี้</p>
+            {isLoading || !data ? (
+              <div className="mt-3 space-y-2">
+                <div className="h-7 w-2/3 animate-pulse rounded-full bg-muted" />
+                <div className="h-4 w-full animate-pulse rounded-full bg-muted" />
+              </div>
+            ) : (
+              <>
+                <h2 className="display mt-2 text-[26px] font-semibold leading-tight">
+                  <span className="text-gold">{hero?.title ?? "จักรวาลของคุณกำลังเคลื่อนไหว"}</span>
+                </h2>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-foreground/80">{hero?.body}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <Badge icon={<Sparkles className="h-3 w-3" />} text={`อาทิตย์ราศี${sun?.signTh ?? "-"}`} />
+                  <Badge icon={<Moon className="h-3 w-3" />} text={moonPhaseLabel(data.transit.moonPhase)} />
+                  <Badge text={`ลัคนาราศี${data.natal.ascendant.signTh}`} />
+                </div>
+              </>
+            )}
           </div>
 
           <motion.div whileTap={{ scale: 0.97 }} className="mt-4">
             <Link
-              to={profile.onboarded ? "/chart" : "/onboarding"}
-              className="relative flex h-14 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl btn-gold text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
+              to={profile.birthDate ? "/chart" : "/onboarding"}
+              className="btn-gold sheen relative flex h-14 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
             >
               <Sparkles className="h-4 w-4" />
-              เปิดดวงชะตาของฉัน
+              {profile.birthDate ? "เปิดจักรวาลดวงชะตา" : "ตั้งค่าดวงกำเนิดของฉัน"}
             </Link>
           </motion.div>
         </section>
 
-        <section className="mt-7">
-          <SectionTitle kicker="Today" title="คะแนนดวงวันนี้" />
-          <div className="grid grid-cols-4 gap-2.5">
-            <ScoreRing value={scores.money} label="การเงิน" icon={Coins} color="#f0c674" delay={0.05} />
-            <ScoreRing value={scores.love} label="ความรัก" icon={Heart} color="#ff9ad5" delay={0.12} />
-            <ScoreRing value={scores.career} label="การงาน" icon={Briefcase} color="#a78bfa" delay={0.19} />
-            <ScoreRing value={scores.health} label="สุขภาพ" icon={HeartPulse} color="#7ee8c0" delay={0.26} />
-          </div>
+        <section className="mt-8">
+          <SectionTitle
+            kicker="Daily Energy"
+            title="พลังดวงวันนี้"
+            right={
+              data && (
+                <span className="display text-[26px] text-gold">{toThaiDigits(data.overall)}</span>
+              )
+            }
+          />
+          {isLoading ? (
+            <LoadingSky />
+          ) : !data ? (
+            <div className="glass grain rounded-[24px] p-5 text-center text-[12.5px] text-muted-foreground">
+              เพิ่มวันเกิดเพื่อคำนวณพลังดวงจากตำแหน่งดาวจริง
+              <Link to="/onboarding" className="mt-3 block text-primary">
+                ตั้งค่าตอนนี้ →
+              </Link>
+            </div>
+          ) : (
+            <div className="glass grain grid grid-cols-3 gap-y-5 rounded-[26px] p-5">
+              {data.scores.map((s, i) => (
+                <ScoreRing key={s.area} value={s.score} label={s.th} area={s.area} delay={i * 0.06} />
+              ))}
+            </div>
+          )}
         </section>
 
-        <section className="mt-7">
-          <SectionTitle kicker="Daily" title="เช็คอินรับพลังดาว" />
-          <div className="glass flex items-center justify-between rounded-2xl p-4">
+        <section className="mt-6 grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setReward(checkIn())}
+            className="press glass grain flex flex-col items-start gap-1 rounded-[22px] p-4 text-left"
+          >
+            <Gift className="h-5 w-5 text-primary" />
+            <p className="mt-1 text-[13px] font-medium text-foreground">เช็คอินรับแต้ม</p>
+            <p className="text-[11px] text-muted-foreground">
+              {reward ? `ได้รับ ${toThaiDigits(reward)} แต้ม!` : `สตรีค ${toThaiDigits(profile.streak)} วัน`}
+            </p>
+          </button>
+          <Link to="/transit" className="press glass grain flex flex-col items-start gap-1 rounded-[22px] p-4">
+            <Moon className="h-5 w-5 text-primary" />
+            <p className="mt-1 text-[13px] font-medium text-foreground">ดาวย้ายล่าสุด</p>
+            <p className="text-[11px] text-muted-foreground">
+              {moon ? `จันทร์ราศี${moon.signTh}` : "ดูจังหวะดาว"}
+            </p>
+          </Link>
+        </section>
+
+        <section className="mt-6">
+          <Link
+            to="/premium"
+            className="press glass-deep grain flex items-center justify-between rounded-[24px] p-5"
+          >
             <div>
-              <p className="text-sm font-medium text-foreground">
-                สตรีค {profile.streak} วันติดต่อกัน
+              <p className="display text-[15px] font-semibold text-gold">
+                {daysLeft === null ? "ทดลองพรีเมียมฟรี 30 วัน" : `พรีเมียมเหลือ ${toThaiDigits(daysLeft)} วัน`}
               </p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                {reward ? `รับไปเลย +${reward} แต้มมงคล` : "เช็คอินทุกวันเพื่อสะสมแต้มมงคล"}
+              <p className="mt-1 text-[11.5px] text-muted-foreground">
+                คำพยากรณ์เชิงลึก เสียงโหร AI และแจ้งเตือนดาวย้ายรายวัน
               </p>
             </div>
-            <motion.button
-              whileTap={{ scale: 0.94 }}
-              onClick={() => setReward(profile.checkIn())}
-              className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/12 px-4 py-2 text-xs font-semibold text-primary"
-            >
-              <Gift className="h-3.5 w-3.5" />
-              เช็คอิน
-            </motion.button>
-          </div>
-        </section>
-
-        <section className="mt-7">
-          <Link to="/premium" className="block">
-            <motion.div
-              whileTap={{ scale: 0.98 }}
-              className="relative overflow-hidden rounded-2xl border border-primary/30 p-5"
-              style={{ background: "linear-gradient(135deg, oklch(0.28 0.11 300), oklch(0.18 0.05 288))" }}
-            >
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary/80">Premium</p>
-              <h3 className="display mt-1 text-2xl font-semibold text-gold">ฟรี 30 วัน</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {daysLeft !== null
-                  ? `เหลือเวลาทดลองอีก ${daysLeft} วัน`
-                  : "ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ"}
-              </p>
-              <span className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/25 blur-2xl" />
-            </motion.div>
+            <ChevronRight className="h-5 w-5 shrink-0 text-primary" />
           </Link>
         </section>
       </PageTransition>
     </AppShell>
+  );
+}
+
+function Badge({ icon, text }: { icon?: React.ReactNode; text: string }) {
+  return (
+    <span className="hairline-gold flex items-center gap-1.5 rounded-full bg-primary/8 px-3 py-1 text-[11px] text-foreground/85">
+      {icon}
+      {text}
+    </span>
   );
 }

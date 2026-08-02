@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays, Clock, MapPin, MessageCircle } from "lucide-r
 import { useEffect, useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
-import { CosmicSceneClient } from "@/components/ClientScene";
+import { PROVINCES } from "@/lib/provinces";
 import { useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/onboarding")({
@@ -21,10 +21,16 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const PROVINCES = [
-  "กรุงเทพมหานคร", "เชียงใหม่", "ขอนแก่น", "นครราชสีมา", "ภูเก็ต",
-  "สงขลา", "ชลบุรี", "อุบลราชธานี", "สุราษฎร์ธานี", "นครศรีธรรมราช",
-];
+
+function SkyOrb() {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[radial-gradient(70%_70%_at_50%_50%,oklch(0.24_0.12_305/70%),transparent_72%)]">
+      <div className="absolute h-[70%] w-[70%] animate-orbit-spin rounded-full border border-dashed border-primary/30" />
+      <div className="absolute h-[45%] w-[45%] animate-orbit-spin rounded-full border border-primary/20" style={{ animationDirection: "reverse" }} />
+      <div className="h-16 w-16 animate-pulse-glow rounded-full bg-[radial-gradient(circle,var(--gold),transparent_70%)]" />
+    </div>
+  );
+}
 
 function Field({ label, icon: Icon, children }: { label: string; icon: typeof Clock; children: React.ReactNode }) {
   return (
@@ -95,7 +101,7 @@ function Onboarding() {
               className="pt-6 text-center"
             >
               <div className="mx-auto h-[240px] w-full overflow-hidden rounded-3xl border border-primary/15">
-                <CosmicSceneClient />
+                <SkyOrb />
               </div>
               <h1 className="display mt-6 text-2xl font-semibold text-gold">ยินดีต้อนรับสู่ Horathai AI</h1>
               <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
@@ -154,7 +160,7 @@ function Onboarding() {
                   onChange={(e) => setForm({ ...form, province: e.target.value })}
                 >
                   {PROVINCES.map((p) => (
-                    <option key={p}>{p}</option>
+                    <option key={p.th}>{p.th}</option>
                   ))}
                 </select>
               </Field>
@@ -179,7 +185,7 @@ function Onboarding() {
           {step === 2 && (
             <motion.div key="s2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-4 text-center">
               <div className="h-[320px] w-full overflow-hidden rounded-3xl border border-primary/15">
-                <CosmicSceneClient />
+                <SkyOrb />
               </div>
               <h2 className="display mt-6 text-xl font-semibold text-gold">กำลังผูกดวงกำเนิด</h2>
               <p className="mt-1 text-xs text-muted-foreground">

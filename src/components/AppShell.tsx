@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Bot, Crown, Home, Orbit, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
+
 const NAV = [
   { to: "/", label: "หน้าแรก", icon: Home },
   { to: "/chart", label: "ผังดวง", icon: Orbit },
@@ -11,38 +13,45 @@ const NAV = [
   { to: "/premium", label: "พรีเมียม", icon: Crown },
 ] as const;
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  moonPhase,
+  element,
+}: {
+  children: ReactNode;
+  moonPhase?: number;
+  element?: "ไฟ" | "ดิน" | "ลม" | "น้ำ";
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[var(--gradient-void)]">
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 opacity-90"
-        style={{ background: "var(--gradient-nebula)" }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none fixed bottom-[-20%] left-[-20%] h-[60vh] w-[80vw] rounded-full opacity-40 blur-3xl"
-        style={{ background: "radial-gradient(circle, oklch(0.45 0.2 305 / 45%), transparent 65%)" }}
-      />
+    <div className="relative min-h-screen overflow-x-hidden">
+      <LiveUniverse {...(moonPhase !== undefined ? { moonPhase } : {})} {...(element ? { element } : {})} />
+
       <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-6">{children}</main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-center pb-[max(env(safe-area-inset-bottom),12px)]">
-        <div className="glass mx-4 flex w-full max-w-md items-center justify-between rounded-full px-2 py-2">
+        <div className="glass-deep grain mx-4 flex w-full max-w-md items-center justify-between rounded-[28px] px-2 py-2">
           {NAV.map(({ to, label, icon: Icon }) => {
             const active = pathname === to;
             return (
               <Link
                 key={to}
                 to={to}
-                className="relative flex flex-1 flex-col items-center gap-1 rounded-full px-1 py-2 text-[10px] text-muted-foreground transition-colors"
+                className="press relative flex flex-1 flex-col items-center gap-1 rounded-3xl px-1 py-2 text-[10px] text-muted-foreground"
               >
                 {active && (
                   <motion.span
                     layoutId="nav-pill"
-                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                    className="absolute inset-0 rounded-full border border-primary/30 bg-primary/12"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 rounded-3xl border border-primary/30 bg-primary/12"
+                  />
+                )}
+                {active && (
+                  <motion.span
+                    layoutId="nav-glow"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute -bottom-1 h-6 w-10 rounded-full bg-primary/40 blur-lg"
                   />
                 )}
                 <Icon
@@ -62,22 +71,52 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function PageTransition({ children }: { children: ReactNode }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: 22, filter: "blur(8px)", scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.div>
   );
 }
 
-export function SectionTitle({ kicker, title }: { kicker?: string; title: string }) {
+export function SectionTitle({ kicker, title, right }: { kicker?: string; title: string; right?: ReactNode }) {
   return (
-    <div className="mb-4">
-      {kicker && (
-        <p className="text-[11px] uppercase tracking-[0.32em] text-primary/70">{kicker}</p>
-      )}
-      <h2 className="display mt-1 text-xl font-semibold text-foreground">{title}</h2>
+    <div className="mb-4 flex items-end justify-between gap-3">
+      <div>
+        {kicker && <p className="text-[10px] uppercase tracking-[0.34em] text-primary/70">{kicker}</p>}
+        <h2 className="display mt-1 text-xl font-semibold text-foreground">{title}</h2>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+export function EmptyBirthData() {
+  return (
+    <div className="glass-deep grain rounded-[26px] p-6 text-center">
+      <p className="display text-lg text-foreground">ยังไม่มีข้อมูลวันเกิด</p>
+      <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+        กรอกวัน เวลา และจังหวัดที่เกิด เพื่อให้เราคำนวณลัคนาและตำแหน่งดาวจริงของคุณ
+      </p>
+      <Link
+        to="/onboarding"
+        className="press btn-gold mt-5 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+      >
+        ตั้งค่าดวงกำเนิด
+      </Link>
+    </div>
+  );
+}
+
+export function LoadingSky({ label = "กำลังคำนวณตำแหน่งดาว…" }: { label?: string }) {
+  return (
+    <div className="glass grain flex h-56 flex-col items-center justify-center gap-4 rounded-[26px]">
+      <div className="relative h-16 w-16">
+        <div className="absolute inset-0 animate-orbit-spin rounded-full border border-dashed border-primary/40" />
+        <div className="absolute inset-0 m-auto h-6 w-6 animate-pulse-glow rounded-full bg-[radial-gradient(circle,var(--gold),transparent_70%)]" />
+      </div>
+      <p className="text-[11px] tracking-[0.2em] text-muted-foreground">{label}</p>
     </div>
   );
 }

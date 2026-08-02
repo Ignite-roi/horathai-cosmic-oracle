@@ -1,19 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import { Send, Sparkles } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { AppShell, PageTransition } from "@/components/AppShell";
-import { HOUSES, buildChart } from "@/lib/astro";
-import { seedKey, useProfile } from "@/store/useProfile";
+import { AppShell, EmptyBirthData, PageTransition } from "@/components/AppShell";
+import { useReading } from "@/hooks/useReading";
+import { askAstrologer } from "@/lib/ai.functions";
+import { ASPECT_LABEL, HOUSES, PLANET_BY_NUM, formatDegree, moonPhaseLabel, type ReadingResult } from "@/lib/astro";
+import { useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/ai")({
   head: () => ({
     meta: [
-      { title: "โหร AI ส่วนตัว | Horathai AI" },
-      { name: "description", content: "ถามโหร AI ได้ทุกเรื่อง การงาน การเงิน ความรัก โดยอ้างอิงผังดวงจริงของคุณ" },
-      { property: "og:title", content: "โหร AI ส่วนตัว | Horathai AI" },
-      { property: "og:description", content: "ผู้ช่วยโหราศาสตร์ไทยที่ตอบจากข้อมูลผังดวงกำเนิดของคุณโดยตรง" },
+      { title: "โหรา AI ส่วนตัว | Horathai AI" },
+      {
+        name: "description",
+        content: "ถามโหรา AI ได้ทุกเรื่อง การงาน การเงิน ความรัก โดยอ้างอิงตำแหน่งดาวจริงในผังดวงของคุณ",
+      },
+      { property: "og:title", content: "โหรา AI ส่วนตัว | Horathai AI" },
+      { property: "og:description", content: "ผู้ช่วยโหราศาสตร์ไทยที่ตอบจากผังดวงกำเนิดจริงของคุณ" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -21,123 +28,161 @@ export const Route = createFileRoute("/ai")({
   component: AiPage,
 });
 
-type Msg = { role: "user" | "ai"; text: string };
+type Msg = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = [
-  "ควรลงทุนตอนนี้ไหม",
-  "ควรเปลี่ยนงานหรือเปล่า",
-  "จะเจอเนื้อคู่เมื่อไหร่",
-  "ช่วงนี้ควรระวังอะไร",
-];
+const SUGGESTIONS = ["ช่วงนี้การงานเป็นอย่างไร", "ควรลงทุนตอนนี้ไหม", "ความรักช่วงนี้เป็นยังไง", "ต้องระวังอะไรเป็นพิเศษ"];
+
+function factSheet(data: ReadingResult, name: string) {
+  const lines: string[] = [`ชื่อผู้ถาม: ${name}`, `ลัคนาราศี${data.natal.ascendant.signTh}`];
+  lines.push("— ดาวกำเนิด —");
+  for (const p of data.natal.planets) {
+    lines.push(
+      `${p.th}: ราศี${p.signTh} ${formatDegree(p)} ${HOUSES[p.house - 1]!.th}${p.retrograde ? " (พักร์)" : ""}`,
+    );
+  }
+  lines.push("— ดาวจรวันนี้ —");
+  for (const p of data.transit.planets) {
+    lines.push(`${p.th}: ราศี${p.signTh} ${formatDegree(p)}${p.retrograde ? " (พักร์)" : ""}`);
+  }
+  lines.push(`ข้างขึ้นข้างแรม: ${moonPhaseLabel(data.transit.moonPhase)}`);
+  lines.push("— มุมสัมพันธ์เด่นวันนี้ —");
+  for (const a of data.transit.aspects.slice(0, 6)) {
+    lines.push(
+      `${PLANET_BY_NUM.get(a.a)!.th} ${ASPECT_LABEL[a.kind]} ${PLANET_BY_NUM.get(a.b)!.th} คลาด ${a.orb}°`,
+    );
+  }
+  lines.push("— คะแนนรายด้าน —");
+  for (const s of data.scores) lines.push(`${s.th}: ${s.score}/100 (${s.reasons[0] ?? "ทรงตัว"})`);
+  return lines.join("\n");
+}
 
 function AiPage() {
-  const profile = useProfile();
-  const chart = useMemo(() => buildChart(seedKey(profile) || "guest"), [profile]);
+  const name = useProfile((s) => s.name);
+  const birthDate = useProfile((s) => s.birthDate);
+  const { data } = useReading();
+  const ask = useServerFn(askAstrologer);
+  const endRef = useRef<HTMLDivElement>(null);
+
   const [messages, setMessages] = useState<Msg[]>([
     {
-      role: "ai",
-      text: `สวัสดีค่ะ คุณ${profile.name} ดิฉันคือโหร AI ที่อ่านจากผังดวงกำเนิดของคุณโดยตรง ถามได้เลยค่ะ`,
+      role: "assistant",
+      content: `สวัสดีค่ะ คุณ${name} ดิฉันคือโหรา AI อ่านจากตำแหน่งดาวจริงในผังดวงของคุณ ถามได้เลยค่ะ`,
     },
   ]);
   const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
-  const endRef = useRef<HTMLDivElement>(null);
 
-  function answer(q: string) {
-    const p = chart[Math.floor(Math.random() * chart.length)]!;
-    return `จากผังดวงของคุณ ดาว${p.th}สถิตราศี${p.sign.th} ${p.degree}° ในเรือน${HOUSES[p.house - 1]} — ${p.influence}กำลังเป็นแกนหลักของช่วงนี้\n\nสำหรับคำถาม “${q}” แนะนำให้เดินหน้าอย่างมีจังหวะ ใช้ช่วง 2 สัปดาห์ข้างหน้าเตรียมข้อมูลให้พร้อม แล้วตัดสินใจในวันที่ดาว${p.th}ได้กำลัง จะได้ผลลัพธ์มั่นคงกว่าการรีบร้อน`;
-  }
+  const facts = useMemo(() => (data ? factSheet(data, name) : ""), [data, name]);
+
+  const mutation = useMutation({
+    mutationFn: (question: string) =>
+      ask({ data: { question, facts, history: messages.slice(-6) } }),
+    onSuccess: (res) => setMessages((m) => [...m, { role: "assistant", content: res.answer }]),
+    onError: (e: Error) => setMessages((m) => [...m, { role: "assistant", content: `ขออภัยค่ะ ${e.message}` }]),
+  });
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, mutation.isPending]);
 
   function send(text: string) {
-    if (!text.trim()) return;
-    setMessages((m) => [...m, { role: "user", text }]);
+    const q = text.trim();
+    if (!q || mutation.isPending || !facts) return;
+    setMessages((m) => [...m, { role: "user", content: q }]);
     setInput("");
-    setTyping(true);
-    setTimeout(() => {
-      setMessages((m) => [...m, { role: "ai", text: answer(text) }]);
-      setTyping(false);
-      setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
-    }, 900);
+    mutation.mutate(q);
+  }
+
+  if (!birthDate) {
+    return (
+      <AppShell>
+        <PageTransition>
+          <h1 className="display mb-4 text-xl font-semibold text-foreground">โหรา AI</h1>
+          <EmptyBirthData />
+        </PageTransition>
+      </AppShell>
+    );
   }
 
   return (
-    <AppShell>
+    <AppShell {...(data ? { moonPhase: data.transit.moonPhase } : {})}>
       <PageTransition>
-        <div className="mb-4 flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full btn-gold">
+        <header className="glass grain sticky top-0 z-20 mb-4 flex items-center gap-3 rounded-[22px] p-3">
+          <span className="btn-gold flex h-9 w-9 items-center justify-center rounded-full">
             <Sparkles className="h-4 w-4 text-primary-foreground" />
           </span>
           <div>
-            <h1 className="display text-lg font-semibold text-foreground">โหร AI</h1>
-            <p className="text-[11px] text-muted-foreground">อ่านจากผังดวงจริง ไม่มโน</p>
+            <p className="text-[13px] font-semibold text-foreground">โหรา AI</p>
+            <p className="text-[10.5px] text-muted-foreground">
+              {data ? `อ่านจากลัคนาราศี${data.natal.ascendant.signTh}` : "กำลังเรียงดาว…"}
+            </p>
           </div>
-        </div>
+        </header>
 
         <div className="min-h-[46vh] space-y-3">
-          {messages.map((m, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
-            >
-              <div
-                className={
-                  m.role === "user"
-                    ? "max-w-[80%] whitespace-pre-line rounded-2xl rounded-br-md bg-primary/18 px-4 py-3 text-[13px] text-foreground"
-                    : "glass max-w-[86%] whitespace-pre-line rounded-2xl rounded-bl-md px-4 py-3 text-[13px] leading-relaxed text-foreground/90"
-                }
+          <AnimatePresence initial={false}>
+            {messages.map((m, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ ease: [0.16, 1, 0.3, 1] }}
+                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {m.text}
-              </div>
-            </motion.div>
-          ))}
-          <AnimatePresence>
-            {typing && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-1.5 pl-2">
-                {[0, 1, 2].map((i) => (
-                  <motion.span
-                    key={i}
-                    className="h-1.5 w-1.5 rounded-full bg-primary"
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
-                  />
-                ))}
+                <div
+                  className={`max-w-[85%] whitespace-pre-wrap rounded-[20px] px-4 py-3 text-[13px] leading-relaxed ${
+                    m.role === "user"
+                      ? "btn-gold text-primary-foreground"
+                      : "glass grain text-foreground/90"
+                  }`}
+                >
+                  {m.content}
+                </div>
               </motion.div>
-            )}
+            ))}
           </AnimatePresence>
+          {mutation.isPending && (
+            <div className="glass flex w-fit gap-1.5 rounded-[20px] px-4 py-3">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-primary"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                />
+              ))}
+            </div>
+          )}
           <div ref={endRef} />
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              className="rounded-full border border-primary/25 bg-primary/8 px-3 py-1.5 text-[11px] text-primary"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-
-        <div className="sticky bottom-24 z-20 mt-6">
+        <div className="sticky bottom-24 mt-5">
+          <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => send(s)}
+                className="press glass whitespace-nowrap rounded-full px-3 py-1.5 text-[11.5px] text-foreground/85"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
             }}
-            className="glass flex items-center gap-2 rounded-full py-2 pl-4 pr-2"
+            className="glass-deep grain flex items-center gap-2 rounded-full p-2"
           >
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="ถามโหร AI..."
-              className="flex-1 bg-transparent text-[13px] outline-none placeholder:text-muted-foreground"
+              placeholder="ถามโหรา AI…"
+              className="flex-1 bg-transparent px-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
             />
             <button
               type="submit"
-              className="flex h-9 w-9 items-center justify-center rounded-full btn-gold"
+              disabled={mutation.isPending || !input.trim()}
+              className="press btn-gold flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-40"
               aria-label="ส่งคำถาม"
             >
               <Send className="h-4 w-4 text-primary-foreground" />
