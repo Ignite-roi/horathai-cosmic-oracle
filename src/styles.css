@@ -90,6 +90,7 @@
   --ring: oklch(0.83 0.14 86 / 60%);
 
   --gold: oklch(0.86 0.14 88);
+  --gold-soft: oklch(0.93 0.08 92);
   --gold-deep: oklch(0.66 0.13 72);
   --nebula: oklch(0.55 0.2 305);
   --void: oklch(0.09 0.03 285);
@@ -97,6 +98,10 @@
   --gradient-nebula: radial-gradient(120% 90% at 50% 0%, oklch(0.4 0.19 305 / 55%), transparent 65%);
   --gradient-void: linear-gradient(180deg, oklch(0.14 0.045 288), oklch(0.09 0.03 285));
   --shadow-glow: 0 0 40px -8px oklch(0.83 0.14 86 / 45%);
+  --shadow-e1: 0 1px 2px oklch(0.05 0.02 285 / 60%), 0 8px 24px -16px oklch(0.05 0.02 285 / 90%);
+  --shadow-e2: 0 2px 6px oklch(0.05 0.02 285 / 55%), 0 18px 44px -22px oklch(0.05 0.02 285 / 95%);
+  --shadow-e3: 0 4px 14px oklch(0.05 0.02 285 / 55%), 0 40px 90px -40px oklch(0.05 0.02 285 / 100%);
+  --spring-soft: cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-nebula: 0 24px 70px -30px oklch(0.55 0.2 305 / 80%);
   --font-display: "Cinzel", "Noto Serif Thai", serif;
   --font-thai: "Noto Sans Thai", system-ui, sans-serif;
@@ -169,10 +174,54 @@
 }
 
 @utility glass {
-  background: color-mix(in oklab, var(--card) 62%, transparent);
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-nebula);
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--card) 74%, transparent),
+    color-mix(in oklab, var(--void) 62%, transparent)
+  );
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid color-mix(in oklab, var(--gold) 16%, transparent);
+  box-shadow: var(--shadow-e2), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 14%, transparent);
+}
+
+/* deeper, more physical surface for hero cards */
+@utility glass-deep {
+  background: linear-gradient(
+    155deg,
+    color-mix(in oklab, var(--card) 88%, transparent),
+    color-mix(in oklab, var(--void) 84%, transparent)
+  );
+  backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--gold) 22%, transparent);
+  box-shadow: var(--shadow-e3), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 20%, transparent);
+}
+
+/* subtle grain so large gradients never band */
+@utility grain {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(oklch(1 0 0) 0.5px, transparent 0.5px);
+    background-size: 3px 3px;
+    border-radius: inherit;
+  }
+}
+
+@utility hairline-gold {
+  border: 1px solid color-mix(in oklab, var(--gold) 28%, transparent);
+}
+
+@utility press {
+  transition: transform 0.22s var(--spring-soft), filter 0.22s var(--spring-soft);
+  &:active {
+    transform: scale(0.965);
+    filter: brightness(1.08);
+  }
 }
 
 @utility text-gold {
@@ -209,4 +258,48 @@
 }
 @utility animate-pulse-glow {
   animation: pulse-glow 3.4s ease-in-out infinite;
+}
+
+@keyframes aurora-drift {
+  0% { transform: translate3d(-4%, -2%, 0) scale(1.05); }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.12); }
+  100% { transform: translate3d(-4%, -2%, 0) scale(1.05); }
+}
+@keyframes sheen {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+@utility animate-aurora {
+  animation: aurora-drift 26s ease-in-out infinite;
+}
+@utility animate-orbit-spin {
+  animation: orbit-spin 24s linear infinite;
+}
+
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, oklch(1 0 0 / 22%), transparent);
+    animation: sheen 4.5s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
