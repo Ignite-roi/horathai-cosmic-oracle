@@ -31,7 +31,7 @@ const MODES = [
 
 function SettingsPage() {
   const { quality, setQuality, reduceMotion, setReduceMotion, showAspects, setShowAspects } = useSettings();
-  const resolved = useQuality().resolved;
+  const resolved = useQuality().quality;
   const { name, birthDate, birthTime, province } = useProfile();
 
   return (
