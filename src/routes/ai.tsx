@@ -73,7 +73,7 @@ function AiPage() {
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="min-h-[46vh] space-y-3">
           {messages.map((m, i) => (
             <motion.div
               key={i}
@@ -121,7 +121,7 @@ function AiPage() {
           ))}
         </div>
 
-        <div className="fixed inset-x-0 bottom-24 z-20 mx-auto max-w-lg px-5">
+        <div className="sticky bottom-24 z-20 mt-6">
           <form
             onSubmit={(e) => {
               e.preventDefault();
