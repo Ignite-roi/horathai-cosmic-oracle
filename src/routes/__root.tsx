@@ -77,16 +77,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Horathai AI — โหราศาสตร์ไทย สุริยยาตร์ ด้วยพลัง AI" },
+      {
+        name: "description",
+        content: "แอปโหราศาสตร์ไทยระดับพรีเมียม ผังดวง 3 มิติ ดาวย้าย และโหร AI ส่วนตัว",
+      },
+      { name: "author", content: "Horathai AI" },
+      { name: "theme-color", content: "#12101f" },
+      { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทย สุริยยาตร์" },
+      { property: "og:description", content: "ผังดวง 3 มิติ ดาวย้าย และโหร AI ส่วนตัว ทดลองฟรี 30 วัน" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@500;600&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
