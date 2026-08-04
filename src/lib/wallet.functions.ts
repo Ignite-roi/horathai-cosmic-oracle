@@ -14,8 +14,16 @@ export const getMyWallet = createServerFn({ method: "GET" })
         .select("days_remaining, expires_at")
         .eq("user_id", context.userId)
         .maybeSingle(),
-      context.supabase.from("user_points").select("balance").eq("user_id", context.userId).maybeSingle(),
-      context.supabase.from("referral_codes").select("code").eq("user_id", context.userId).maybeSingle(),
+      context.supabase
+        .from("user_points")
+        .select("balance")
+        .eq("user_id", context.userId)
+        .maybeSingle(),
+      context.supabase
+        .from("referral_codes")
+        .select("code")
+        .eq("user_id", context.userId)
+        .maybeSingle(),
       context.supabase
         .from("credit_transactions")
         .select("id, type, days, points_used, note, created_at")
@@ -27,7 +35,8 @@ export const getMyWallet = createServerFn({ method: "GET" })
         .select("code, name_th, days, price_thb, bonus_days, is_popular, sort_order")
         .order("sort_order"),
     ]);
-    const error = credits.error ?? points.error ?? code.error ?? transactions.error ?? packages.error;
+    const error =
+      credits.error ?? points.error ?? code.error ?? transactions.error ?? packages.error;
     if (error) throw new Error(error.message);
     return {
       daysRemaining: credits.data?.days_remaining ?? 0,
@@ -64,11 +73,16 @@ export const completeMockCheckout = createServerFn({ method: "POST" })
 export const adjustUserDays = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({
-      userId: z.string().uuid(),
-      days: z.number().int().refine((value) => value !== 0),
-      note: z.string().max(240).optional(),
-    }).parse(input),
+    z
+      .object({
+        userId: z.string().uuid(),
+        days: z
+          .number()
+          .int()
+          .refine((value) => value !== 0),
+        note: z.string().max(240).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const { data: role, error: roleError } = await context.supabase
