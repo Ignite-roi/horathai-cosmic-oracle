@@ -24,6 +24,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
+import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
 import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
@@ -104,6 +105,12 @@ const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   path: '/transits',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminKnowledgeRoute =
+  AuthenticatedAdminKnowledgeRouteImport.update({
+    id: '/admin/knowledge',
+    path: '/admin/knowledge',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedKnowledgeAdminIndexRoute =
   AuthenticatedKnowledgeAdminIndexRouteImport.update({
     id: '/',
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -156,6 +164,7 @@ export interface FileRoutesByTo {
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -177,6 +186,7 @@ export interface FileRoutesById {
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
+  '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin/'
     | '/knowledge-admin/sources/$sourceId'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin'
     | '/knowledge-admin/sources/$sourceId'
@@ -236,6 +248,7 @@ export interface FileRouteTypes {
     | '/_authenticated/premium'
     | '/_authenticated/settings'
     | '/_authenticated/transits'
+    | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
     | '/_authenticated/knowledge-admin/'
     | '/_authenticated/knowledge-admin/sources/$sourceId'
@@ -358,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransitsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/knowledge': {
+      id: '/_authenticated/admin/knowledge'
+      path: '/admin/knowledge'
+      fullPath: '/admin/knowledge'
+      preLoaderRoute: typeof AuthenticatedAdminKnowledgeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/knowledge-admin/': {
       id: '/_authenticated/knowledge-admin/'
       path: '/'
@@ -412,6 +432,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
+  AuthenticatedAdminKnowledgeRoute: typeof AuthenticatedAdminKnowledgeRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -424,6 +445,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
+  AuthenticatedAdminKnowledgeRoute: AuthenticatedAdminKnowledgeRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -442,13 +464,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
