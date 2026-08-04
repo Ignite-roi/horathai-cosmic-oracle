@@ -15,7 +15,7 @@ import {
 } from "@/components/home/HomeSections";
 import { MajorTransitCard } from "@/components/home/MajorTransitCard";
 import { TodayScore } from "@/components/home/TodayScore";
-import { useLineAuth } from "@/hooks/useAuth";
+import { useLineAuth } from "@/context/LineAuthContext";
 import { LOOKAHEAD_DAYS, useHomeReading } from "@/hooks/useHomeReading";
 import { dailyCheckIn } from "@/lib/profile.functions";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";

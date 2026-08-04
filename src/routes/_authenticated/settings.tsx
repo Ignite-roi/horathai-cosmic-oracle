@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Gauge, LogOut, MessageCircle, Sparkles, User } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
-import { useLineAuth } from "@/hooks/useAuth";
+import { useLineAuth } from "@/context/LineAuthContext";
 import { useQuality } from "@/hooks/useQuality";
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";

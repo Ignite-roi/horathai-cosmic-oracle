@@ -90,9 +90,24 @@ export const saveMyProfile = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Starts the 30-day premium trial once; returns the current entitlement. */
+/** The resolved access state for the signed-in user (server is the authority). */
+export const getMyAccess = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { resolveEntitlementForUser } = await import("./access.server");
+    const resolved = await resolveEntitlementForUser(context.supabase, context.userId);
+    return { mode: resolved.mode, plan: resolved.plan };
+  });
+
+/**
+ * Starts the 30-day premium trial. Never called implicitly — the client must
+ * pass `confirm: true`, which only happens after the user taps the confirm
+ * button in the trial dialog. Entitlements are write-protected by RLS, so the
+ * update runs through the trusted server client.
+ */
 export const startPremiumTrial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ confirm: z.literal(true) }).parse(input))
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const current = await supabase
@@ -104,7 +119,8 @@ export const startPremiumTrial = createServerFn({ method: "POST" })
 
     const startedAt = new Date();
     const expiresAt = new Date(startedAt.getTime() + 30 * 86400000);
-    const { data, error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
       .from("entitlements")
       .update({
         plan: "premium_trial",
@@ -112,35 +128,46 @@ export const startPremiumTrial = createServerFn({ method: "POST" })
         expires_at: expiresAt.toISOString(),
       })
       .eq("user_id", userId)
+      .is("trial_started_at", null)
       .select("plan, trial_started_at, expires_at")
-      .single();
+      .maybeSingle();
     if (error) throw new Error(error.message);
-    return data;
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        subscription_status: "trialing",
+        trial_started_at: startedAt.toISOString(),
+        trial_ends_at: expiresAt.toISOString(),
+      })
+      .eq("id", userId);
+    return (
+      data ?? {
+        plan: "premium_trial",
+        trial_started_at: startedAt.toISOString(),
+        expires_at: expiresAt.toISOString(),
+      }
+    );
   });
 
-/** Daily check-in. Returns the reward, or null when already checked in today. */
+/**
+ * Daily check-in. Points are awarded by a server-side routine using the
+ * server clock (Asia/Bangkok) and a unique per-day event row, so the reward
+ * cannot be claimed twice or forged from the client.
+ */
 export const dailyCheckIn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const today = new Date().toISOString().slice(0, 10);
-    const current = await supabase
-      .from("gamification")
-      .select("points, streak, last_check_in")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (!current.data) throw new Error("ไม่พบข้อมูลสะสมแต้ม");
-    if (current.data.last_check_in === today) return { reward: null, ...current.data };
-
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-    const reward = 20 + Math.floor(Math.random() * 30);
-    const streak = current.data.last_check_in === yesterday ? current.data.streak + 1 : 1;
-    const { data, error } = await supabase
-      .from("gamification")
-      .update({ points: current.data.points + reward, streak, last_check_in: today })
-      .eq("user_id", userId)
-      .select("points, streak, last_check_in")
-      .single();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.rpc("daily_check_in", {
+      _user_id: context.userId,
+    });
     if (error) throw new Error(error.message);
-    return { reward, ...data };
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) throw new Error("บันทึกเช็คอินไม่สำเร็จ");
+    return {
+      reward: row.already_checked_in ? null : row.reward,
+      points: row.points,
+      streak: row.streak,
+      last_check_in: row.event_date,
+    };
   });

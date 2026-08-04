@@ -70,11 +70,16 @@ export function useAccount() {
   });
 }
 
+export type LineAuthState = ReturnType<typeof useLineAuthMachine>;
+
 /**
  * Boots LIFF, auto-signs the user in when the app is opened from LINE, and
  * mirrors the account row into the local store so every screen keeps working.
+ *
+ * Internal: mount exactly once via <LineAuthProvider>. Screens should import
+ * `useLineAuth` from "@/context/LineAuthContext".
  */
-export function useLineAuth() {
+export function useLineAuthMachine() {
   const { session, loading } = useSession();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<LineStatus>("idle");

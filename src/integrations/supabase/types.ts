@@ -14,60 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_events: {
+        Row: {
+          created_at: string
+          error_code: string | null
+          event_type: string
+          id: string
+          ip_hash: string | null
+          provider: string
+          success: boolean
+          user_agent_summary: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_code?: string | null
+          event_type: string
+          id?: string
+          ip_hash?: string | null
+          provider?: string
+          success?: boolean
+          user_agent_summary?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_code?: string | null
+          event_type?: string
+          id?: string
+          ip_hash?: string | null
+          provider?: string
+          success?: boolean
+          user_agent_summary?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       birth_profiles: {
         Row: {
           birth_date: string
           birth_time: string | null
+          birth_time_estimated: boolean
           birth_time_known: boolean
+          calculation_settings_json: Json
           calculation_system: string
+          calculation_version: string
           country: string
+          country_code: string
           created_at: string
           district: string | null
           id: string
           is_primary: boolean
           latitude: number
+          locality: string | null
           longitude: number
           nickname: string
           province: string
           timezone: string
           updated_at: string
           user_id: string
+          utc_birth_datetime: string | null
         }
         Insert: {
           birth_date: string
           birth_time?: string | null
+          birth_time_estimated?: boolean
           birth_time_known?: boolean
+          calculation_settings_json?: Json
           calculation_system?: string
+          calculation_version?: string
           country?: string
+          country_code?: string
           created_at?: string
           district?: string | null
           id?: string
           is_primary?: boolean
           latitude?: number
+          locality?: string | null
           longitude?: number
           nickname?: string
           province?: string
           timezone?: string
           updated_at?: string
           user_id: string
+          utc_birth_datetime?: string | null
         }
         Update: {
           birth_date?: string
           birth_time?: string | null
+          birth_time_estimated?: boolean
           birth_time_known?: boolean
+          calculation_settings_json?: Json
           calculation_system?: string
+          calculation_version?: string
           country?: string
+          country_code?: string
           created_at?: string
           district?: string | null
           id?: string
           is_primary?: boolean
           latitude?: number
+          locality?: string | null
           longitude?: number
           nickname?: string
           province?: string
           timezone?: string
           updated_at?: string
           user_id?: string
+          utc_birth_datetime?: string | null
         }
         Relationships: []
       }
@@ -125,41 +179,86 @@ export type Database = {
         }
         Relationships: []
       }
+      gamification_events: {
+        Row: {
+          created_at: string
+          event_date: string
+          event_type: string
+          id: string
+          metadata: Json
+          points_delta: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          points_delta?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          points_delta?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       natal_charts: {
         Row: {
           ascendant_degree: number
           ascendant_sign: string
+          aspects_json: Json
           birth_profile_id: string
           calculated_at: string
+          calculation_settings_json: Json
           calculation_version: string
+          engine_type: string
           houses_json: Json
           id: string
+          input_snapshot_json: Json
           planets_json: Json
           standards_json: Json
+          superseded_at: string | null
           user_id: string
         }
         Insert: {
           ascendant_degree?: number
           ascendant_sign: string
+          aspects_json?: Json
           birth_profile_id: string
           calculated_at?: string
+          calculation_settings_json?: Json
           calculation_version?: string
+          engine_type?: string
           houses_json?: Json
           id?: string
+          input_snapshot_json?: Json
           planets_json?: Json
           standards_json?: Json
+          superseded_at?: string | null
           user_id: string
         }
         Update: {
           ascendant_degree?: number
           ascendant_sign?: string
+          aspects_json?: Json
           birth_profile_id?: string
           calculated_at?: string
+          calculation_settings_json?: Json
           calculation_version?: string
+          engine_type?: string
           houses_json?: Json
           id?: string
+          input_snapshot_json?: Json
           planets_json?: Json
           standards_json?: Json
+          superseded_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -237,7 +336,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      daily_check_in: {
+        Args: { _user_id: string }
+        Returns: {
+          already_checked_in: boolean
+          event_date: string
+          points: number
+          reward: number
+          streak: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

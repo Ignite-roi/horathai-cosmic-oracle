@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import { Check, Crown, Gift, Sparkles, Trophy, Users } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
-import { useLineAuth } from "@/hooks/useAuth";
+import { useLineAuth } from "@/context/LineAuthContext";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
@@ -32,18 +35,36 @@ const PERKS = [
 function PremiumPage() {
   const { premiumTrialStartedAt, startTrial, points, streak } = useProfile();
   const { isSignedIn, login } = useLineAuth();
+  const access = useFeatureAccess();
+  const queryClient = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [trialError, setTrialError] = useState<string | null>(null);
   const daysLeft = trialDaysLeft(premiumTrialStartedAt);
 
+  /** Opens the confirmation dialog — the trial never starts automatically. */
   const handleStartTrial = async () => {
+    setTrialError(null);
     if (!isSignedIn) {
       const ok = await login();
       if (!ok) return;
     }
-    startTrial();
+    setConfirmOpen(true);
+  };
+
+  const confirmTrial = async () => {
+    setPending(true);
+    setTrialError(null);
     try {
-      await startPremiumTrial();
+      await startPremiumTrial({ data: { confirm: true } });
+      startTrial();
+      await queryClient.invalidateQueries({ queryKey: ["account"] });
+      setConfirmOpen(false);
     } catch (err) {
       console.error("[trial] start failed", err);
+      setTrialError("เริ่มทดลองใช้ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setPending(false);
     }
   };
 
@@ -62,6 +83,11 @@ function PremiumPage() {
           <p className="mt-3 text-[11px] uppercase tracking-[0.34em] text-primary/80">Free Premium</p>
           <h1 className="display mt-1 text-4xl font-bold text-gold">30 วัน</h1>
           <p className="mt-2 text-xs text-muted-foreground">ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ</p>
+          {access.unlockedForEveryone && (
+            <p className="mt-2 text-[11px] text-primary/80">
+              ช่วงพัฒนา: ทุกฟีเจอร์เปิดให้ใช้ฟรีอยู่แล้ว การเริ่มทดลองใช้เป็นการยืนยันด้วยตัวคุณเอง
+            </p>
+          )}
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={handleStartTrial}
@@ -131,6 +157,58 @@ function PremiumPage() {
             ชวนเลย
           </button>
         </div>
+
+        <AnimatePresence>
+          {confirmOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-4 pb-8 backdrop-blur-sm"
+              onClick={() => !pending && setConfirmOpen(false)}
+            >
+              <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 40, opacity: 0 }}
+                transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                onClick={(e) => e.stopPropagation()}
+                className="surface-card w-full max-w-sm rounded-[26px] p-6 text-center"
+                role="dialog"
+                aria-modal="true"
+                aria-label="ยืนยันการเริ่มทดลองใช้พรีเมียม"
+              >
+                <Crown className="mx-auto h-6 w-6 text-primary" />
+                <h2 className="mt-3 text-[17px] font-semibold text-foreground">
+                  เริ่มทดลองใช้พรีเมียม 30 วัน?
+                </h2>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">
+                  ระบบจะเริ่มนับ 30 วันตั้งแต่ตอนนี้ ไม่มีการเรียกเก็บเงิน และยกเลิกได้ทุกเมื่อ
+                  {access.unlockedForEveryone
+                    ? " ในช่วงพัฒนานี้คุณใช้ทุกฟีเจอร์ได้อยู่แล้วแม้ไม่กดเริ่มทดลอง"
+                    : ""}
+                </p>
+                {trialError && <p className="mt-3 text-[12px] text-destructive">{trialError}</p>}
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setConfirmOpen(false)}
+                    disabled={pending}
+                    className="press surface-inset rounded-2xl py-3 text-[13px] text-muted-foreground disabled:opacity-50"
+                  >
+                    ยังก่อน
+                  </button>
+                  <button
+                    onClick={confirmTrial}
+                    disabled={pending}
+                    className="press btn-gold rounded-2xl py-3 text-[13px] font-semibold text-primary-foreground disabled:opacity-60"
+                  >
+                    {pending ? "กำลังเริ่ม…" : "ยืนยันเริ่มทดลอง"}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </PageTransition>
     </AppShell>
   );

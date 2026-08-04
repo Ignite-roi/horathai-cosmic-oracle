@@ -4,7 +4,8 @@ import { AlertTriangle, ExternalLink, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
 
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
-import { useAccount, useLineAuth } from "@/hooks/useAuth";
+import { useAccount } from "@/hooks/useAuth";
+import { useLineAuth } from "@/context/LineAuthContext";
 
 export const Route = createFileRoute("/")({
   head: () => ({
