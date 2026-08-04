@@ -1,8 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { Bell, Gauge, LogOut, MessageCircle, Sparkles, User } from "lucide-react";
-import { useState } from "react";
+import { Gauge, LogOut, MessageCircle, Sparkles, User } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
 import { useLineAuth } from "@/context/LineAuthContext";
@@ -10,7 +7,6 @@ import { useQuality } from "@/hooks/useQuality";
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";
 import { OWNER_REVIEW_BIRTH, PUBLIC_REVIEW_MODE } from "@/config/public-review";
-import { getNotificationPreferences, saveNotificationPreferences } from "@/lib/social.functions";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -45,12 +41,6 @@ function SettingsPage() {
   const { name, avatar, birthDate, birthTime, province } = useProfile();
   const { isSignedIn, configured, error: lineError, login, logout } = useLineAuth();
   const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
-  const getPrefs = useServerFn(getNotificationPreferences);
-  const savePrefs = useServerFn(saveNotificationPreferences);
-  const queryClient = useQueryClient();
-  const prefs = useQuery({ queryKey: ["line-notification-preferences"], queryFn: () => getPrefs(), enabled: isSignedIn });
-  const [savingPrefs, setSavingPrefs] = useState(false);
-  const updatePrefs = async (next: { enabled: boolean; dailyColor: boolean; majorTransit: boolean; creditExpiry: boolean }) => { setSavingPrefs(true); try { await savePrefs({ data: next }); await queryClient.invalidateQueries({ queryKey: ["line-notification-preferences"] }); } finally { setSavingPrefs(false); } };
 
   return (
     <AppShell>
@@ -114,8 +104,6 @@ function SettingsPage() {
             </>
           )}
         </div>
-
-        {isSignedIn && <div className="glass grain mt-4 rounded-[26px] p-5"><p className="flex items-center gap-2 text-[12px] text-muted-foreground"><Bell className="h-4 w-4 text-primary"/> แจ้งเตือนผ่าน LINE</p><p className="mt-2 text-[11px] leading-5 text-muted-foreground">เปิดรับข้อมูลสีมงคลตอนเช้า ดาวย้ายใหญ่ และแจ้งเตือนก่อนวันหมดอายุ 3 วัน คุณปิดได้ทุกเมื่อ</p>{prefs.data && <div className="mt-4 space-y-3"><PreferenceToggle label="อนุญาตการแจ้งเตือน" checked={prefs.data.enabled} disabled={savingPrefs} onChange={(enabled) => void updatePrefs({ ...prefs.data, enabled })}/>{prefs.data.enabled && <><PreferenceToggle label="สีมงคลประจำเช้า" checked={prefs.data.dailyColor} disabled={savingPrefs} onChange={(dailyColor) => void updatePrefs({ ...prefs.data, dailyColor })}/><PreferenceToggle label="ดาวย้ายใหญ่ล่วงหน้า" checked={prefs.data.majorTransit} disabled={savingPrefs} onChange={(majorTransit) => void updatePrefs({ ...prefs.data, majorTransit })}/><PreferenceToggle label="วันใช้งานจะหมดใน 3 วัน" checked={prefs.data.creditExpiry} disabled={savingPrefs} onChange={(creditExpiry) => void updatePrefs({ ...prefs.data, creditExpiry })}/></>}</div>}</div>}
 
         <div className="glass-deep grain rounded-[26px] p-5">
           <p className="flex items-center gap-2 text-[12px] text-muted-foreground">
@@ -209,4 +197,3 @@ function SettingsPage() {
   );
 }
 
-function PreferenceToggle({ label, checked, disabled, onChange }: { label: string; checked: boolean; disabled: boolean; onChange: (value: boolean) => void }) { return <label className="flex items-center justify-between text-[13px] text-foreground"><span>{label}</span><input type="checkbox" className="h-4 w-4 accent-[var(--gold)]" checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)}/></label>; }

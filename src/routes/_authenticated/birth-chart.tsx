@@ -11,7 +11,6 @@ import { AscendantRevealCard, BirthChartActions, BirthDataCertificate, PlanetPos
 import { BirthChartEmptyState, BirthChartErrorState, BirthChartLoadingState, BirthTimeUnknownState } from "@/components/chart/BirthChartStates";
 import { Button } from "@/components/ui/button";
 import { GovernedReading } from "@/components/kb/CitationSections";
-import { ShareResultButton } from "@/components/social/ShareResultButton";
 import { useNatalChart } from "@/hooks/useNatalChart";
 import { HOUSES, PLANET_BY_NUM, formatDegree } from "@/lib/astro";
 import type { ChartPlanet } from "@/lib/astrology-engine.server";
@@ -36,6 +35,12 @@ function BirthChartPage() {
   const [selected, setSelected] = useState<ChartPlanet | null>(null);
   const data = useNatalChart(mode);
 
+  const share = async () => {
+    const text = data.ascendant ? `ดวงกำเนิดของฉัน ลัคนาราศี${data.ascendant.signTh} — Horathai AI` : "ดวงกำเนิดของฉัน — Horathai AI";
+    if (navigator.share) await navigator.share({ title: "ดวงกำเนิด Horathai AI", text, url: window.location.href });
+    else await navigator.clipboard.writeText(`${text} ${window.location.href}`);
+  };
+
   return <AppShell><PageTransition>
     <BirthChartHero {...(data.ascendant?.signTh ? { ascendant: data.ascendant.signTh } : {})} isDemo={data.isDemo}/>
     <BirthChartTabs value={mode} onChange={setMode}/>
@@ -51,8 +56,7 @@ function BirthChartPage() {
       <PlanetPositionGrid planets={data.planets} onSelect={setSelected}/>
       {data.profile && data.chart && <BirthDataCertificate profile={data.profile} chart={data.chart}/>} 
       <GovernedReading facts={[`เอนจิน ${data.chart?.engine_type ?? "demo"}`, data.ascendant ? `ลัคนาราศี${data.ascendant.signTh}` : "ไม่กำหนดลัคนา", `ตำแหน่งดาว ${data.planets.length} ดวง`]} rules={[]} limitations={["ยังไม่มีกฎ published ใน Master Knowledge Base", "ไม่แสดงคำตีความที่ไม่มี citation", "เอนจิน sidereal_lahiri_dev ยังไม่ผ่าน independent benchmark"]}/>
-       <ShareResultButton type="natal" />
-       <BirthChartActions onShare={() => void navigator.clipboard.writeText(window.location.href)}/>
+      <BirthChartActions onShare={() => void share()}/>
        {data.isDemo && !data.isTemporary && <BirthChartEmptyState demo/>}
     </>}
     <AnimatePresence>{selected && <PlanetSheet planet={selected} onClose={() => setSelected(null)}/>}</AnimatePresence>
