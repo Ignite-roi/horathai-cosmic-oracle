@@ -17,7 +17,7 @@ export function ReviewModeBanner() {
           <p className="text-[11px] leading-5 text-foreground">
             {hasTemporaryChart
               ? "ดวงชั่วคราว — ยังไม่ได้บันทึก ข้อมูลจะหายเมื่อปิดแท็บ"
-              : "โหมดพัฒนา — กรอกวันเกิดและดูดวงชั่วคราวได้โดยไม่ต้องล็อกอิน"}
+              : "โหมดผู้เยี่ยมชม — หากยังไม่กรอกข้อมูล ระบบจะแสดงดวงตัวอย่างพร้อมป้ายกำกับ"}
           </p>
           <button
             type="button"

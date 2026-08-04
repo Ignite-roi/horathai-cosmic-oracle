@@ -142,10 +142,6 @@ function Entry() {
   const { data: account } = useAccount();
 
   useEffect(() => {
-    if (PUBLIC_REVIEW_MODE && !isSignedIn) {
-      void navigate({ to: "/onboarding", replace: true });
-      return;
-    }
     if (!isSignedIn || !account) return;
     const done = account.profile?.onboarding_completed;
     void navigate({ to: done ? "/dashboard" : "/onboarding", replace: true });
@@ -249,9 +245,18 @@ function Entry() {
         </div>
       )}
 
+      {PUBLIC_REVIEW_MODE && (
+        <Link
+          to="/onboarding"
+          className="press btn-gold mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+        >
+          เริ่มใช้งานโดยไม่ต้องล็อกอิน
+        </Link>
+      )}
+
       <button
         onClick={() => void login()}
-        className="press btn-gold mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+        className="press mt-3 inline-flex h-11 w-full items-center justify-center rounded-2xl border border-primary/30 text-[13px] text-foreground"
       >
         เข้าสู่ระบบด้วย LINE
       </button>
