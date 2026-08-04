@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
         content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
-      { property: "og:description", content: "ผูกดวงกำเนิด ดาวย้าย และโหร AI ในแอปเดียว" },
+      { property: "og:description", content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
