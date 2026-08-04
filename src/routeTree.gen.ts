@@ -14,17 +14,17 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as TransitRouteImport } from './routes/transit'
-import { Route as AuthenticatedAdminKbRouteRouteImport } from './routes/_authenticated/admin-kb-route'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
-import { Route as AuthenticatedAdminKbRouteIndexRouteImport } from './routes/_authenticated/admin-kb-route.index'
-import { Route as AuthenticatedAdminKbRouteEntityRouteImport } from './routes/_authenticated/admin-kb-route.$entity'
-import { Route as AuthenticatedAdminKbRouteSourcesSourceIdRouteImport } from './routes/_authenticated/admin-kb-route.sources.$sourceId'
+import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
+import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
+import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -50,12 +50,6 @@ const TransitRoute = TransitRouteImport.update({
   path: '/transit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminKbRouteRoute =
-  AuthenticatedAdminKbRouteRouteImport.update({
-    id: '/admin-kb-route',
-    path: '/admin-kb-route',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedAiAstrologerRoute =
   AuthenticatedAiAstrologerRouteImport.update({
     id: '/ai-astrologer',
@@ -72,6 +66,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedKnowledgeAdminRoute =
+  AuthenticatedKnowledgeAdminRouteImport.update({
+    id: '/knowledge-admin',
+    path: '/knowledge-admin',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -92,23 +92,23 @@ const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   path: '/transits',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAdminKbRouteIndexRoute =
-  AuthenticatedAdminKbRouteIndexRouteImport.update({
+const AuthenticatedKnowledgeAdminIndexRoute =
+  AuthenticatedKnowledgeAdminIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAdminKbRouteRoute,
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
   } as any)
-const AuthenticatedAdminKbRouteEntityRoute =
-  AuthenticatedAdminKbRouteEntityRouteImport.update({
+const AuthenticatedKnowledgeAdminEntityRoute =
+  AuthenticatedKnowledgeAdminEntityRouteImport.update({
     id: '/$entity',
     path: '/$entity',
-    getParentRoute: () => AuthenticatedAdminKbRouteRoute,
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
   } as any)
-const AuthenticatedAdminKbRouteSourcesSourceIdRoute =
-  AuthenticatedAdminKbRouteSourcesSourceIdRouteImport.update({
+const AuthenticatedKnowledgeAdminSourcesSourceIdRoute =
+  AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport.update({
     id: '/sources/$sourceId',
     path: '/sources/$sourceId',
-    getParentRoute: () => AuthenticatedAdminKbRouteRoute,
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -116,17 +116,17 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
-  '/admin-kb-route': typeof AuthenticatedAdminKbRouteRouteWithChildren
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
-  '/admin-kb-route/$entity': typeof AuthenticatedAdminKbRouteEntityRoute
-  '/admin-kb-route/': typeof AuthenticatedAdminKbRouteIndexRoute
-  '/admin-kb-route/sources/$sourceId': typeof AuthenticatedAdminKbRouteSourcesSourceIdRoute
+  '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,9 +140,9 @@ export interface FileRoutesByTo {
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
-  '/admin-kb-route/$entity': typeof AuthenticatedAdminKbRouteEntityRoute
-  '/admin-kb-route': typeof AuthenticatedAdminKbRouteIndexRoute
-  '/admin-kb-route/sources/$sourceId': typeof AuthenticatedAdminKbRouteSourcesSourceIdRoute
+  '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,17 +151,17 @@ export interface FileRoutesById {
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
-  '/_authenticated/admin-kb-route': typeof AuthenticatedAdminKbRouteRouteWithChildren
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
-  '/_authenticated/admin-kb-route/$entity': typeof AuthenticatedAdminKbRouteEntityRoute
-  '/_authenticated/admin-kb-route/': typeof AuthenticatedAdminKbRouteIndexRoute
-  '/_authenticated/admin-kb-route/sources/$sourceId': typeof AuthenticatedAdminKbRouteSourcesSourceIdRoute
+  '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,17 +170,17 @@ export interface FileRouteTypes {
     | '/ai'
     | '/chart'
     | '/transit'
-    | '/admin-kb-route'
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
+    | '/knowledge-admin'
     | '/onboarding'
     | '/premium'
     | '/settings'
     | '/transits'
-    | '/admin-kb-route/$entity'
-    | '/admin-kb-route/'
-    | '/admin-kb-route/sources/$sourceId'
+    | '/knowledge-admin/$entity'
+    | '/knowledge-admin/'
+    | '/knowledge-admin/sources/$sourceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -194,9 +194,9 @@ export interface FileRouteTypes {
     | '/premium'
     | '/settings'
     | '/transits'
-    | '/admin-kb-route/$entity'
-    | '/admin-kb-route'
-    | '/admin-kb-route/sources/$sourceId'
+    | '/knowledge-admin/$entity'
+    | '/knowledge-admin'
+    | '/knowledge-admin/sources/$sourceId'
   id:
     | '__root__'
     | '/'
@@ -204,17 +204,17 @@ export interface FileRouteTypes {
     | '/ai'
     | '/chart'
     | '/transit'
-    | '/_authenticated/admin-kb-route'
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
     | '/_authenticated/dashboard'
+    | '/_authenticated/knowledge-admin'
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
     | '/_authenticated/settings'
     | '/_authenticated/transits'
-    | '/_authenticated/admin-kb-route/$entity'
-    | '/_authenticated/admin-kb-route/'
-    | '/_authenticated/admin-kb-route/sources/$sourceId'
+    | '/_authenticated/knowledge-admin/$entity'
+    | '/_authenticated/knowledge-admin/'
+    | '/_authenticated/knowledge-admin/sources/$sourceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -262,13 +262,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransitRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin-kb-route': {
-      id: '/_authenticated/admin-kb-route'
-      path: '/admin-kb-route'
-      fullPath: '/admin-kb-route'
-      preLoaderRoute: typeof AuthenticatedAdminKbRouteRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/ai-astrologer': {
       id: '/_authenticated/ai-astrologer'
       path: '/ai-astrologer'
@@ -288,6 +281,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/knowledge-admin': {
+      id: '/_authenticated/knowledge-admin'
+      path: '/knowledge-admin'
+      fullPath: '/knowledge-admin'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding': {
@@ -318,54 +318,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransitsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/admin-kb-route/': {
-      id: '/_authenticated/admin-kb-route/'
+    '/_authenticated/knowledge-admin/': {
+      id: '/_authenticated/knowledge-admin/'
       path: '/'
-      fullPath: '/admin-kb-route/'
-      preLoaderRoute: typeof AuthenticatedAdminKbRouteIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminKbRouteRoute
+      fullPath: '/knowledge-admin/'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
-    '/_authenticated/admin-kb-route/$entity': {
-      id: '/_authenticated/admin-kb-route/$entity'
+    '/_authenticated/knowledge-admin/$entity': {
+      id: '/_authenticated/knowledge-admin/$entity'
       path: '/$entity'
-      fullPath: '/admin-kb-route/$entity'
-      preLoaderRoute: typeof AuthenticatedAdminKbRouteEntityRouteImport
-      parentRoute: typeof AuthenticatedAdminKbRouteRoute
+      fullPath: '/knowledge-admin/$entity'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminEntityRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
-    '/_authenticated/admin-kb-route/sources/$sourceId': {
-      id: '/_authenticated/admin-kb-route/sources/$sourceId'
+    '/_authenticated/knowledge-admin/sources/$sourceId': {
+      id: '/_authenticated/knowledge-admin/sources/$sourceId'
       path: '/sources/$sourceId'
-      fullPath: '/admin-kb-route/sources/$sourceId'
-      preLoaderRoute: typeof AuthenticatedAdminKbRouteSourcesSourceIdRouteImport
-      parentRoute: typeof AuthenticatedAdminKbRouteRoute
+      fullPath: '/knowledge-admin/sources/$sourceId'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
   }
 }
 
-interface AuthenticatedAdminKbRouteRouteChildren {
-  AuthenticatedAdminKbRouteEntityRoute: typeof AuthenticatedAdminKbRouteEntityRoute
-  AuthenticatedAdminKbRouteIndexRoute: typeof AuthenticatedAdminKbRouteIndexRoute
-  AuthenticatedAdminKbRouteSourcesSourceIdRoute: typeof AuthenticatedAdminKbRouteSourcesSourceIdRoute
+interface AuthenticatedKnowledgeAdminRouteChildren {
+  AuthenticatedKnowledgeAdminEntityRoute: typeof AuthenticatedKnowledgeAdminEntityRoute
+  AuthenticatedKnowledgeAdminIndexRoute: typeof AuthenticatedKnowledgeAdminIndexRoute
+  AuthenticatedKnowledgeAdminSourcesSourceIdRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 
-const AuthenticatedAdminKbRouteRouteChildren: AuthenticatedAdminKbRouteRouteChildren =
+const AuthenticatedKnowledgeAdminRouteChildren: AuthenticatedKnowledgeAdminRouteChildren =
   {
-    AuthenticatedAdminKbRouteEntityRoute: AuthenticatedAdminKbRouteEntityRoute,
-    AuthenticatedAdminKbRouteIndexRoute: AuthenticatedAdminKbRouteIndexRoute,
-    AuthenticatedAdminKbRouteSourcesSourceIdRoute:
-      AuthenticatedAdminKbRouteSourcesSourceIdRoute,
+    AuthenticatedKnowledgeAdminEntityRoute:
+      AuthenticatedKnowledgeAdminEntityRoute,
+    AuthenticatedKnowledgeAdminIndexRoute:
+      AuthenticatedKnowledgeAdminIndexRoute,
+    AuthenticatedKnowledgeAdminSourcesSourceIdRoute:
+      AuthenticatedKnowledgeAdminSourcesSourceIdRoute,
   }
 
-const AuthenticatedAdminKbRouteRouteWithChildren =
-  AuthenticatedAdminKbRouteRoute._addFileChildren(
-    AuthenticatedAdminKbRouteRouteChildren,
+const AuthenticatedKnowledgeAdminRouteWithChildren =
+  AuthenticatedKnowledgeAdminRoute._addFileChildren(
+    AuthenticatedKnowledgeAdminRouteChildren,
   )
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminKbRouteRoute: typeof AuthenticatedAdminKbRouteRouteWithChildren
   AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
   AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -373,10 +375,11 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminKbRouteRoute: AuthenticatedAdminKbRouteRouteWithChildren,
   AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
   AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedKnowledgeAdminRoute:
+    AuthenticatedKnowledgeAdminRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
