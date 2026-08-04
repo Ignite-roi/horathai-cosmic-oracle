@@ -146,7 +146,6 @@ export function AstrologerConsult({ question }: { question: string }) {
 /* ---------- H. Day wallet ---------- */
 
 export function DayWalletStatus({ days, points }: { days: number; points: number }) {
-
   return (
     <Link
       to="/wallet"
@@ -166,7 +165,9 @@ export function DayWalletStatus({ days, points }: { days: number; points: number
       </span>
       <div className="min-w-0 flex-1">
         <p className="thai-heading text-[15px] text-gold">
-          {days > 0 ? `วันใช้งานคงเหลือ ${toThaiDigits(days)} วัน` : "เติมวันเพื่อเปิดประสบการณ์เชิงลึก"}
+          {days > 0
+            ? `วันใช้งานคงเหลือ ${toThaiDigits(days)} วัน`
+            : "เติมวันเพื่อเปิดประสบการณ์เชิงลึก"}
         </p>
         <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           มี {toThaiDigits(points)} แต้ม · แตะเพื่อดูยอด ประวัติ และแพ็กเกจ
@@ -198,8 +199,8 @@ export function DemoCallout() {
           นี่คือตัวอย่างการแสดงผล ยังไม่ใช่ดวงของคุณ
         </h2>
         <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">
-          ระบบไม่ได้บันทึกดวงสาธิตนี้ไว้ กรอกวัน เวลา และสถานที่เกิด
-          เพื่อคำนวณผังดวงด้วยโมเดล Lahiri แบบมีเวอร์ชันและให้ผลซ้ำได้
+          ระบบไม่ได้บันทึกดวงสาธิตนี้ไว้ กรอกวัน เวลา และสถานที่เกิด เพื่อคำนวณผังดวงด้วยโมเดล
+          Lahiri แบบมีเวอร์ชันและให้ผลซ้ำได้
         </p>
         <Link
           to="/onboarding"

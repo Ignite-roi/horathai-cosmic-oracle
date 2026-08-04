@@ -28,7 +28,13 @@ export function useReading(atIso?: string) {
   const day = atIso ?? new Date().toISOString().slice(0, 13);
 
   return useQuery({
-    queryKey: ["reading", publicReview ? "public-review" : (temporary?.birth_date ?? birthDate), temporary?.birth_time ?? birthTime, temporary?.province ?? province, day],
+    queryKey: [
+      "reading",
+      publicReview ? "public-review" : (temporary?.birth_date ?? birthDate),
+      temporary?.birth_time ?? birthTime,
+      temporary?.province ?? province,
+      day,
+    ],
     enabled: ready,
     staleTime: 1000 * 60 * 30,
     queryFn: () =>
