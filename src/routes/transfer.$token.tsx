@@ -10,7 +10,7 @@ import { useLineAuth } from "@/context/LineAuthContext";
 import type { DayTransferPreview } from "@/lib/social.features";
 import { claimDayTransfer, getDayTransferPreview } from "@/lib/social.functions";
 
-export const Route = createFileRoute("/_authenticated/transfer/$token")({ head: () => ({ meta: [
+export const Route = createFileRoute("/transfer/$token")({ head: () => ({ meta: [
   { title: "รับวันจากเพื่อน | Horathai AI" }, { name: "description", content: "ตรวจสอบและยืนยันรับวันใช้งานผ่าน QR อายุ 60 นาที" },
   { property: "og:title", content: "รับวันจากเพื่อน | Horathai AI" }, { property: "og:description", content: "รับวันใช้งาน Horathai จากเพื่อนอย่างปลอดภัย" },
   { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
