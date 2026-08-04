@@ -4,7 +4,9 @@ export function validateRuleCitations(rule: KnowledgeRule): KnowledgeCitation[] 
   if (rule.status === "published" && rule.citations.length === 0) {
     throw new Error(`Published rule ${rule.ruleCode} has no citation`);
   }
-  return rule.citations.filter((citation) => Boolean(citation.sourceCode && citation.sourceTitle && citation.locator));
+  return rule.citations.filter((citation) =>
+    Boolean(citation.sourceCode && citation.sourceTitle && citation.locator),
+  );
 }
 
 export function citationSnapshot(rules: KnowledgeRule[]): KnowledgeCitation[] {

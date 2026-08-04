@@ -69,7 +69,9 @@ export type RuleEngineOutput = {
 export type InterpretationContext = {
   system: KnowledgeSystemRef;
   calculatedFacts: CalculatedFact[];
-  matchedRules: Array<Pick<KnowledgeRule, "id" | "ruleCode" | "outcome" | "confidence">>;
+  matchedRules: Array<
+    Pick<KnowledgeRule, "id" | "ruleCode" | "outcome" | "confidence">
+  >;
   citations: KnowledgeCitation[];
   wordingConstraints: string[];
   prohibitedCapabilities: string[];

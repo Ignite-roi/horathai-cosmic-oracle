@@ -8,7 +8,10 @@ function matchesConditions(rule: KnowledgeRule, input: RuleEngineInput): boolean
   return true;
 }
 
-export function matchKnowledgeRules(input: RuleEngineInput, rules: KnowledgeRule[]): RuleEngineOutput {
+export function matchKnowledgeRules(
+  input: RuleEngineInput,
+  rules: KnowledgeRule[],
+): RuleEngineOutput {
   const eligible = rules.filter((rule) =>
     rule.systemId === input.system.id &&
     rule.systemVersion === input.system.version &&
@@ -24,7 +27,9 @@ export function matchKnowledgeRules(input: RuleEngineInput, rules: KnowledgeRule
       .map((rule) => ({
         ruleId: rule.id,
         ruleCode: rule.ruleCode,
-        factsUsed: input.transitEvent ? [...input.chartFacts, ...input.transitEvent.facts] : input.chartFacts,
+        factsUsed: input.transitEvent
+          ? [...input.chartFacts, ...input.transitEvent.facts]
+          : input.chartFacts,
         citations: rule.citations,
         confidence: rule.confidence,
         limitations: rule.limitations,
