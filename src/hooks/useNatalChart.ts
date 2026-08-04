@@ -78,7 +78,8 @@ export function useNatalChart(mode: "natal" | "transit" | "both", transitAt?: st
   useEffect(() => {
     if (
       context.data?.birthProfile &&
-      (!context.data.chart || context.data.chart.calculation_version !== ASTROLOGY_CALCULATION_VERSION) &&
+      (!context.data.chart ||
+        context.data.chart.calculation_version !== ASTROLOGY_CALCULATION_VERSION) &&
       !calculation.isPending &&
       !calculation.isSuccess
     )
