@@ -1,19 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useMemo, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
 import { BirthChartHero, BirthChartTabs, type ChartMode } from "@/components/chart/BirthChartHero";
 import { ChartControls, type ChartView } from "@/components/chart/ChartControls";
 import { CosmicNatalOrrery } from "@/components/chart/CosmicNatalOrrery";
-import { AscendantRevealCard, BirthChartActions, BirthDataCertificate, NatalInterpretationSections, PlanetPositionGrid } from "@/components/chart/ChartDetails";
+import { AscendantRevealCard, BirthChartActions, BirthDataCertificate, PlanetPositionGrid } from "@/components/chart/ChartDetails";
 import { BirthChartEmptyState, BirthChartErrorState, BirthChartLoadingState, BirthTimeUnknownState } from "@/components/chart/BirthChartStates";
 import { Button } from "@/components/ui/button";
+import { GovernedReading } from "@/components/kb/CitationSections";
 import { useNatalChart } from "@/hooks/useNatalChart";
 import { HOUSES, PLANET_BY_NUM, formatDegree } from "@/lib/astro";
 import type { ChartPlanet } from "@/lib/astrology-engine.server";
-import { buildNatalInterpretations } from "@/lib/interpretation";
 
 export const Route = createFileRoute("/_authenticated/birth-chart")({
   head: () => ({ meta: [
@@ -34,7 +34,6 @@ function BirthChartPage() {
   const [fullNames, setFullNames] = useState(false);
   const [selected, setSelected] = useState<ChartPlanet | null>(null);
   const data = useNatalChart(mode);
-  const interpretations = useMemo(() => buildNatalInterpretations(data.planets, data.houses, data.standards, data.ascendant?.signTh), [data.planets, data.houses, data.standards, data.ascendant?.signTh]);
 
   const share = async () => {
     const text = data.ascendant ? `ดวงกำเนิดของฉัน ลัคนาราศี${data.ascendant.signTh} — Horathai AI` : "ดวงกำเนิดของฉัน — Horathai AI";
@@ -56,7 +55,7 @@ function BirthChartPage() {
       {!data.ascendant && !data.isDemo ? <BirthTimeUnknownState/> : data.ascendant && <AscendantRevealCard ascendant={{ signId: data.ascendant.signId, signTh: data.ascendant.signTh, degree: data.ascendant.degree, minute: data.ascendant.minute }} houseSystem={data.chart?.house_system ?? "whole_sign"}/>} 
       <PlanetPositionGrid planets={data.planets} onSelect={setSelected}/>
       {data.profile && data.chart && <BirthDataCertificate profile={data.profile} chart={data.chart}/>} 
-      <NatalInterpretationSections sections={interpretations}/>
+      <GovernedReading facts={[`เอนจิน ${data.chart?.engine_type ?? "demo"}`, data.ascendant ? `ลัคนาราศี${data.ascendant.signTh}` : "ไม่กำหนดลัคนา", `ตำแหน่งดาว ${data.planets.length} ดวง`]} rules={[]} limitations={["ยังไม่มีกฎ published ใน Master Knowledge Base", "ไม่แสดงคำตีความที่ไม่มี citation", "เอนจิน sidereal_lahiri_dev ยังไม่ผ่าน independent benchmark"]}/>
       <BirthChartActions onShare={() => void share()}/>
       {data.isDemo && <BirthChartEmptyState demo/>}
     </>}
@@ -65,6 +64,5 @@ function BirthChartPage() {
 }
 
 function PlanetSheet({ planet, onClose }: { planet: ChartPlanet; onClose: () => void }) {
-  const meta = PLANET_BY_NUM.get(planet.num as 1);
-  return <motion.div className="fixed inset-0 z-40 flex items-end justify-center bg-void/80 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}><motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 320, damping: 34 }} onClick={(event) => event.stopPropagation()} className="glass-deep grain w-full max-w-lg rounded-t-[28px] p-6 pb-[max(env(safe-area-inset-bottom),32px)]"><div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3"><span className="planet-sphere h-14 w-14 text-lg" style={{ "--planet-color": planet.color } as CSSProperties}>{planet.thaiNumeral}</span><div className="min-w-0"><h3 className="thai-heading text-xl text-foreground">ดาว{planet.th}</h3><p className="text-xs text-muted-foreground">{meta?.meaning}</p></div><Button variant="ghost" size="icon" onClick={onClose} aria-label="ปิด"><X/></Button></div><div className="mt-5 grid grid-cols-2 gap-2">{[["ตำแหน่ง",`ราศี${planet.signTh} ${formatDegree(planet)}`],["เรือนชะตา",HOUSES[planet.house - 1]?.th ?? `ภพ ${planet.house}`],["ทิศทาง",planet.retrograde ? "พักร์" : "เดินหน้าปกติ"],["กำลังสัมพัทธ์",`${Math.round(planet.strength * 100)}%`]].map(([label,value]) => <div key={label} className="surface-inset p-3"><p className="text-[10px] text-muted-foreground">{label}</p><p className="mt-1 text-xs text-foreground">{value}</p></div>)}</div><p className="mt-4 rounded-xl border border-primary/18 bg-primary/6 p-4 text-[12px] leading-6 text-foreground/75">ข้อมูลตำแหน่งเป็นผลคำนวณ ส่วนความหมายเชื่อมโยงกับ{planet.meaning}ตามชุดกฎไทยปัจจุบัน</p></motion.div></motion.div>;
+  return <motion.div className="fixed inset-0 z-40 flex items-end justify-center bg-void/80 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}><motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 320, damping: 34 }} onClick={(event) => event.stopPropagation()} className="glass-deep grain w-full max-w-lg rounded-t-[28px] p-6 pb-[max(env(safe-area-inset-bottom),32px)]"><div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3"><span className="planet-sphere h-14 w-14 text-lg" style={{ "--planet-color": planet.color } as CSSProperties}>{planet.thaiNumeral}</span><div className="min-w-0"><h3 className="thai-heading text-xl text-foreground">ดาว{planet.th}</h3><p className="text-xs text-muted-foreground">ข้อเท็จจริงจากการคำนวณ</p></div><Button variant="ghost" size="icon" onClick={onClose} aria-label="ปิด"><X/></Button></div><div className="mt-5 grid grid-cols-2 gap-2">{[["ตำแหน่ง",`ราศี${planet.signTh} ${formatDegree(planet)}`],["เรือนชะตา",HOUSES[planet.house - 1]?.th ?? `ภพ ${planet.house}`],["ทิศทาง",planet.retrograde ? "พักร์" : "เดินหน้าปกติ"],["กำลังสัมพัทธ์",`${Math.round(planet.strength * 100)}%`]].map(([label,value]) => <div key={label} className="surface-inset p-3"><p className="text-[10px] text-muted-foreground">{label}</p><p className="mt-1 text-xs text-foreground">{value}</p></div>)}</div><p className="mt-4 rounded-xl border border-warning/18 bg-warning/6 p-4 text-[12px] leading-6 text-muted-foreground">งดแสดงความหมายจนกว่าจะมีกฎโหราศาสตร์ไทยที่เผยแพร่และมี citation ครบ</p></motion.div></motion.div>;
 }

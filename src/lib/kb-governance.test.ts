@@ -12,7 +12,9 @@ describe("knowledge governance", () => {
     expect(productionEligibleRules([{ ...citedPublishedRule, status: "expert_reviewed" }])).toEqual([]);
   });
   it("requires complete citations", () => {
-    expect(isCitationComplete({ ...citedPublishedRule.citations[0], locator: "" })).toBe(false);
+    const citation = citedPublishedRule.citations[0];
+    if (!citation) throw new Error("test citation missing");
+    expect(isCitationComplete({ ...citation, locator: "" })).toBe(false);
     expect(productionEligibleRules([{ ...citedPublishedRule, citations: [] }])).toEqual([]);
   });
   it("isolates unresolved conflicts", () => {

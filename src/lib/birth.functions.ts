@@ -8,7 +8,7 @@ const BirthProfileInput = z.object({
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "รูปแบบวันเกิดไม่ถูกต้อง"),
   birth_time: z
     .string()
-    .regex(/^\d{2}:\d{2}$/, "รูปแบบเวลาเกิดไม่ถูกต้อง")
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "รูปแบบเวลาเกิดไม่ถูกต้อง")
     .optional(),
   birth_time_known: z.boolean(),
   country: z.string().trim().min(1).max(60),
@@ -111,7 +111,8 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
     const place = PROVINCES.find((p) => p.th === data.province.trim());
     if (!place) throw new Error(`ไม่พบพิกัดของจังหวัด "${data.province}" กรุณาเลือกจากรายการ`);
 
-    const birthDate = new Date(`${data.birth_date}T00:00:00+07:00`);
+    const { zonedWallClockToUtc } = await import("./timezone");
+    const birthDate = zonedWallClockToUtc(data.birth_date, "00:00", "Asia/Bangkok");
     if (Number.isNaN(birthDate.getTime())) throw new Error("วันเกิดไม่ถูกต้อง");
     if (birthDate.getTime() > Date.now()) throw new Error("วันเกิดต้องไม่เป็นวันในอนาคต");
     if (birthDate.getUTCFullYear() < 1900) throw new Error("ปีเกิดต้องไม่เก่ากว่า พ.ศ. ๒๔๔๓");
@@ -131,8 +132,10 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
       country_code: "TH",
       locality: data.district?.trim() || data.province,
       birth_time_estimated: !data.birth_time_known,
-      utc_birth_datetime: new Date(
-        `${data.birth_date}T${data.birth_time_known ? (data.birth_time ?? "12:00") : "12:00"}:00+07:00`,
+      utc_birth_datetime: zonedWallClockToUtc(
+        data.birth_date,
+        data.birth_time_known ? (data.birth_time ?? "12:00") : "12:00",
+        "Asia/Bangkok",
       ).toISOString(),
       calculation_system: "sidereal_lahiri_dev",
       calculation_settings_json: {
