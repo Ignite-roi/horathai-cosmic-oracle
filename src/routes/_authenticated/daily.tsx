@@ -6,6 +6,7 @@ import { Download, Palette, Sparkles } from "lucide-react";
 import { AppShell, PageTransition } from "@/components/AppShell";
 import { HowToUseSheet } from "@/components/insights/HowToUseSheet";
 import { Button } from "@/components/ui/button";
+import { ShareResultButton } from "@/components/social/ShareResultButton";
 import { useSession } from "@/hooks/useAuth";
 import { readGuestBirthContext } from "@/lib/guest-birth";
 import { buddhistDate, downloadCanvas, guestContextToBirth } from "@/lib/insights.client";
@@ -165,6 +166,7 @@ function DailyPage() {
                 <Download className="h-4 w-4" />
                 สร้างวอลเปเปอร์มือถือ
               </Button>
+              {session && <ShareResultButton type="daily" />}
               <Evidence evidence={query.data.evidence} />
             </>
           )}

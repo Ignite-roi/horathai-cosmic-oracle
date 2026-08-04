@@ -22,6 +22,7 @@ import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCompatRouteImport } from './routes/_authenticated/compat'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedGiftDaysRouteImport } from './routes/_authenticated/gift-days'
 import { Route as AuthenticatedInviteRouteImport } from './routes/_authenticated/invite'
 import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -100,6 +101,11 @@ const AuthenticatedDailyRoute = AuthenticatedDailyRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedGiftDaysRoute = AuthenticatedGiftDaysRouteImport.update({
+  id: '/gift-days',
+  path: '/gift-days',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedInviteRoute = AuthenticatedInviteRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/compat': typeof AuthenticatedCompatRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gift-days': typeof AuthenticatedGiftDaysRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/compat': typeof AuthenticatedCompatRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gift-days': typeof AuthenticatedGiftDaysRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/_authenticated/compat': typeof AuthenticatedCompatRoute
   '/_authenticated/daily': typeof AuthenticatedDailyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/gift-days': typeof AuthenticatedGiftDaysRoute
   '/_authenticated/invite': typeof AuthenticatedInviteRoute
   '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/compat'
     | '/daily'
     | '/dashboard'
+    | '/gift-days'
     | '/invite'
     | '/knowledge-admin'
     | '/onboarding'
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/compat'
     | '/daily'
     | '/dashboard'
+    | '/gift-days'
     | '/invite'
     | '/onboarding'
     | '/premium'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/_authenticated/compat'
     | '/_authenticated/daily'
     | '/_authenticated/dashboard'
+    | '/_authenticated/gift-days'
     | '/_authenticated/invite'
     | '/_authenticated/knowledge-admin'
     | '/_authenticated/onboarding'
@@ -453,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/gift-days': {
+      id: '/_authenticated/gift-days'
+      path: '/gift-days'
+      fullPath: '/gift-days'
+      preLoaderRoute: typeof AuthenticatedGiftDaysRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/invite': {
@@ -584,6 +603,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCompatRoute: typeof AuthenticatedCompatRoute
   AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedGiftDaysRoute: typeof AuthenticatedGiftDaysRoute
   AuthenticatedInviteRoute: typeof AuthenticatedInviteRoute
   AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
@@ -602,6 +622,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCompatRoute: AuthenticatedCompatRoute,
   AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedGiftDaysRoute: AuthenticatedGiftDaysRoute,
   AuthenticatedInviteRoute: AuthenticatedInviteRoute,
   AuthenticatedKnowledgeAdminRoute:
     AuthenticatedKnowledgeAdminRouteWithChildren,
