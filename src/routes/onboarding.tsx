@@ -4,6 +4,8 @@ import { ArrowRight, CalendarDays, Clock, MapPin, MessageCircle } from "lucide-r
 import { useEffect, useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
+import { useLineAuth } from "@/hooks/useAuth";
+import { saveMyProfile, startPremiumTrial } from "@/lib/profile.functions";
 import { PROVINCES } from "@/lib/provinces";
 import { useProfile } from "@/store/useProfile";
 
@@ -47,6 +49,8 @@ function Field({ label, icon: Icon, children }: { label: string; icon: typeof Cl
 function Onboarding() {
   const navigate = useNavigate();
   const { setProfile, startTrial, ...profile } = useProfile();
+  const { isSignedIn, status, error: lineError, configured, login } = useLineAuth();
+  const [signingIn, setSigningIn] = useState(false);
   const [step, setStep] = useState(profile.onboarded ? 1 : 0);
   const [form, setForm] = useState({
     name: profile.name,
@@ -67,11 +71,36 @@ function Onboarding() {
     if (step === 2 && progress >= 100) {
       setProfile({ ...form, onboarded: true });
       if (!profile.premiumTrialStartedAt) startTrial();
+      if (isSignedIn) {
+        void saveMyProfile({
+          data: {
+            display_name: form.name,
+            birth_date: form.birthDate,
+            birth_time: form.birthTime,
+            province: form.province,
+            country: form.country,
+            onboarded: true,
+          },
+        }).catch((e) => console.error("[profile] save failed", e));
+        void startPremiumTrial().catch((e) => console.error("[trial] start failed", e));
+      }
       const t = setTimeout(() => navigate({ to: "/chart" }), 500);
       return () => clearTimeout(t);
     }
     return;
-  }, [step, progress, form, navigate, setProfile, startTrial, profile.premiumTrialStartedAt]);
+  }, [step, progress, form, navigate, setProfile, startTrial, profile.premiumTrialStartedAt, isSignedIn]);
+
+  // Skip the login step once the LINE session is live.
+  useEffect(() => {
+    if (isSignedIn && step === 0) setStep(1);
+  }, [isSignedIn, step]);
+
+  const handleLineLogin = async () => {
+    setSigningIn(true);
+    const ok = await login();
+    setSigningIn(false);
+    if (ok) setStep(1);
+  };
 
   const inputCls =
     "mt-2 w-full bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted-foreground";
