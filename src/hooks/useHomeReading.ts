@@ -6,6 +6,8 @@ import type { PlacedPlanet, ReadingResult } from "@/lib/astro";
 import { getMyBirthContext } from "@/lib/birth.functions";
 import { useProfile } from "@/store/useProfile";
 import { useSession } from "@/hooks/useAuth";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
+import { getPublicReviewReading } from "@/lib/public-review.functions";
 
 /** Fixed sample birth used only to render the demo composition. Never persisted. */
 export const DEMO_BIRTH = {
@@ -61,6 +63,8 @@ export function useHomeReading() {
   const birthTime = useProfile((s) => s.birthTime);
   const province = useProfile((s) => s.province);
   const fetchReading = useServerFn(getReading);
+  const fetchReviewReading = useServerFn(getPublicReviewReading);
+  const { session } = useSession();
   const { data: context } = useBirthContext();
   const saved = context?.birthProfile ?? null;
 
@@ -89,7 +93,9 @@ export function useHomeReading() {
       ],
       staleTime: 1000 * 60 * 30,
       queryFn: () =>
-        fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>,
+        PUBLIC_REVIEW_MODE && !session
+          ? (fetchReviewReading({ data: { at: isoAt(offset) } }) as Promise<ReadingResult>)
+          : (fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>),
     })),
   });
 

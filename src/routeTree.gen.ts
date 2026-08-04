@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
@@ -43,6 +45,16 @@ const AiRoute = AiRouteImport.update({
 const ChartRoute = ChartRouteImport.update({
   id: '/chart',
   path: '/chart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TransitRoute = TransitRouteImport.update({
@@ -115,6 +127,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -132,6 +146,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -150,6 +166,8 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -169,6 +187,8 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/chart'
+    | '/privacy'
+    | '/terms'
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
@@ -186,6 +206,8 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/chart'
+    | '/privacy'
+    | '/terms'
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
@@ -203,6 +225,8 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/ai'
     | '/chart'
+    | '/privacy'
+    | '/terms'
     | '/transit'
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
@@ -222,6 +246,8 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AiRoute: typeof AiRoute
   ChartRoute: typeof ChartRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
 }
 
@@ -253,6 +279,20 @@ declare module '@tanstack/react-router' {
       path: '/chart'
       fullPath: '/chart'
       preLoaderRoute: typeof ChartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/transit': {
@@ -395,6 +435,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AiRoute: AiRoute,
   ChartRoute: ChartRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
 }
 export const routeTree = rootRouteImport

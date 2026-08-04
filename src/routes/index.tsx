@@ -4,6 +4,7 @@ import { AlertTriangle, ChevronDown, ExternalLink, RefreshCw, ShieldCheck } from
 import { useEffect, useState } from "react";
 
 import { APP_ACCESS_MODE } from "@/config/access";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { getLiffDiagnostics } from "@/lib/line-auth.functions";
 import { useQuery } from "@tanstack/react-query";
 
@@ -141,6 +142,10 @@ function Entry() {
   const { data: account } = useAccount();
 
   useEffect(() => {
+    if (PUBLIC_REVIEW_MODE && !isSignedIn) {
+      void navigate({ to: "/dashboard", replace: true });
+      return;
+    }
     if (!isSignedIn || !account) return;
     const done = account.profile?.onboarding_completed;
     void navigate({ to: done ? "/dashboard" : "/onboarding", replace: true });

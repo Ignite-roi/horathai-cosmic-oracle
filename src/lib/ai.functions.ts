@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const AskInput = z.object({
   question: z.string().min(1).max(600),
@@ -12,6 +13,7 @@ const AskInput = z.object({
 
 /** Thai astrologer AI. The chart facts are computed server-side and passed in as ground truth. */
 export const askAstrologer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => AskInput.parse(input))
   .handler(async ({ data }) => {
     const key = process.env["LOVABLE_API_KEY"];

@@ -4,6 +4,7 @@ import { Bot, Crown, Home, Orbit, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
+import { ReviewModeBanner } from "@/components/ReviewModeBanner";
 
 const NAV = [
   { to: "/dashboard", label: "หน้าแรก", icon: Home },
@@ -28,7 +29,10 @@ export function AppShell({
     <div className="relative min-h-screen overflow-x-hidden">
       <LiveUniverse {...(moonPhase !== undefined ? { moonPhase } : {})} {...(element ? { element } : {})} />
 
-      <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-6">{children}</main>
+      <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-6">
+        <ReviewModeBanner />
+        {children}
+      </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-center pb-[max(env(safe-area-inset-bottom),12px)]">
         <div className="glass-deep grain mx-4 flex w-full max-w-md items-center justify-between rounded-[28px] px-2 py-2">

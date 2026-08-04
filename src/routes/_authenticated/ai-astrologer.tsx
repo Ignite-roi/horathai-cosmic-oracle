@@ -8,8 +8,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell, EmptyBirthData, PageTransition } from "@/components/AppShell";
 import { useReading } from "@/hooks/useReading";
 import { askAstrologer } from "@/lib/ai.functions";
-import { ASPECT_LABEL, HOUSES, PLANET_BY_NUM, formatDegree, moonPhaseLabel, type ReadingResult } from "@/lib/astro";
+import {
+  ASPECT_LABEL,
+  HOUSES,
+  PLANET_BY_NUM,
+  formatDegree,
+  moonPhaseLabel,
+  type ReadingResult,
+} from "@/lib/astro";
 import { useProfile } from "@/store/useProfile";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
+import { useLineAuth } from "@/context/LineAuthContext";
 
 export const Route = createFileRoute("/_authenticated/ai-astrologer")({
   head: () => ({
@@ -17,10 +26,14 @@ export const Route = createFileRoute("/_authenticated/ai-astrologer")({
       { title: "โหรา AI ส่วนตัว | Horathai AI" },
       {
         name: "description",
-        content: "ถามโหรา AI ได้ทุกเรื่อง การงาน การเงิน ความรัก โดยอ้างอิงตำแหน่งดาวจริงในผังดวงของคุณ",
+        content:
+          "ถามโหรา AI ได้ทุกเรื่อง การงาน การเงิน ความรัก โดยอ้างอิงตำแหน่งดาวจริงในผังดวงของคุณ",
       },
       { property: "og:title", content: "โหรา AI ส่วนตัว | Horathai AI" },
-      { property: "og:description", content: "ผู้ช่วยโหราศาสตร์ไทยที่ตอบจากผังดวงกำเนิดจริงของคุณ" },
+      {
+        property: "og:description",
+        content: "ผู้ช่วยโหราศาสตร์ไทยที่ตอบจากผังดวงกำเนิดจริงของคุณ",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -30,7 +43,12 @@ export const Route = createFileRoute("/_authenticated/ai-astrologer")({
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const SUGGESTIONS = ["ช่วงนี้การงานเป็นอย่างไร", "ควรลงทุนตอนนี้ไหม", "ความรักช่วงนี้เป็นยังไง", "ต้องระวังอะไรเป็นพิเศษ"];
+const SUGGESTIONS = [
+  "ช่วงนี้การงานเป็นอย่างไร",
+  "ควรลงทุนตอนนี้ไหม",
+  "ความรักช่วงนี้เป็นยังไง",
+  "ต้องระวังอะไรเป็นพิเศษ",
+];
 
 function factSheet(data: ReadingResult, name: string) {
   const lines: string[] = [`ชื่อผู้ถาม: ${name}`, `ลัคนาราศี${data.natal.ascendant.signTh}`];
@@ -60,6 +78,8 @@ function AiPage() {
   const name = useProfile((s) => s.name);
   const birthDate = useProfile((s) => s.birthDate);
   const { data } = useReading();
+  const { isSignedIn, login } = useLineAuth();
+  const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
   const ask = useServerFn(askAstrologer);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +97,8 @@ function AiPage() {
     mutationFn: (question: string) =>
       ask({ data: { question, facts, history: messages.slice(-6) } }),
     onSuccess: (res) => setMessages((m) => [...m, { role: "assistant", content: res.answer }]),
-    onError: (e: Error) => setMessages((m) => [...m, { role: "assistant", content: `ขออภัยค่ะ ${e.message}` }]),
+    onError: (e: Error) =>
+      setMessages((m) => [...m, { role: "assistant", content: `ขออภัยค่ะ ${e.message}` }]),
   });
 
   useEffect(() => {
@@ -89,10 +110,21 @@ function AiPage() {
     if (!q || mutation.isPending || !facts) return;
     setMessages((m) => [...m, { role: "user", content: q }]);
     setInput("");
+    if (reviewGuest) {
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          content:
+            "โหมดตรวจสอบแสดงดวงตัวอย่างแบบอ่านอย่างเดียว จึงยังไม่ส่งคำถามไปยัง AI กรุณาเข้าสู่ระบบด้วย LINE เพื่อถามจากดวงของคุณ",
+        },
+      ]);
+      return;
+    }
     mutation.mutate(q);
   }
 
-  if (!birthDate) {
+  if (!birthDate && !reviewGuest) {
     return (
       <AppShell>
         <PageTransition>
@@ -155,6 +187,14 @@ function AiPage() {
         </div>
 
         <div className="sticky bottom-24 mt-5">
+          {reviewGuest && (
+            <button
+              onClick={() => void login()}
+              className="press mb-3 flex h-11 w-full items-center justify-center rounded-xl border border-primary/30 text-[12px] text-primary"
+            >
+              เข้าสู่ระบบด้วย LINE เพื่อถามโหรา AI
+            </button>
+          )}
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {SUGGESTIONS.map((s) => (
               <button

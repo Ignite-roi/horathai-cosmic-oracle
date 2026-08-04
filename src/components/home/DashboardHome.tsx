@@ -24,6 +24,7 @@ import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { dailyCheckIn } from "@/lib/profile.functions";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 
 export function DashboardHome() {
   const profile = useProfile();
@@ -37,6 +38,7 @@ export function DashboardHome() {
 
   const handleCheckIn = async () => {
     if (!isSignedIn) {
+      if (PUBLIC_REVIEW_MODE) return;
       setReward(checkIn());
       return;
     }
@@ -123,7 +125,7 @@ export function DashboardHome() {
           />
         </div>
 
-        {isDemo && (
+        {isDemo && !PUBLIC_REVIEW_MODE && (
           <div className="mt-4">
             <DemoCallout />
           </div>
@@ -180,6 +182,7 @@ export function DashboardHome() {
         <motion.button
           whileTap={{ scale: 0.98 }}
           onClick={() => void handleCheckIn()}
+          disabled={PUBLIC_REVIEW_MODE && !isSignedIn}
           className="press surface-card mt-5 flex w-full items-center gap-3 p-4 text-left"
         >
           <span className="surface-inset flex h-10 w-10 shrink-0 items-center justify-center">
@@ -190,9 +193,11 @@ export function DashboardHome() {
               เช็คอินรับแต้มประจำวัน
             </span>
             <span className="block text-[11.5px] text-muted-foreground">
-              {reward
-                ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
-                : `สตรีค ${toThaiDigits(profile.streak)} วัน · ${moon ? `จันทร์ราศี${moon.signTh}` : "ดวงจันทร์กำลังเคลื่อน"}`}
+              {PUBLIC_REVIEW_MODE && !isSignedIn
+                ? "โหมดอ่านอย่างเดียว · เข้าสู่ระบบเพื่อเช็คอิน"
+                : reward
+                  ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
+                  : `สตรีค ${toThaiDigits(profile.streak)} วัน · ${moon ? `จันทร์ราศี${moon.signTh}` : "ดวงจันทร์กำลังเคลื่อน"}`}
             </span>
           </span>
         </motion.button>
