@@ -412,6 +412,21 @@
 @utility animate-orbit-spin {
   animation: orbit-spin 24s linear infinite;
 }
+@utility animate-orbit-slow {
+  animation: orbit-spin 140s linear infinite;
+  transform-origin: 50% 50%;
+}
+@utility animate-orbit-slow-rev {
+  animation: orbit-spin 200s linear infinite reverse;
+  transform-origin: 50% 50%;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.035); }
+}
+@utility animate-breathe {
+  animation: breathe 7s ease-in-out infinite;
+}
 
 @utility sheen {
   position: relative;
