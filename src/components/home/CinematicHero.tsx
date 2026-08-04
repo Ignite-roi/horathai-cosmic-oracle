@@ -26,8 +26,8 @@ export function CinematicHero({
       <KanokCorner position="br" size={92} opacity={0.16} />
 
       {/* stage: orrery behind, astrologer in front */}
-      <div className="relative h-[248px] w-full sm:h-[286px]">
-        <div className="pointer-events-none absolute left-1/2 top-2 h-[250px] w-[250px] -translate-x-1/2 opacity-80 sm:h-[290px] sm:w-[290px]">
+      <div className="relative h-[268px] w-full sm:h-[300px]">
+        <div className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 opacity-90 sm:h-[340px] sm:w-[340px]">
           <HeroOrrery planets={planets} ascendant={ascendant} {...(activePlanet ? { activeNum: activePlanet.num } : {})} />
         </div>
 
@@ -35,7 +35,7 @@ export function CinematicHero({
           initial={{ opacity: 0, y: 18, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute bottom-0 left-1/2 w-[168px] -translate-x-1/2 sm:w-[190px]"
+          className="absolute bottom-0 left-1/2 w-[146px] -translate-x-1/2 sm:w-[164px]"
         >
           <AstrologerHero variant="hero" priority className="drop-shadow-[0_24px_48px_oklch(0_0_0/0.7)]" />
         </motion.div>

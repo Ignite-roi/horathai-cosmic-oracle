@@ -14,7 +14,7 @@ type Variant = "avatar" | "bust" | "hero";
 const FRAME: Record<Variant, { ratio: string; position: string; scale: string }> = {
   avatar: { ratio: "1 / 1", position: "50% 20%", scale: "175%" },
   bust: { ratio: "1 / 1", position: "50% 21%", scale: "150%" },
-  hero: { ratio: "3 / 4", position: "50% 24%", scale: "128%" },
+  hero: { ratio: "3 / 4", position: "50% 30%", scale: "108%" },
 };
 
 export function AstrologerHero({

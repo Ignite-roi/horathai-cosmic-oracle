@@ -62,7 +62,7 @@ export function TodayScore({ overall, scores }: { overall: number; scores: AreaS
           </defs>
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="numeral text-[54px] leading-none text-gold">{overall}</span>
+          <span className="thai-heading text-[52px] leading-none text-gold">{toThaiDigits(overall)}</span>
           <span className="mt-1.5 text-[11px] tracking-[0.18em] text-muted-foreground">คะแนน</span>
         </div>
       </div>
