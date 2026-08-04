@@ -18,12 +18,12 @@ export const Route = createFileRoute("/")({
       { title: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
       {
         name: "description",
-        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
       {
         property: "og:description",
-        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

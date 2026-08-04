@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
         content: "กรอกวันเวลาเกิดและสถานที่เกิด เพื่อคำนวณผังดวงโหราศาสตร์ไทยของคุณ",
       },
       { property: "og:title", content: "เริ่มต้นผูกดวง | Horathai AI" },
-      { property: "og:description", content: "ผูกดวงกำเนิดด้วยหลักสุริยยาตร์ ภายใน 5 ขั้นตอน" },
+      { property: "og:description", content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ภายใน 5 ขั้นตอน" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

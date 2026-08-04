@@ -9,7 +9,7 @@ import { getPublicReviewReading } from "@/lib/public-review.functions";
 import { readGuestBirthContext } from "@/lib/guest-birth";
 import { useEffect, useState } from "react";
 
-/** Fetches the authentic Suriyayart reading from the server engine. */
+/** Fetches a reading from the versioned deterministic Lahiri model. */
 export function useReading(atIso?: string) {
   const birthDate = useProfile((s) => s.birthDate);
   const birthTime = useProfile((s) => s.birthTime);

@@ -199,7 +199,7 @@ export function DemoCallout() {
         </h2>
         <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">
           ระบบไม่ได้บันทึกดวงสาธิตนี้ไว้ กรอกวัน เวลา และสถานที่เกิด
-          เพื่อคำนวณผังดวงจริงด้วยหลักสุริยยาตร์
+          เพื่อคำนวณผังดวงด้วยโมเดล Lahiri แบบมีเวอร์ชันและให้ผลซ้ำได้
         </p>
         <Link
           to="/onboarding"
