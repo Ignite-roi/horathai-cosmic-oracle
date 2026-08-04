@@ -12,12 +12,13 @@ export function matchKnowledgeRules(
   input: RuleEngineInput,
   rules: KnowledgeRule[],
 ): RuleEngineOutput {
-  const eligible = rules.filter((rule) =>
-    rule.systemId === input.system.id &&
-    rule.systemVersion === input.system.version &&
-    rule.status === "published" &&
-    rule.citations.length > 0 &&
-    (!input.releaseRuleIds || input.releaseRuleIds.includes(rule.id)),
+  const eligible = rules.filter(
+    (rule) =>
+      rule.systemId === input.system.id &&
+      rule.systemVersion === input.system.version &&
+      rule.status === "published" &&
+      rule.citations.length > 0 &&
+      (!input.releaseRuleIds || input.releaseRuleIds.includes(rule.id)),
   );
   return {
     system: input.system,
@@ -36,6 +37,7 @@ export function matchKnowledgeRules(
       })),
   };
 }
+
 
 export function productionRuleIsValid(rule: KnowledgeRule): boolean {
   return rule.status === "published" && rule.citations.length > 0;

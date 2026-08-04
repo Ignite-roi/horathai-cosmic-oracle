@@ -5,9 +5,7 @@ export async function getKnowledgeAdminOverview() {
   const [sources, systems, rules] = await Promise.all([
     supabaseAdmin
       .from("astrology_sources")
-      .select(
-        "id,source_code,title,author,rights_status,ingestion_status,page_count,updated_at",
-      )
+      .select("id,source_code,title,author,rights_status,ingestion_status,page_count,updated_at")
       .order("updated_at", { ascending: false }),
     supabaseAdmin
       .from("astrology_systems")
@@ -42,12 +40,7 @@ export async function createDraftKnowledgeRule(input: {
   summaryTh: string;
   condition: Record<string, unknown>;
   outcome: Record<string, unknown>;
-  evidenceLevel:
-    | "primary_source"
-    | "secondary_source"
-    | "editorial"
-    | "inference"
-    | "experimental";
+  evidenceLevel: "primary_source" | "secondary_source" | "editorial" | "inference" | "experimental";
 }) {
   const result = await supabaseAdmin
     .from("astrology_rules")
@@ -70,6 +63,7 @@ export async function createDraftKnowledgeRule(input: {
   if (result.error) throw new Error(result.error.message);
   return result.data;
 }
+
 
 export async function attachRuleCitation(input: {
   ruleId: string;

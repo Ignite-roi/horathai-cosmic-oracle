@@ -22,7 +22,12 @@ export const createKnowledgeDraftRule = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z
       .object({
-        ruleCode: z.string().trim().min(3).max(100).regex(/^[A-Z0-9_-]+$/),
+        ruleCode: z
+          .string()
+          .trim()
+          .min(3)
+          .max(100)
+          .regex(/^[A-Z0-9_-]+$/),
         systemId: z.string().uuid(),
         ruleType: z.enum([
           "natal",
@@ -60,6 +65,7 @@ export const createKnowledgeDraftRule = createServerFn({ method: "POST" })
     const { createDraftKnowledgeRule } = await import("./source-registry.server");
     return createDraftKnowledgeRule({ actorId: context.userId, ...data });
   });
+
 
 export const attachKnowledgeCitation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

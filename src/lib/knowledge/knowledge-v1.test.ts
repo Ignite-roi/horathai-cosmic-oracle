@@ -41,9 +41,7 @@ const citedRule: KnowledgeRule = {
 
 describe("knowledge V1 contracts", () => {
   it("never matches rules across systems", () =>
-    expect(matchKnowledgeRules(input, [{ ...citedRule, systemId: "thai" }]).matches).toEqual(
-      [],
-    ));
+    expect(matchKnowledgeRules(input, [{ ...citedRule, systemId: "thai" }]).matches).toEqual([]));
   it("uses only published cited rules in production", () => {
     expect(
       matchKnowledgeRules(input, [
@@ -90,6 +88,7 @@ describe("knowledge V1 contracts", () => {
     expect(context.prohibitedCapabilities).toContain("create_rules");
   });
 });
+
 
 describe("database invariants represented by migration", () => {
   it("treats duplicate checksum and event hash as unique identifiers", () => {

@@ -1,5 +1,10 @@
 import { matchKnowledgeRules } from "./rule-engine.server";
-import type { KnowledgeRule, NeutralTransitEvent, RuleEngineInput, RuleEngineOutput } from "./types";
+import type {
+  KnowledgeRule,
+  NeutralTransitEvent,
+  RuleEngineInput,
+  RuleEngineOutput,
+} from "./types";
 
 export function matchNeutralTransit(
   input: Omit<RuleEngineInput, "transitEvent">,
