@@ -45,19 +45,19 @@ No existing live entity was duplicated or rewritten.
 - Canonical JSON and deterministic SHA-256 hashes.
 - Dry-run importer with baseline, duplicate, collision, AST, and dangling-reference abort gates.
 - Production rule fail-closed checks for publication, immutable release membership, runtime eligibility, citations, rights, reviewer approval, tests, and blocking conflicts.
-- Deterministic Thai narrative output with sentence-level rule/citation lineage and output hash.
+- Deterministic Thai rendering from one resolved conclusion with rule/citation lineage and a resolution trace hash.
 - Deterministic Single Answer Resolver with one public answer per question/domain/period, supporting-rule merge, ranked conflict resolution, insufficient-evidence fallback, combined citation lineage, and server-only rejected-candidate trace.
 - Candidate release report with deterministic replay hash and explicit blockers.
 - Regression coverage for pack validation, mismatch/duplicate/dangling aborts, draft exclusion, profile isolation, unknown birth time, competitor observations, AST boundaries, narrative safety, candidate release blocking, Single Answer cardinality/ranking/conflicts/order invariance, and 100-repeat determinism with zero fetch calls.
 
 ## Verification
 
-- Focused Master Brain tests: pass.
-- Full test suite: **66/66 pass**, including all 9 P0.1 mock-checkout lockdown tests.
+- Focused Single Answer Resolver and Master Brain tests: **30/30 pass**.
+- Full test suite: **75/75 pass**, including all 9 P0.1 mock-checkout lockdown tests.
 - P0.1 production-deny/no-mutation and review/development allowlist behavior remains unchanged.
 - Offline boundary scan: no `fetch`, Gemini/Lovable AI key access, `eval`, or `new Function` in the imported calculation/rule/narrative path.
-- Global lint command: blocked by existing project-wide Prettier findings, including unrelated UI files (`ScoreCard.tsx`, `AstrologerHero.tsx`, and `ChartDetails.tsx`) and formatting-only findings in the newly added knowledge files. Functional ESLint validation is reported separately from formatting.
-- Type/build verification is delegated to the project harness; no publish was performed.
+- Functional ESLint for all modified TypeScript files: pass. The repository's formatting-only debt remains outside this resolver scope.
+- TypeScript (`tsgo --noEmit`): pass. Production build verification is delegated to the project harness; no publish was performed.
 
 ## Changed files
 
