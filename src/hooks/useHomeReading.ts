@@ -5,6 +5,7 @@ import { getReading } from "@/lib/astro.functions";
 import type { PlacedPlanet, ReadingResult } from "@/lib/astro";
 import { getMyBirthContext } from "@/lib/birth.functions";
 import { useProfile } from "@/store/useProfile";
+import { useSession } from "@/hooks/useAuth";
 
 /** Fixed sample birth used only to render the demo composition. Never persisted. */
 export const DEMO_BIRTH = {
@@ -34,7 +35,7 @@ export type MajorTransit = {
 
 /** House of a longitude counted from the natal ascendant (presentation only). */
 export function houseFromAscendant(longitude: number, ascendant: number) {
-  const delta = ((longitude - ascendant) % 360 + 360) % 360;
+  const delta = (((longitude - ascendant) % 360) + 360) % 360;
   return Math.floor(delta / 30) + 1;
 }
 
@@ -45,12 +46,13 @@ export function houseFromAscendant(longitude: number, ascendant: number) {
  */
 /** Saved birth profile + cached natal chart for the signed-in user. */
 export function useBirthContext() {
-  const lineUserId = useProfile((s) => s.lineUserId);
+  const { session } = useSession();
   return useQuery({
     queryKey: ["birth-context"],
     queryFn: () => getMyBirthContext(),
     staleTime: 60_000,
-    enabled: Boolean(lineUserId),
+    enabled: Boolean(session),
+    retry: false,
   });
 }
 
@@ -77,7 +79,14 @@ export function useHomeReading() {
 
   const results = useQueries({
     queries: offsets.map((offset) => ({
-      queryKey: ["home-reading", input.birthDate, input.birthTime, input.province, offset, isoAt(offset)],
+      queryKey: [
+        "home-reading",
+        input.birthDate,
+        input.birthTime,
+        input.province,
+        offset,
+        isoAt(offset),
+      ],
       staleTime: 1000 * 60 * 30,
       queryFn: () =>
         fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>,

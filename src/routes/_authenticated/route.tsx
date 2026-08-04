@@ -11,6 +11,8 @@ import { LoadingSky } from "@/components/AppShell";
 import { APP_ACCESS_MODE } from "@/config/access";
 import { useAccount, useSession } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useBirthContext } from "@/hooks/useHomeReading";
+import { useProfile } from "@/store/useProfile";
 
 /** Routes a guest may explore while the app runs in development_unlocked. */
 const GUEST_PATHS = ["/transits"];
@@ -36,6 +38,7 @@ function AuthedLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { session, loading: sessionLoading } = useSession();
   const { data: account, isLoading } = useAccount();
+  useSyncSavedBirth();
   const needsOnboarding = Boolean(account?.profile && !account.profile.onboarding_completed);
 
   useEffect(() => {
@@ -55,4 +58,25 @@ function AuthedLayout() {
   }
 
   return <Outlet />;
+}
+
+/**
+ * The saved birth profile is the single source of truth. Mirror it into the
+ * local store so every screen reads real data instead of the demo chart.
+ */
+function useSyncSavedBirth() {
+  const { data } = useBirthContext();
+  const setProfile = useProfile((s) => s.setProfile);
+  const saved = data?.birthProfile ?? null;
+
+  useEffect(() => {
+    if (!saved) return;
+    setProfile({
+      birthDate: saved.birth_date,
+      birthTime: (saved.birth_time ?? "12:00").slice(0, 5),
+      province: saved.province,
+      country: saved.country,
+      onboarded: true,
+    });
+  }, [saved, setProfile]);
 }

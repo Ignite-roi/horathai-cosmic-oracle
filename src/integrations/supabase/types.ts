@@ -212,54 +212,81 @@ export type Database = {
       natal_charts: {
         Row: {
           ascendant_degree: number
+          ascendant_json: Json
+          ascendant_known: boolean
           ascendant_sign: string
           aspects_json: Json
+          ayanamsa: number | null
           birth_profile_id: string
           calculated_at: string
           calculation_settings_json: Json
           calculation_version: string
           engine_type: string
+          house_system: string
           houses_json: Json
           id: string
+          input_hash: string | null
           input_snapshot_json: Json
+          latitude: number | null
+          longitude: number | null
           planets_json: Json
           standards_json: Json
           superseded_at: string | null
+          timezone: string
           user_id: string
+          utc_birth_datetime: string | null
         }
         Insert: {
           ascendant_degree?: number
+          ascendant_json?: Json
+          ascendant_known?: boolean
           ascendant_sign: string
           aspects_json?: Json
+          ayanamsa?: number | null
           birth_profile_id: string
           calculated_at?: string
           calculation_settings_json?: Json
           calculation_version?: string
           engine_type?: string
+          house_system?: string
           houses_json?: Json
           id?: string
+          input_hash?: string | null
           input_snapshot_json?: Json
+          latitude?: number | null
+          longitude?: number | null
           planets_json?: Json
           standards_json?: Json
           superseded_at?: string | null
+          timezone?: string
           user_id: string
+          utc_birth_datetime?: string | null
         }
         Update: {
           ascendant_degree?: number
+          ascendant_json?: Json
+          ascendant_known?: boolean
           ascendant_sign?: string
           aspects_json?: Json
+          ayanamsa?: number | null
           birth_profile_id?: string
           calculated_at?: string
           calculation_settings_json?: Json
           calculation_version?: string
           engine_type?: string
+          house_system?: string
           houses_json?: Json
           id?: string
+          input_hash?: string | null
           input_snapshot_json?: Json
+          latitude?: number | null
+          longitude?: number | null
           planets_json?: Json
           standards_json?: Json
           superseded_at?: string | null
+          timezone?: string
           user_id?: string
+          utc_birth_datetime?: string | null
         }
         Relationships: [
           {

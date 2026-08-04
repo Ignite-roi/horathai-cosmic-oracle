@@ -163,6 +163,54 @@ function ascendantLongitude(jd: number, latitude: number, longitudeEast: number)
   return norm360(Math.atan2(y, x) / RAD + 180);
 }
 
+export type AscendantDetail = {
+  /** Tropical (สายนะ) ecliptic longitude of the rising degree. */
+  tropicalLongitude: number;
+  /** Lahiri ayanamsha applied at that instant. */
+  ayanamsa: number;
+  /** Sidereal (นิรายนะ) ascendant longitude = tropical − ayanamsha. */
+  siderealLongitude: number;
+  signId: number;
+  signTh: string;
+  degree: number;
+  minute: number;
+  julianDay: number;
+  /** Local (apparent) sidereal time in degrees, kept for verification. */
+  localSiderealTime: number;
+  obliquity: number;
+};
+
+/**
+ * Full ascendant (ลัคนา) result for an exact UTC instant and geographic position.
+ * Standard spherical formula for the ecliptic degree rising on the eastern
+ * horizon, then shifted to the sidereal zodiac with the Lahiri ayanamsha.
+ */
+export function ascendantDetail(
+  date: Date,
+  latitude: number,
+  longitudeEast: number,
+): AscendantDetail {
+  const jd = julianDay(date);
+  const aya = ayanamsa(jd);
+  const tropical = ascendantLongitude(jd, latitude, longitudeEast);
+  const sidereal = norm360(tropical - aya);
+  const signIndex = Math.floor(sidereal / 30);
+  const within = sidereal - signIndex * 30;
+  const sign = ZODIACS[signIndex]!;
+  return {
+    tropicalLongitude: Math.round(tropical * 1e6) / 1e6,
+    ayanamsa: Math.round(aya * 1e6) / 1e6,
+    siderealLongitude: Math.round(sidereal * 1e6) / 1e6,
+    signId: sign.id,
+    signTh: sign.th,
+    degree: Math.floor(within),
+    minute: Math.floor((within % 1) * 60),
+    julianDay: Math.round(jd * 1e5) / 1e5,
+    localSiderealTime: Math.round(siderealDegrees(jd, longitudeEast) * 1e4) / 1e4,
+    obliquity: Math.round((23.4392911 - 0.0130042 * centuries(jd)) * 1e6) / 1e6,
+  };
+}
+
 /* ---------- chart building ---------- */
 
 const ASPECTS: { kind: AspectKind; angle: number; orb: number; benefic: boolean }[] = [
@@ -238,7 +286,14 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
         if (orb <= asp.orb) {
           const benefic =
             asp.kind === "conjunction" ? BENEFIC.has(a.num) && BENEFIC.has(b.num) : asp.benefic;
-          aspects.push({ a: a.num, b: b.num, kind: asp.kind, angle: asp.angle, orb: Math.round(orb * 10) / 10, benefic });
+          aspects.push({
+            a: a.num,
+            b: b.num,
+            kind: asp.kind,
+            angle: asp.angle,
+            orb: Math.round(orb * 10) / 10,
+            benefic,
+          });
           break;
         }
       }
@@ -324,7 +379,9 @@ export function scoreAreas(natal: ChartResult, transit: ChartResult): AreaScore[
       if (!keys.includes(np.num)) continue;
       if (houses.includes(np.house)) {
         score += Math.round(np.strength * 12);
-        reasons.push(`ดวงกำเนิดมีดาว${np.th}สถิต${HOUSES[np.house - 1]!.th} เป็นพื้นดวงที่ดีของ${th}`);
+        reasons.push(
+          `ดวงกำเนิดมีดาว${np.th}สถิต${HOUSES[np.house - 1]!.th} เป็นพื้นดวงที่ดีของ${th}`,
+        );
       }
     }
 
@@ -367,7 +424,13 @@ export function buildReading(natal: ChartResult, transit: ChartResult): ReadingR
   highlights.push({
     title: `จันทร์จรราศี${moon.signTh}`,
     body: `อารมณ์ประจำวันถูกปรับด้วยธาตุ${moon.element} เหมาะกับการ${
-      moon.element === "ไฟ" ? "ลงมือทำอย่างเด็ดขาด" : moon.element === "ดิน" ? "จัดระเบียบและวางแผนระยะยาว" : moon.element === "ลม" ? "เจรจาและติดต่อสื่อสาร" : "ดูแลจิตใจและคนใกล้ตัว"
+      moon.element === "ไฟ"
+        ? "ลงมือทำอย่างเด็ดขาด"
+        : moon.element === "ดิน"
+          ? "จัดระเบียบและวางแผนระยะยาว"
+          : moon.element === "ลม"
+            ? "เจรจาและติดต่อสื่อสาร"
+            : "ดูแลจิตใจและคนใกล้ตัว"
     }`,
     tone: "neutral",
   });
