@@ -5,6 +5,7 @@ import { Download, HeartHandshake, History, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
+import { Time24Field } from "@/components/Time24Field";
 import { HowToUseSheet } from "@/components/insights/HowToUseSheet";
 import { Button } from "@/components/ui/button";
 import { ShareResultButton } from "@/components/social/ShareResultButton";
@@ -178,12 +179,10 @@ function CompatPage() {
                 </label>
                 <label className="text-xs text-muted-foreground">
                   เวลาเกิด
-                  <input
-                    type="time"
+                  <Time24Field
                     disabled={!form.birthTimeKnown}
-                    className={field}
                     value={form.birthTime}
-                    onChange={(e) => setForm({ ...form, birthTime: e.target.value })}
+                    onChange={(birthTime) => setForm({ ...form, birthTime })}
                   />
                 </label>
                 <label className="col-span-2 text-xs text-muted-foreground">

@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+import { CivilTimeSchema } from "./civil-time";
+
 export const BirthInputSchema = z.object({
   birthDate: z.string().date(),
-  birthTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  birthTime: CivilTimeSchema,
   birthTimeKnown: z.boolean(),
   latitude: z.number().finite().min(-90).max(90),
   longitude: z.number().finite().min(-180).max(180),
@@ -12,10 +14,7 @@ export const BirthInputSchema = z.object({
 export const PartnerBirthSchema = z.object({
   label: z.string().trim().min(1).max(40),
   birthDate: z.string().date(),
-  birthTime: z
-    .string()
-    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
-    .optional(),
+  birthTime: CivilTimeSchema.optional(),
   birthTimeKnown: z.boolean(),
   country: z.string().trim().min(1).max(60).default("ประเทศไทย"),
   province: z.string().trim().min(1).max(60),

@@ -15,8 +15,7 @@ export function parseCivilTime(value: string): { hour: number; minute: number } 
   if (!isCivilTime(value)) {
     throw new Error("เวลาใช้รูปแบบ 24 ชั่วโมง HH:mm (00:00–23:59)");
   }
-  const [hour, minute] = value.split(":").map(Number);
-  return { hour, minute };
+  return { hour: Number(value.slice(0, 2)), minute: Number(value.slice(3, 5)) };
 }
 
 export function toCivilTime(hour: number, minute: number): string {
@@ -38,7 +37,7 @@ export function formatThaiDateTime(
   value: Date | string | number,
   timeZone = "Asia/Bangkok",
 ): string {
-  return new Intl.DateTimeFormat(`${THAI_TIME_LOCALE}-u-ca-buddhist`, {
+  return new Intl.DateTimeFormat("th-TH-u-ca-buddhist-hc-h23", {
     dateStyle: "medium",
     timeStyle: "short",
     hour12: false,
