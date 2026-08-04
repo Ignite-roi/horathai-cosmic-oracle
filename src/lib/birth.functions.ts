@@ -98,7 +98,19 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
       latitude: place.lat,
       longitude: place.lon,
       timezone: "Asia/Bangkok",
-      calculation_system: "suriyayart",
+      country_code: "TH",
+      locality: data.district?.trim() || data.province,
+      birth_time_estimated: !data.birth_time_known,
+      utc_birth_datetime: new Date(
+        `${data.birth_date}T${(data.birth_time_known ? (data.birth_time ?? "12:00") : "12:00")}:00+07:00`,
+      ).toISOString(),
+      calculation_system: "sidereal_lahiri_dev",
+      calculation_settings_json: {
+        ayanamsa: "lahiri",
+        zodiac: "sidereal",
+        house_system: "whole_sign",
+        engine: "sidereal_lahiri_dev",
+      },
       is_primary: true,
     };
 
@@ -130,8 +142,9 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
   });
 
 /**
- * Step 5: calculate the natal chart, cache it, complete onboarding and start
- * the 30-day trial on first completion.
+ * Step 5: calculate the natal chart, snapshot it and complete onboarding.
+ * No entitlement is granted here — the premium trial only starts when the
+ * user explicitly confirms it on the premium screen.
  */
 export const calculateAndSaveChart = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -172,6 +185,22 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       houses_json: payload.houses as unknown as Json,
       standards_json: payload.standards as unknown as Json,
       calculation_version: CALCULATION_VERSION,
+      engine_type: "sidereal_lahiri_dev",
+      input_snapshot_json: {
+        birth_date: b.birth_date,
+        birth_time: b.birth_time,
+        birth_time_known: b.birth_time_known,
+        latitude: b.latitude,
+        longitude: b.longitude,
+        timezone: b.timezone,
+        province: b.province,
+        country: b.country,
+      } as unknown as Json,
+      calculation_settings_json: {
+        ayanamsa: "lahiri",
+        zodiac: "sidereal",
+        house_system: "whole_sign",
+      } as unknown as Json,
       calculated_at: payload.calculatedAt,
     };
 
@@ -182,35 +211,10 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    const now = new Date();
-    const profile = await supabase
-      .from("profiles")
-      .select("trial_started_at")
-      .eq("id", userId)
-      .maybeSingle();
-
-    const patch: {
-      onboarding_completed: boolean;
-      onboarded: boolean;
-      trial_started_at?: string;
-      trial_ends_at?: string;
-      subscription_status?: string;
-    } = { onboarding_completed: true, onboarded: true };
-    if (!profile.data?.trial_started_at) {
-      patch.trial_started_at = now.toISOString();
-      patch.trial_ends_at = new Date(now.getTime() + 30 * 86400000).toISOString();
-      patch.subscription_status = "trialing";
-    }
-    await supabase.from("profiles").update(patch).eq("id", userId);
     await supabase
-      .from("entitlements")
-      .update({
-        plan: "premium_trial",
-        trial_started_at: patch.trial_started_at ?? now.toISOString(),
-        expires_at: patch.trial_ends_at ?? new Date(now.getTime() + 30 * 86400000).toISOString(),
-      })
-      .eq("user_id", userId)
-      .is("trial_started_at", null);
+      .from("profiles")
+      .update({ onboarding_completed: true, onboarded: true })
+      .eq("id", userId);
 
     return saved as NatalChartRow;
   });
