@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { AlertTriangle, ChevronDown, ExternalLink, RefreshCw } from "lucide-react";
+import { AlertTriangle, ChevronDown, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { APP_ACCESS_MODE } from "@/config/access";
@@ -63,7 +63,8 @@ function Orb({ label }: { label: string }) {
 /** Safe, secret-free diagnostics. Only rendered while access is unlocked. */
 function Diagnostics() {
   const [open, setOpen] = useState(false);
-  const { status, liffError, inLine, initialized, lineLoggedIn, configured } = useLineAuth();
+  const { status, liffError, inLine, initialized, lineLoggedIn, configured, diagnostics } =
+    useLineAuth();
   const { data: server } = useQuery({
     queryKey: ["liff-diagnostics"],
     queryFn: () => getLiffDiagnostics(),
@@ -90,6 +91,9 @@ function Diagnostics() {
     ["Inside LINE", inLine ? "yes" : "no"],
     ["LIFF initialized", initialized ? "yes" : "no"],
     ["LINE logged in", lineLoggedIn ? "yes" : "no"],
+    ["Has ID token", diagnostics.hasIdToken ? "yes" : "no"],
+    ["Has decoded ID token", diagnostics.hasDecodedIdToken ? "yes" : "no"],
+    ["Context type", diagnostics.contextType],
     ["Provider status", status],
     ["Error code", liffError?.code ?? "—"],
     ["Error message", liffError?.message ?? "—"],
