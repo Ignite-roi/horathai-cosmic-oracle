@@ -5,6 +5,7 @@ const BirthInput = z.object({
   birthDate: z.string().min(4),
   birthTime: z.string().default("12:00"),
   province: z.string().default("กรุงเทพมหานคร"),
+  timezone: z.string().default("Asia/Bangkok"),
   /** ISO timestamp to evaluate transits at; defaults to now */
   at: z.string().optional(),
 });
@@ -15,9 +16,14 @@ export const getReading = createServerFn({ method: "POST" })
     const { computeChart, buildReading } = await import("./ephemeris.server");
     const { findProvince } = await import("./provinces");
 
+    const { zonedWallClockToUtc } = await import("./timezone");
     const place = findProvince(data.province);
-    // Thai local time is UTC+7
-    const birth = new Date(`${data.birthDate}T${data.birthTime || "12:00"}:00+07:00`);
+    // Real zone offset for the birth instant, not a fixed assumption.
+    const birth = zonedWallClockToUtc(
+      data.birthDate,
+      (data.birthTime || "12:00").slice(0, 5),
+      data.timezone,
+    );
     const when = data.at ? new Date(data.at) : new Date();
     if (Number.isNaN(birth.getTime())) throw new Error("รูปแบบวันเกิดไม่ถูกต้อง");
 
