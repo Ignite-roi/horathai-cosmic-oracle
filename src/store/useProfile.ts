@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 export type Profile = {
   name: string;
   avatar: string | null;
+  lineUserId: string | null;
   birthDate: string;
   birthTime: string;
   province: string;
@@ -25,6 +26,7 @@ type State = Profile & {
 const initial: Profile = {
   name: "ผู้เดินทางแห่งดวงดาว",
   avatar: null,
+  lineUserId: null,
   birthDate: "",
   birthTime: "",
   province: "กรุงเทพมหานคร",
