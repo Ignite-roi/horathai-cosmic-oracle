@@ -10,16 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as PremiumRouteImport } from './routes/premium'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TransitRouteImport } from './routes/transit'
+import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
+import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiRoute = AiRouteImport.update({
@@ -32,54 +41,88 @@ const ChartRoute = ChartRouteImport.update({
   path: '/chart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PremiumRoute = PremiumRouteImport.update({
-  id: '/premium',
-  path: '/premium',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TransitRoute = TransitRouteImport.update({
   id: '/transit',
   path: '/transit',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAiAstrologerRoute =
+  AuthenticatedAiAstrologerRouteImport.update({
+    id: '/ai-astrologer',
+    path: '/ai-astrologer',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBirthChartRoute = AuthenticatedBirthChartRouteImport.update({
+  id: '/birth-chart',
+  path: '/birth-chart',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPremiumRoute = AuthenticatedPremiumRouteImport.update({
+  id: '/premium',
+  path: '/premium',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
+  id: '/transits',
+  path: '/transits',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
+  '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/premium': typeof AuthenticatedPremiumRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
+  '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/premium': typeof AuthenticatedPremiumRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
   '/transit': typeof TransitRoute
+  '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/premium': typeof AuthenticatedPremiumRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,37 +130,48 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/chart'
+    | '/transit'
+    | '/ai-astrologer'
+    | '/birth-chart'
+    | '/dashboard'
     | '/onboarding'
     | '/premium'
     | '/settings'
-    | '/transit'
+    | '/transits'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ai'
     | '/chart'
+    | '/transit'
+    | '/ai-astrologer'
+    | '/birth-chart'
+    | '/dashboard'
     | '/onboarding'
     | '/premium'
     | '/settings'
-    | '/transit'
+    | '/transits'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/ai'
     | '/chart'
-    | '/onboarding'
-    | '/premium'
-    | '/settings'
     | '/transit'
+    | '/_authenticated/ai-astrologer'
+    | '/_authenticated/birth-chart'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/onboarding'
+    | '/_authenticated/premium'
+    | '/_authenticated/settings'
+    | '/_authenticated/transits'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AiRoute: typeof AiRoute
   ChartRoute: typeof ChartRoute
-  OnboardingRoute: typeof OnboardingRoute
-  PremiumRoute: typeof PremiumRoute
-  SettingsRoute: typeof SettingsRoute
   TransitRoute: typeof TransitRoute
 }
 
@@ -128,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai': {
@@ -144,27 +205,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/premium': {
-      id: '/premium'
-      path: '/premium'
-      fullPath: '/premium'
-      preLoaderRoute: typeof PremiumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/transit': {
       id: '/transit'
       path: '/transit'
@@ -172,28 +212,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ai-astrologer': {
+      id: '/_authenticated/ai-astrologer'
+      path: '/ai-astrologer'
+      fullPath: '/ai-astrologer'
+      preLoaderRoute: typeof AuthenticatedAiAstrologerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/birth-chart': {
+      id: '/_authenticated/birth-chart'
+      path: '/birth-chart'
+      fullPath: '/birth-chart'
+      preLoaderRoute: typeof AuthenticatedBirthChartRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/premium': {
+      id: '/_authenticated/premium'
+      path: '/premium'
+      fullPath: '/premium'
+      preLoaderRoute: typeof AuthenticatedPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/transits': {
+      id: '/_authenticated/transits'
+      path: '/transits'
+      fullPath: '/transits'
+      preLoaderRoute: typeof AuthenticatedTransitsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
+  AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
+  AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AiRoute: AiRoute,
   ChartRoute: ChartRoute,
-  OnboardingRoute: OnboardingRoute,
-  PremiumRoute: PremiumRoute,
-  SettingsRoute: SettingsRoute,
   TransitRoute: TransitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

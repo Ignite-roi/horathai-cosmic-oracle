@@ -26,7 +26,7 @@ export function TimeTravelPreview({
   ];
 
   return (
-    <Link to="/transit" className="press surface-card block overflow-hidden p-5">
+    <Link to="/transits" className="press surface-card block overflow-hidden p-5">
       <div className="flex items-center justify-between">
         <div>
           <p className="eyebrow">Time travel</p>
@@ -114,7 +114,7 @@ export function DestinyTimeline({ points }: { points: DestinyPoint[] }) {
 
 export function AstrologerConsult({ question }: { question: string }) {
   return (
-    <Link to="/ai" className="press surface-hero grain relative flex items-center gap-4 overflow-hidden p-5">
+    <Link to="/ai-astrologer" className="press surface-hero grain relative flex items-center gap-4 overflow-hidden p-5">
       <AstrologerHero variant="avatar" className="h-[74px] w-[74px] shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="eyebrow">AI Astrologer</p>

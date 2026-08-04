@@ -7,7 +7,7 @@ import { useQuality } from "@/hooks/useQuality";
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "ตั้งค่าประสบการณ์ | Horathai AI" },

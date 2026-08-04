@@ -65,7 +65,7 @@ export function MajorTransitCard({ transit }: { transit: MajorTransit }) {
       </div>
 
       <Link
-        to="/transit"
+        to="/transits"
         className="press surface-inset mt-4 flex h-11 items-center justify-center gap-2 text-[13px] font-medium text-foreground"
       >
         ดูผลกระทบทุกภพ

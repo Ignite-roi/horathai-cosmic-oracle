@@ -1,203 +1,118 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Flame, Gift, Settings2 } from "lucide-react";
-import { useState } from "react";
+import { AlertTriangle, ExternalLink, RefreshCw } from "lucide-react";
+import { useEffect } from "react";
 
-import { AppShell, PageTransition } from "@/components/AppShell";
-import { CinematicHero } from "@/components/home/CinematicHero";
-import {
-  AstrologerConsult,
-  DestinyTimeline,
-  PremiumStatus,
-  TimeTravelPreview,
-  type DestinyPoint,
-} from "@/components/home/HomeSections";
-import { MajorTransitCard } from "@/components/home/MajorTransitCard";
-import { TodayScore } from "@/components/home/TodayScore";
-import { useLineAuth } from "@/hooks/useAuth";
-import { LOOKAHEAD_DAYS, useHomeReading } from "@/hooks/useHomeReading";
-import { dailyCheckIn } from "@/lib/profile.functions";
-import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
-import { trialDaysLeft, useProfile } from "@/store/useProfile";
+import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
+import { useAccount, useLineAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Horathai AI — โหราศาสตร์ไทยสุริยยาตร์ ด้วยพลัง AI" },
+      { title: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
       {
         name: "description",
-        content:
-          "ดูดวงโหราศาสตร์ไทยแม่นยำจากตำแหน่งดาวจริง ผังดวง 3 มิติ ดาวย้าย และโหร AI ส่วนตัว ทดลองพรีเมียมฟรี 30 วัน",
+        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
-      { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยสุริยยาตร์" },
-      {
-        property: "og:description",
-        content: "ผังดวง 3 มิติ ดาวย้าย และโหร AI ส่วนตัว สำหรับคนไทย ทดลองฟรี 30 วัน",
-      },
+      { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
+      { property: "og:description", content: "ผูกดวงกำเนิด ดาวย้าย และโหร AI ในแอปเดียว" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: Entry,
 });
 
-function Index() {
-  const profile = useProfile();
-  const checkIn = useProfile((s) => s.checkIn);
-  const { isSignedIn } = useLineAuth();
-  const queryClient = useQueryClient();
-  const { data, past, future, majorTransit, isDemo, isLoading } = useHomeReading();
-  const [reward, setReward] = useState<number | null>(null);
-  const daysLeft = trialDaysLeft(profile.premiumTrialStartedAt);
+function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
+      <LiveUniverse />
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-sm text-center"
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
 
-  const handleCheckIn = async () => {
-    if (!isSignedIn) {
-      setReward(checkIn());
-      return;
-    }
-    try {
-      const result = await dailyCheckIn();
-      setReward(result.reward);
-      await queryClient.invalidateQueries({ queryKey: ["account"] });
-    } catch (err) {
-      console.error("[checkin] failed", err);
-    }
-  };
+function Orb({ label }: { label: string }) {
+  return (
+    <>
+      <div className="relative mx-auto h-24 w-24">
+        <div className="absolute inset-0 animate-orbit-spin rounded-full border border-dashed border-primary/40" />
+        <div className="absolute inset-3 animate-orbit-spin rounded-full border border-primary/20" style={{ animationDirection: "reverse" }} />
+        <div className="absolute inset-0 m-auto h-8 w-8 animate-pulse-glow rounded-full bg-[radial-gradient(circle,var(--gold),transparent_70%)]" />
+      </div>
+      <p className="mt-6 text-[12px] tracking-[0.24em] text-muted-foreground">{label}</p>
+    </>
+  );
+}
 
-  const moon = data?.transit.planets.find((p) => p.num === 2);
-  const element = data?.natal.planets.find((p) => p.num === 1)?.element;
+function Entry() {
+  const navigate = useNavigate();
+  const { status, error, isSignedIn, login, retry, configured } = useLineAuth();
+  const { data: account } = useAccount();
 
-  const destiny: DestinyPoint[] = data
-    ? data.scores.slice(0, 4).map((s) => ({
-        label: s.th,
-        sub: s.reasons[0] ?? "จังหวะดาวส่งผล",
-        value: s.score,
-      }))
-    : [];
+  useEffect(() => {
+    if (!isSignedIn || !account) return;
+    const done = account.profile?.onboarding_completed;
+    void navigate({ to: done ? "/dashboard" : "/onboarding", replace: true });
+  }, [isSignedIn, account, navigate]);
 
-  const consultQuestion = majorTransit
-    ? `ดาว${majorTransit.planet.th}เข้า${HOUSES.find((h) => h.n === majorTransit.house)?.th ?? "ภพสำคัญ"} ผมควรระวังเรื่องอะไรบ้าง`
-    : "ช่วงนี้ดวงการงานและการเงินของฉันเป็นอย่างไร";
+  if (isSignedIn) return <Shell><Orb label="กำลังเข้าสู่แอป…" /></Shell>;
+
+  if (status === "idle" || status === "booting") return <Shell><Orb label="กำลังเริ่มระบบ…" /></Shell>;
+  if (status === "verifying") return <Shell><Orb label="กำลังยืนยันตัวตนกับ LINE…" /></Shell>;
+
+  if (status === "unconfigured" || !configured) {
+    return (
+      <Shell>
+        <AlertTriangle className="mx-auto h-8 w-8 text-primary" />
+        <h1 className="display mt-4 text-xl text-foreground">ยังไม่ได้ตั้งค่า LIFF</h1>
+        <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+          ผู้ดูแลระบบต้องตั้งค่า LIFF ID ก่อนจึงจะเข้าใช้งานผ่าน LINE ได้
+        </p>
+      </Shell>
+    );
+  }
 
   return (
-    <AppShell
-      {...(data ? { moonPhase: data.transit.moonPhase } : {})}
-      {...(element ? { element } : {})}
-    >
-      <PageTransition>
-        {/* A. identity header */}
-        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="gold-hairline relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--indigo-deep)]">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <span className="text-sm font-semibold text-[var(--gold)]">{profile.name.slice(0, 1)}</span>
-              )}
-            </span>
-            <div className="min-w-0">
-              <p className="numeral text-[10.5px] text-muted-foreground">{thaiDate()}</p>
-              <h1 className="truncate text-[14px] font-semibold text-foreground">{profile.name}</h1>
-              <p className="truncate text-[11px] text-muted-foreground">
-                {data ? `ลัคนาราศี${data.natal.ascendant.signTh}` : "ยังไม่ได้ตั้งค่าดวงกำเนิด"}
-                {data ? ` · ${moonPhaseLabel(data.transit.moonPhase)}` : ""}
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="gold-hairline flex items-center gap-1.5 rounded-full px-2.5 py-1.5">
-              <Flame className="h-3.5 w-3.5 text-[var(--gold)]" />
-              <span className="numeral text-[11px] text-foreground">
-                {daysLeft !== null && daysLeft > 0 ? `${toThaiDigits(daysLeft)} วัน` : toThaiDigits(profile.points)}
-              </span>
-            </span>
-            <Link to="/settings" className="press surface-inset rounded-full p-2" aria-label="ตั้งค่า">
-              <Settings2 className="h-4 w-4 text-muted-foreground" />
-            </Link>
-          </div>
-        </header>
+    <Shell>
+      <h1 className="display text-2xl text-foreground">Horathai AI</h1>
+      <p className="mt-2 text-[12px] tracking-[0.2em] text-primary/80">โหราศาสตร์ไทยด้วย AI</p>
 
-        {/* B. cinematic hero — always composed, demo chart before onboarding */}
-        <div className="mt-4">
-          <CinematicHero
-            planets={data?.transit.planets ?? []}
-            ascendant={data?.natal.ascendant.longitude ?? 0}
-            activePlanet={majorTransit?.planet}
-            isDemo={isDemo}
-          />
-        </div>
+      {status === "external" && (
+        <p className="mt-5 flex items-center justify-center gap-2 text-[12px] leading-relaxed text-muted-foreground">
+          <ExternalLink className="h-3.5 w-3.5 text-primary" />
+          แนะนำให้เปิดผ่านแอป LINE เพื่อประสบการณ์ที่สมบูรณ์
+        </p>
+      )}
 
-        {isDemo && (
-          <p className="mt-3 text-center text-[11.5px] leading-relaxed text-muted-foreground">
-            ตัวเลขด้านล่างเป็นตัวอย่างจากดวงสาธิต ระบบยังไม่บันทึกเป็นดวงของคุณ
-          </p>
-        )}
+      {status === "error" && error && (
+        <p className="mt-5 rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-[12px] text-foreground">
+          {error}
+        </p>
+      )}
 
-        {/* C. today score */}
-        <div className="mt-5">
-          {data ? (
-            <TodayScore overall={data.overall} scores={data.scores} />
-          ) : (
-            <div className="surface-hero h-[380px] animate-breathe" aria-busy={isLoading} />
-          )}
-        </div>
+      <button
+        onClick={() => void login()}
+        className="press btn-gold mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+      >
+        เข้าสู่ระบบด้วย LINE
+      </button>
 
-        {/* D. major transit */}
-        {majorTransit && (
-          <div className="mt-5">
-            <MajorTransitCard transit={majorTransit} />
-          </div>
-        )}
-
-        {/* E. time travel */}
-        {past && data && future && (
-          <div className="mt-5">
-            <TimeTravelPreview
-              past={past.overall}
-              now={data.overall}
-              future={future.overall}
-              days={LOOKAHEAD_DAYS}
-            />
-          </div>
-        )}
-
-        {/* F. destiny timeline */}
-        {destiny.length > 0 && (
-          <div className="mt-5">
-            <DestinyTimeline points={destiny} />
-          </div>
-        )}
-
-        {/* G. AI astrologer */}
-        <div className="mt-5">
-          <AstrologerConsult question={consultQuestion} />
-        </div>
-
-        {/* daily ritual */}
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={() => void handleCheckIn()}
-          className="press surface-card mt-5 flex w-full items-center gap-3 p-4 text-left"
+      {status === "error" && (
+        <button
+          onClick={() => void retry()}
+          className="press mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-primary/30 text-[13px] text-foreground"
         >
-          <span className="surface-inset flex h-10 w-10 shrink-0 items-center justify-center">
-            <Gift className="h-4.5 w-4.5 text-[var(--gold)]" strokeWidth={1.8} />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[13.5px] font-medium text-foreground">เช็คอินรับแต้มประจำวัน</span>
-            <span className="block text-[11.5px] text-muted-foreground">
-              {reward
-                ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
-                : `สตรีค ${toThaiDigits(profile.streak)} วัน · ${moon ? `จันทร์ราศี${moon.signTh}` : "ดวงจันทร์กำลังเคลื่อน"}`}
-            </span>
-          </span>
-        </motion.button>
-
-        {/* H. premium */}
-        <div className="mt-5">
-          <PremiumStatus daysLeft={daysLeft} />
-        </div>
-      </PageTransition>
-    </AppShell>
+          <RefreshCw className="h-4 w-4" /> ลองใหม่อีกครั้ง
+        </button>
+      )}
+    </Shell>
   );
 }

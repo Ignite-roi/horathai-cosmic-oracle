@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   getLiffIdToken,
   initLiff,
+  isInsideLine,
   isLiffLoggedIn,
   liffLogin,
   liffLogout,
@@ -14,7 +15,24 @@ import { getLiffConfig, signInWithLine } from "@/lib/line-auth.functions";
 import { getMyAccount, type AccountData } from "@/lib/profile.functions";
 import { useProfile } from "@/store/useProfile";
 
-type LineStatus = "idle" | "booting" | "ready" | "signing-in" | "unconfigured" | "error";
+/**
+ * booting        – LIFF SDK is initialising
+ * external       – opened outside the LINE app (login still possible)
+ * logged-out     – LIFF ready, user has not authorised yet
+ * verifying      – exchanging the LINE ID token with our backend
+ * ready          – verified session available
+ * unconfigured   – no LIFF id configured on the server
+ * error          – init / login / verification failed, retry available
+ */
+export type LineStatus =
+  | "idle"
+  | "booting"
+  | "external"
+  | "logged-out"
+  | "verifying"
+  | "ready"
+  | "unconfigured"
+  | "error";
 
 /** Session state driven by Cloud auth. */
 export function useSession() {
@@ -61,6 +79,7 @@ export function useLineAuth() {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<LineStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [inLine, setInLine] = useState(false);
   const { data: account } = useAccount();
   const setProfile = useProfile((s) => s.setProfile);
 
@@ -72,7 +91,7 @@ export function useLineAuth() {
 
   const doSignIn = useCallback(async () => {
     setError(null);
-    setStatus("signing-in");
+    setStatus("verifying");
     try {
       const idToken = await getLiffIdToken();
       if (!idToken) throw new Error("ไม่ได้รับ ID token จาก LINE");
@@ -111,11 +130,18 @@ export function useLineAuth() {
         setError("เริ่มต้น LIFF ไม่สำเร็จ");
         return;
       }
-      if (!session && (await isLiffLoggedIn())) {
+      const inLine = await isInsideLine();
+      if (cancelled) return;
+      setInLine(inLine);
+      if (session) {
+        setStatus("ready");
+        return;
+      }
+      if (await isLiffLoggedIn()) {
         await doSignIn();
         return;
       }
-      if (!cancelled) setStatus("ready");
+      if (!cancelled) setStatus(inLine ? "logged-out" : "external");
     })();
     return () => {
       cancelled = true;
@@ -167,11 +193,33 @@ export function useLineAuth() {
     useProfile.getState().reset();
   }, [queryClient]);
 
+  /** Re-run the whole boot sequence after a failure. */
+  const retry = useCallback(async () => {
+    setError(null);
+    setStatus("booting");
+    if (!config?.liffId) {
+      setStatus("unconfigured");
+      return false;
+    }
+    const ok = await initLiff(config.liffId);
+    if (!ok) {
+      setError("เริ่มต้น LIFF ไม่สำเร็จ");
+      setStatus("error");
+      return false;
+    }
+    if (await isLiffLoggedIn()) return doSignIn();
+    setStatus((await isInsideLine()) ? "logged-out" : "external");
+    return false;
+  }, [config, doSignIn]);
+
   return {
     session,
     isSignedIn: Boolean(session),
     status,
     error,
+    inLine,
+    booting: status === "idle" || status === "booting" || status === "verifying",
+    retry,
     configured: Boolean(config?.liffId),
     account,
     login,

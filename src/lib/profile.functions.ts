@@ -17,11 +17,17 @@ export type AccountData = {
     line_user_id: string | null;
     display_name: string;
     avatar_url: string | null;
+    picture_url: string | null;
     birth_date: string | null;
     birth_time: string | null;
     province: string;
     country: string;
     onboarded: boolean;
+    onboarding_completed: boolean;
+    subscription_status: string;
+    trial_started_at: string | null;
+    trial_ends_at: string | null;
+    last_login_at: string | null;
   } | null;
   entitlement: { plan: string; trial_started_at: string | null; expires_at: string | null } | null;
   gamification: { points: number; streak: number; last_check_in: string | null } | null;
@@ -35,7 +41,9 @@ export const getMyAccount = createServerFn({ method: "GET" })
     const [profile, entitlement, gamification] = await Promise.all([
       supabase
         .from("profiles")
-        .select("line_user_id, display_name, avatar_url, birth_date, birth_time, province, country, onboarded")
+        .select(
+          "line_user_id, display_name, avatar_url, picture_url, birth_date, birth_time, province, country, onboarded, onboarding_completed, subscription_status, trial_started_at, trial_ends_at, last_login_at",
+        )
         .eq("id", userId)
         .maybeSingle(),
       supabase

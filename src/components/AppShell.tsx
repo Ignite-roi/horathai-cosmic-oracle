@@ -6,10 +6,10 @@ import type { ReactNode } from "react";
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
 
 const NAV = [
-  { to: "/", label: "หน้าแรก", icon: Home },
-  { to: "/chart", label: "ผังดวง", icon: Orbit },
-  { to: "/transit", label: "ดาวย้าย", icon: Sparkles },
-  { to: "/ai", label: "โหรAI", icon: Bot },
+  { to: "/dashboard", label: "หน้าแรก", icon: Home },
+  { to: "/birth-chart", label: "ผังดวง", icon: Orbit },
+  { to: "/transits", label: "ดาวย้าย", icon: Sparkles },
+  { to: "/ai-astrologer", label: "โหรAI", icon: Bot },
   { to: "/premium", label: "พรีเมียม", icon: Crown },
 ] as const;
 
