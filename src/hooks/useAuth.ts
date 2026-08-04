@@ -100,6 +100,9 @@ export function useLineAuthMachine() {
   const [inLine, setInLine] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [lineLoggedIn, setLineLoggedIn] = useState(false);
+  const [hasIdToken, setHasIdToken] = useState(false);
+  const [hasDecodedToken, setHasDecodedToken] = useState(false);
+  const [contextType, setContextType] = useState<string>("unknown");
   const { data: account } = useAccount();
   const setProfile = useProfile((s) => s.setProfile);
 
@@ -118,7 +121,17 @@ export function useLineAuthMachine() {
     setStatus("signing_in");
     try {
       const idToken = await getLiffIdToken();
-      if (!idToken) throw new Error("ไม่ได้รับ ID token จาก LINE");
+      setHasIdToken(Boolean(idToken));
+      if (!idToken) {
+        // LINE knows the user, but the granted consent has no `openid` scope,
+        // so no ID token is issued. Retrying the backend exchange can never
+        // succeed — the user must re-authorize instead.
+        setHasDecodedToken(await hasDecodedIdToken());
+        setLiffError(missingIdTokenError());
+        setStatus("reauthorization_required");
+        return false;
+      }
+      setHasDecodedToken(await hasDecodedIdToken());
       const result = await signInWithLine({ data: { idToken } });
       const { error: sessionError } = await supabase.auth.setSession({
         access_token: result.access_token,
@@ -126,6 +139,7 @@ export function useLineAuthMachine() {
       });
       if (sessionError) throw sessionError;
       await queryClient.invalidateQueries({ queryKey: ["account"] });
+      clearReauthorizationGuard();
       setStatus("authenticated");
       return true;
     } catch (err) {
@@ -166,6 +180,7 @@ export function useLineAuthMachine() {
       setInLine(inside);
       const loggedIn = await isLiffLoggedIn();
       setLineLoggedIn(loggedIn);
+      setContextType(await getLiffContextType());
       if (session) {
         setStatus("authenticated");
         return true;
@@ -236,6 +251,26 @@ export function useLineAuthMachine() {
     return doSignIn();
   }, [config, doSignIn]);
 
+  /**
+   * User-triggered re-consent. Clears the stale LINE login and returns the
+   * user through the consent screen once per cooldown window (loop guard).
+   */
+  const reauthorize = useCallback(async () => {
+    const result = await liffReauthorize();
+    if (!result.ok) {
+      setLiffError({
+        code: "LINE_REAUTH_COOLDOWN",
+        message:
+          "เพิ่งขออนุญาต LINE ไปเมื่อครู่ กรุณารอสักครู่แล้วลองใหม่ หากยังไม่สำเร็จ แปลว่าต้องเปิดสิทธิ์ openid ในระบบหลังบ้านก่อน",
+        isConfigurationError: true,
+        isOutsideLine: false,
+        timestamp: new Date().toISOString(),
+      });
+      return false;
+    }
+    return true;
+  }, []);
+
   const logout = useCallback(async () => {
     await liffLogout();
     await supabase.auth.signOut();
@@ -266,6 +301,19 @@ export function useLineAuthMachine() {
     inLine,
     initialized,
     lineLoggedIn,
+    /** Development-only safe diagnostics: booleans and labels, never tokens. */
+    diagnostics: {
+      inClient: inLine,
+      initialized,
+      isLoggedIn: lineLoggedIn,
+      hasIdToken,
+      hasDecodedIdToken: hasDecodedToken,
+      contextType,
+      errorCode: liffError?.code ?? null,
+    },
+    needsReauthorization: status === "reauthorization_required",
+    canReauthorize: canAttemptReauthorization(),
+    reauthorize,
     booting:
       status === "idle" ||
       status === "loading_config" ||
