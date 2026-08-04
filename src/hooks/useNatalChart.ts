@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { getReading } from "@/lib/astro.functions";
@@ -128,6 +127,7 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
 
   return {
     isDemo: !session,
+    isTemporary: Boolean(!session && guestContext),
     isLoading:
       sessionLoading || context.isLoading || reviewChart.isLoading || calculation.isPending,
     error:
@@ -139,6 +139,7 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
     retry: () => {
       void context.refetch();
       void reviewChart.refetch();
+      setGuestContext(readGuestBirthContext());
     },
     profile: context.data?.birthProfile ?? guestContext?.birthProfile ?? null,
     chart: saved ?? null,
