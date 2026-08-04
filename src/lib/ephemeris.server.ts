@@ -21,11 +21,19 @@ import {
   type ReadingResult,
 } from "./astro";
 import { Body, Ecliptic, GeoVector } from "astronomy-engine";
+import {
+  ASTROLOGY_AYANAMSA,
+  ASTROLOGY_CALCULATION_VERSION,
+  ASTROLOGY_ENGINE,
+  ASTROLOGY_ENGINE_VERSION,
+  ASTROLOGY_EPHEMERIS,
+  ASTROLOGY_HOUSE_SYSTEM,
+} from "./astrology-meta";
 
-export const EPHEMERIS_SOURCE = "astronomy-engine@2.1.19 (VSOP/JPL-validated)";
-export const ENGINE_NAME = "sidereal_lahiri_astronomy_engine";
-export const ENGINE_VERSION = "3.0.0";
-export const HOUSE_SYSTEM_NAME = "whole_sign";
+export const EPHEMERIS_SOURCE = ASTROLOGY_EPHEMERIS;
+export const ENGINE_NAME = ASTROLOGY_ENGINE;
+export const ENGINE_VERSION = ASTROLOGY_ENGINE_VERSION;
+export const HOUSE_SYSTEM_NAME = ASTROLOGY_HOUSE_SYSTEM;
 
 const RAD = Math.PI / 180;
 const norm360 = (x: number) => ((x % 360) + 360) % 360;
@@ -240,9 +248,9 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
     julianDay: Math.round(jd * 100000) / 100000,
     isoDate: date.toISOString(),
     engine: ENGINE_NAME,
-    calculationVersion: `${ENGINE_NAME}-${ENGINE_VERSION}`,
+    calculationVersion: ASTROLOGY_CALCULATION_VERSION,
     ephemerisSource: EPHEMERIS_SOURCE,
-    ayanamsaName: "lahiri_polynomial_v1",
+    ayanamsaName: ASTROLOGY_AYANAMSA,
     houseSystem: HOUSE_SYSTEM_NAME,
   };
 }

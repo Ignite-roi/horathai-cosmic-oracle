@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { getReading } from "@/lib/astro.functions";
+import { ASTROLOGY_CALCULATION_VERSION } from "@/lib/astrology-meta";
 import { calculateAndSaveChart, getMyBirthContext } from "@/lib/birth.functions";
 import { useSession } from "@/hooks/useAuth";
 import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
@@ -77,7 +78,7 @@ export function useNatalChart(mode: "natal" | "transit" | "both", transitAt?: st
   useEffect(() => {
     if (
       context.data?.birthProfile &&
-      !context.data.chart &&
+      (!context.data.chart || context.data.chart.calculation_version !== ASTROLOGY_CALCULATION_VERSION) &&
       !calculation.isPending &&
       !calculation.isSuccess
     )

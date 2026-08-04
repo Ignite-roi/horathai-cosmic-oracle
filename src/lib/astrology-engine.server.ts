@@ -6,13 +6,18 @@
  * without touching routes. Production data only — no mock fallback.
  */
 import { HOUSES, PLANET_BY_NUM, ZODIACS, type PlacedPlanet } from "./astro";
+import {
+  ASTROLOGY_CALCULATION_VERSION,
+  ASTROLOGY_ENGINE,
+  ASTROLOGY_HOUSE_SYSTEM,
+} from "./astrology-meta";
 import { offsetLabel, zonedWallClockToUtc } from "./timezone";
 
 /** Bump when the calculation output changes; cached charts are recomputed. */
-export const CALCULATION_VERSION = "sidereal-lahiri-astronomy-engine-3.0.0";
+export const CALCULATION_VERSION = ASTROLOGY_CALCULATION_VERSION;
 /** Honest label of what is actually implemented today. */
-export const ENGINE_LABEL = "sidereal_lahiri_astronomy_engine";
-export const HOUSE_SYSTEM = "whole_sign";
+export const ENGINE_LABEL = ASTROLOGY_ENGINE;
+export const HOUSE_SYSTEM = ASTROLOGY_HOUSE_SYSTEM;
 
 export type BirthInput = {
   birthDate: string; // YYYY-MM-DD (Gregorian)
