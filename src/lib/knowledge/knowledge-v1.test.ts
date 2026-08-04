@@ -6,21 +6,31 @@ import { matchNeutralTransit } from "./transit-matcher.server";
 import type { KnowledgeRule, RuleEngineInput } from "./types";
 
 const input: RuleEngineInput = {
-  system: { id: "lahiri", code: "sidereal_lahiri_dev", version: "dev" },
+  system: { id: "sidereal_lahiri", code: "sidereal_lahiri", version: "3.0.0" },
+  calculationProfile: { id: "sidereal_lahiri", version: "3.0.0" },
+  interpretationProfile: {
+    id: "lahiri_natal_th",
+    version: "1.0.0",
+    calculationProfileId: "sidereal_lahiri",
+    calculationProfileVersion: "3.0.0",
+    systemId: "sidereal_lahiri",
+    systemVersion: "3.0.0",
+    releaseId: "test-release-1",
+  },
   chartFacts: [
     {
       key: "ascendant",
       value: "capricorn",
       authority: "calculation_engine",
-      provenance: "sidereal_lahiri_dev",
+      provenance: "sidereal_lahiri@3.0.0",
     },
   ],
 };
 const citedRule: KnowledgeRule = {
   id: "r1",
   ruleCode: "TEST-001",
-  systemId: "lahiri",
-  systemVersion: "dev",
+  systemId: "sidereal_lahiri",
+  systemVersion: "3.0.0",
   ruleType: "natal",
   status: "published",
   condition: { ascendant: "capricorn" },
@@ -58,10 +68,10 @@ describe("knowledge V1 contracts", () => {
         id: "e1",
         eventCode: "INGRESS",
         eventType: "sign_ingress",
-        systemId: "lahiri",
+        systemId: "sidereal_lahiri",
         eventTime: "2026-08-04T00:00:00Z",
-        calculationEngine: "sidereal_lahiri_dev",
-        calculationVersion: "dev",
+        calculationEngine: "sidereal_lahiri_astronomy_engine",
+        calculationVersion: "3.0.0",
         facts: [
           {
             key: "transit_sign",

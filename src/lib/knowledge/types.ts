@@ -39,6 +39,7 @@ export type KnowledgeRule = {
   status: "draft" | "review" | "approved" | "published" | "deprecated" | "rejected";
   condition: Record<string, unknown>;
   outcome: Record<string, unknown>;
+  outcomeId?: string;
   confidence: number;
   priority: number;
   citations: KnowledgeCitation[];
@@ -47,6 +48,16 @@ export type KnowledgeRule = {
 
 export type RuleEngineInput = {
   system: KnowledgeSystemRef;
+  calculationProfile: { id: string; version: string };
+  interpretationProfile: {
+    id: string;
+    version: string;
+    calculationProfileId: string;
+    calculationProfileVersion: string;
+    systemId: string;
+    systemVersion: string;
+    releaseId: string;
+  };
   chartFacts: CalculatedFact[];
   transitEvent?: NeutralTransitEvent;
   releaseRuleIds?: string[];
@@ -55,10 +66,14 @@ export type RuleEngineInput = {
 export type RuleMatch = {
   ruleId: string;
   ruleCode: string;
+  outcomeId: string;
   factsUsed: CalculatedFact[];
   citations: KnowledgeCitation[];
   confidence: number;
   limitations: string[];
+  systemId: string;
+  systemVersion: string;
+  releaseId: string;
 };
 
 export type RuleEngineOutput = {
