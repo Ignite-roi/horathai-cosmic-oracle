@@ -1,4 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { parseCivilTime, toCivilTime } from "@/lib/civil-time";
 
 const HOURS = Array.from({ length: 24 }, (_, value) => String(value).padStart(2, "0"));
@@ -26,9 +32,17 @@ export function Time24Field({
         <SelectTrigger aria-label="ชั่วโมง (00 ถึง 23)" className="h-11 bg-transparent">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>{HOURS.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
+        <SelectContent>
+          {HOURS.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
-      <span aria-hidden="true" className="text-foreground">:</span>
+      <span aria-hidden="true" className="text-foreground">
+        :
+      </span>
       <Select
         value={String(minute).padStart(2, "0")}
         disabled={disabled}
@@ -37,7 +51,13 @@ export function Time24Field({
         <SelectTrigger aria-label="นาที (00 ถึง 59)" className="h-11 bg-transparent">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>{MINUTES.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
+        <SelectContent>
+          {MINUTES.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
       <p className="col-span-3 text-[10px] text-muted-foreground">เวลา 24 ชั่วโมง · HH:mm</p>
     </div>
