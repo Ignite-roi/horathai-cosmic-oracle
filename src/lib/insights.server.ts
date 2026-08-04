@@ -99,6 +99,22 @@ function aspectContribution(distance: number, policy: AspectPolicy) {
   };
 }
 
+function assertScoringPolicy(policy: ScoringPolicy | undefined): asserts policy is ScoringPolicy {
+  if (
+    !policy ||
+    !Number.isFinite(policy.base_score) ||
+    !Number.isFinite(policy.minimum_score) ||
+    !Number.isFinite(policy.maximum_score) ||
+    !Number.isFinite(policy.aspect_orb_degrees) ||
+    !Number.isFinite(policy.aspect_fade_degrees) ||
+    policy.aspect_fade_degrees <= 0 ||
+    !policy.areas.length ||
+    !Object.keys(policy.aspect_angles).length
+  ) {
+    throw new Error("กฎที่เผยแพร่ยังมี policy การคำนวณไม่ครบ จึงไม่สามารถแสดงผลได้");
+  }
+}
+
 export async function calculateCompatibility(
   primary: BirthInput,
   partner: PartnerBirthInput,
@@ -254,6 +270,7 @@ export async function calculateDailyInsight(
 ): Promise<DailyInsightResult> {
   const { row, evidence } = await publishedRule("HT-DAILY-COLOR-V1");
   const config = row.outcome_json as unknown as ColorConfig;
+  assertScoringPolicy(config.scoring_policy);
   const natal = computeChart(birthMoment(birth), birth.latitude, birth.longitude);
   const transit = computeChart(at, birth.latitude, birth.longitude);
   const reading = scoreFromPolicy(natal, transit, config.scoring_policy, birth.birthTimeKnown);
@@ -262,14 +279,11 @@ export async function calculateDailyInsight(
       .filter((p) => category.planets.includes(p.num))
       .map((p) => {
         const np = natal.planets.find((n) => n.num === p.num);
-        const affinity = np
-          ? Math.max(0, 12 - circularDistance(p.longitude, np.longitude) / 15)
-          : 0;
         const signal = aspectContribution(
           circularDistance(p.longitude, np?.longitude ?? p.longitude),
           config.scoring_policy,
         ).value;
-        return { planet: p, weight: config.scoring_policy.base_score + signal + affinity };
+        return { planet: p, weight: config.scoring_policy.base_score + signal };
       })
       .sort((a, b) => b.weight - a.weight);
     const lead = candidates[0]?.planet ?? transit.planets[0]!;
@@ -301,7 +315,7 @@ export async function calculateDailyInsight(
       hex: avoidColor.hex,
       planet: avoidPlanet.num,
       planetTh: avoidPlanet.th,
-      reason: `น้ำหนักดาว${avoidPlanet.th}ต่อพื้นดวงวันนี้ต่ำที่สุดตามกฎที่เผยแพร่`,
+      reason: config.avoid_policy.replace("{planet}", avoidPlanet.th),
     },
     scores: reading.scores.map((s) => ({
       area: s.area,
@@ -326,6 +340,7 @@ export async function calculateCalendar(birth: BirthInput, start: string): Promi
     practical_caution: string;
     scoring_policy: ScoringPolicy;
   };
+  assertScoringPolicy(config.scoring_policy);
   const natal = computeChart(birthMoment(birth), birth.latitude, birth.longitude);
   const from = new Date(`${start}T05:00:00.000Z`);
   const days = [];
@@ -337,11 +352,10 @@ export async function calculateCalendar(birth: BirthInput, start: string): Promi
       config.scoring_policy,
       birth.birthTimeKnown,
     );
-    const level =
-      [...config.bands].sort((a, b) => b.min - a.min).find((band) => reading.overall >= band.min)
-        ?.level ??
-      config.bands.at(-1)?.level ??
-      "ปกติ";
+    const level = [...config.bands]
+      .sort((a, b) => b.min - a.min)
+      .find((band) => reading.overall >= band.min)?.level;
+    if (!level) throw new Error("กฎปฏิทินไม่มีช่วงคะแนนที่รองรับผลลัพธ์นี้");
     const suitable = config.activities
       .filter((a) => (reading.scores.find((s) => s.area === a.area)?.score ?? 0) >= a.min)
       .map((a) => a.label);
