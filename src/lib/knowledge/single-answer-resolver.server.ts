@@ -61,17 +61,17 @@ function countSpecificity(value: unknown): number {
   if (!value || typeof value !== "object") return 0;
   if (Array.isArray(value)) return value.reduce((sum, item) => sum + countSpecificity(item), 0);
   const record = value as Record<string, unknown>;
-  if (typeof record.fact === "string") return 1;
-  return Object.values(record).reduce((sum, item) => sum + countSpecificity(item), 0);
+  if (typeof record["fact"] === "string") return 1;
+  return Object.values(record).reduce<number>((sum, item) => sum + countSpecificity(item), 0);
 }
 
 function conclusionCode(rule: KnowledgeRule, match: RuleMatch): string {
   return rule.conclusionCode ??
-    (typeof rule.outcome.conclusionCode === "string" ? rule.outcome.conclusionCode : match.outcomeId);
+    (typeof rule.outcome["conclusionCode"] === "string" ? rule.outcome["conclusionCode"] : match.outcomeId);
 }
 
 function summaryTh(rule: KnowledgeRule): string {
-  const summary = rule.outcome.summaryTh;
+  const summary = rule.outcome["summaryTh"];
   return typeof summary === "string" && summary.trim()
     ? summary.trim()
     : "มีข้อสรุปจากกฎที่ผ่านการทบทวน โดยควรพิจารณาร่วมกับบริบทชีวิตจริง";
