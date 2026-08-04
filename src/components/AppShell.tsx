@@ -4,6 +4,7 @@ import {
   Bot,
   CalendarDays,
   HeartHandshake,
+  Layers3,
   Home,
   Orbit,
   Palette,
@@ -28,6 +29,7 @@ const INSIGHT_NAV = [
   { to: "/daily", label: "สีวันนี้", icon: Palette },
   { to: "/calendar", label: "ปฏิทิน", icon: CalendarDays },
   { to: "/compat", label: "สมพงษ์", icon: HeartHandshake },
+  { to: "/tools", label: "ไพ่วันนี้", icon: Layers3 },
 ] as const;
 
 export function AppShell({

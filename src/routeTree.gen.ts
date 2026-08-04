@@ -22,13 +22,17 @@ import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCompatRouteImport } from './routes/_authenticated/compat'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedGiftDaysRouteImport } from './routes/_authenticated/gift-days'
 import { Route as AuthenticatedInviteRouteImport } from './routes/_authenticated/invite'
 import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedToolsRouteImport } from './routes/_authenticated/tools'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as RTokenRouteImport } from './routes/r.$token'
+import { Route as TransferTokenRouteImport } from './routes/transfer.$token'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
@@ -99,6 +103,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedGiftDaysRoute = AuthenticatedGiftDaysRouteImport.update({
+  id: '/gift-days',
+  path: '/gift-days',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedInviteRoute = AuthenticatedInviteRouteImport.update({
   id: '/invite',
   path: '/invite',
@@ -125,6 +134,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedToolsRoute = AuthenticatedToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   id: '/transits',
   path: '/transits',
@@ -134,6 +148,16 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransferTokenRoute = TransferTokenRouteImport.update({
+  id: '/transfer/$token',
+  path: '/transfer/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminKnowledgeRoute =
   AuthenticatedAdminKnowledgeRouteImport.update({
@@ -173,13 +197,17 @@ export interface FileRoutesByFullPath {
   '/compat': typeof AuthenticatedCompatRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gift-days': typeof AuthenticatedGiftDaysRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
+  '/transfer/$token': typeof TransferTokenRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -198,12 +226,16 @@ export interface FileRoutesByTo {
   '/compat': typeof AuthenticatedCompatRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gift-days': typeof AuthenticatedGiftDaysRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
+  '/transfer/$token': typeof TransferTokenRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -224,13 +256,17 @@ export interface FileRoutesById {
   '/_authenticated/compat': typeof AuthenticatedCompatRoute
   '/_authenticated/daily': typeof AuthenticatedDailyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/gift-days': typeof AuthenticatedGiftDaysRoute
   '/_authenticated/invite': typeof AuthenticatedInviteRoute
   '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/tools': typeof AuthenticatedToolsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
+  '/transfer/$token': typeof TransferTokenRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -251,13 +287,17 @@ export interface FileRouteTypes {
     | '/compat'
     | '/daily'
     | '/dashboard'
+    | '/gift-days'
     | '/invite'
     | '/knowledge-admin'
     | '/onboarding'
     | '/premium'
     | '/settings'
+    | '/tools'
     | '/transits'
     | '/wallet'
+    | '/r/$token'
+    | '/transfer/$token'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin/'
@@ -276,12 +316,16 @@ export interface FileRouteTypes {
     | '/compat'
     | '/daily'
     | '/dashboard'
+    | '/gift-days'
     | '/invite'
     | '/onboarding'
     | '/premium'
     | '/settings'
+    | '/tools'
     | '/transits'
     | '/wallet'
+    | '/r/$token'
+    | '/transfer/$token'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin'
@@ -301,13 +345,17 @@ export interface FileRouteTypes {
     | '/_authenticated/compat'
     | '/_authenticated/daily'
     | '/_authenticated/dashboard'
+    | '/_authenticated/gift-days'
     | '/_authenticated/invite'
     | '/_authenticated/knowledge-admin'
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
     | '/_authenticated/settings'
+    | '/_authenticated/tools'
     | '/_authenticated/transits'
     | '/_authenticated/wallet'
+    | '/r/$token'
+    | '/transfer/$token'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
     | '/_authenticated/knowledge-admin/'
@@ -322,6 +370,8 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
+  RTokenRoute: typeof RTokenRoute
+  TransferTokenRoute: typeof TransferTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -417,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/gift-days': {
+      id: '/_authenticated/gift-days'
+      path: '/gift-days'
+      fullPath: '/gift-days'
+      preLoaderRoute: typeof AuthenticatedGiftDaysRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/invite': {
       id: '/_authenticated/invite'
       path: '/invite'
@@ -452,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/tools': {
+      id: '/_authenticated/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof AuthenticatedToolsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/transits': {
       id: '/_authenticated/transits'
       path: '/transits'
@@ -465,6 +529,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/wallet'
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transfer/$token': {
+      id: '/transfer/$token'
+      path: '/transfer/$token'
+      fullPath: '/transfer/$token'
+      preLoaderRoute: typeof TransferTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/knowledge': {
       id: '/_authenticated/admin/knowledge'
@@ -525,11 +603,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCompatRoute: typeof AuthenticatedCompatRoute
   AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedGiftDaysRoute: typeof AuthenticatedGiftDaysRoute
   AuthenticatedInviteRoute: typeof AuthenticatedInviteRoute
   AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedToolsRoute: typeof AuthenticatedToolsRoute
   AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedAdminKnowledgeRoute: typeof AuthenticatedAdminKnowledgeRoute
@@ -542,12 +622,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCompatRoute: AuthenticatedCompatRoute,
   AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedGiftDaysRoute: AuthenticatedGiftDaysRoute,
   AuthenticatedInviteRoute: AuthenticatedInviteRoute,
   AuthenticatedKnowledgeAdminRoute:
     AuthenticatedKnowledgeAdminRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedToolsRoute: AuthenticatedToolsRoute,
   AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedAdminKnowledgeRoute: AuthenticatedAdminKnowledgeRoute,
@@ -565,6 +647,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
+  RTokenRoute: RTokenRoute,
+  TransferTokenRoute: TransferTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

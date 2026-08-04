@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AppShell, PageTransition } from "@/components/AppShell";
 import { HowToUseSheet } from "@/components/insights/HowToUseSheet";
 import { Button } from "@/components/ui/button";
+import { ShareResultButton } from "@/components/social/ShareResultButton";
 import { useSession } from "@/hooks/useAuth";
 import { readGuestBirthContext } from "@/lib/guest-birth";
 import { downloadCanvas, guestContextToBirth } from "@/lib/insights.client";
@@ -277,6 +278,7 @@ function CompatPage() {
                 <Download className="h-4 w-4" />
                 แชร์ผลเป็นภาพ
               </Button>
+              {session && <ShareResultButton type="compatibility" />}
               <footer className="surface-inset p-4 text-[10.5px] leading-5 text-muted-foreground">
                 <p className="text-foreground">
                   กฎ {result.evidence.ruleCode} · v{result.evidence.version}

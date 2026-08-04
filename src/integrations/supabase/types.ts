@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_notification_jobs: {
+        Row: {
+          attempts: number
+          channel: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          notification_type: string
+          payload: Json
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel?: string
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          last_error?: string | null
+          notification_type: string
+          payload: Json
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: string
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          last_error?: string | null
+          notification_type?: string
+          payload?: Json
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_notification_jobs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ascendant_rules: {
         Row: {
           algorithm_profile: string | null
@@ -608,6 +664,47 @@ export type Database = {
         }
         Relationships: []
       }
+      card_draws: {
+        Row: {
+          activated_rule_ids: string[]
+          citations: Json
+          created_at: string
+          draw_date: string
+          draw_type: string
+          id: string
+          result: Json
+          user_id: string
+        }
+        Insert: {
+          activated_rule_ids?: string[]
+          citations?: Json
+          created_at?: string
+          draw_date: string
+          draw_type: string
+          id?: string
+          result: Json
+          user_id: string
+        }
+        Update: {
+          activated_rule_ids?: string[]
+          citations?: Json
+          created_at?: string
+          draw_date?: string
+          draw_type?: string
+          id?: string
+          result?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_draws_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_checks: {
         Row: {
           calculation_engine: string
@@ -779,6 +876,60 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      day_transfer_claims: {
+        Row: {
+          cancelled_at: string | null
+          claimed_at: string | null
+          created_at: string
+          days: number
+          expires_at: string
+          id: string
+          recipient_id: string | null
+          sender_id: string
+          status: string
+          token_hash: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          claimed_at?: string | null
+          created_at?: string
+          days: number
+          expires_at: string
+          id?: string
+          recipient_id?: string | null
+          sender_id: string
+          status?: string
+          token_hash: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          claimed_at?: string | null
+          created_at?: string
+          days?: number
+          expires_at?: string
+          id?: string
+          recipient_id?: string | null
+          sender_id?: string
+          status?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "day_transfer_claims_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "day_transfer_claims_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entitlements: {
         Row: {
@@ -2555,6 +2706,50 @@ export type Database = {
           },
         ]
       }
+      result_shares: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          owner_id: string
+          payload: Json
+          result_type: string
+          revoked_at: string | null
+          title: string
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          owner_id: string
+          payload: Json
+          result_type: string
+          revoked_at?: string | null
+          title: string
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          owner_id?: string
+          payload?: Json
+          result_type?: string
+          revoked_at?: string | null
+          title?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_shares_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rule_citations: {
         Row: {
           citation_id: string
@@ -3142,6 +3337,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_day_transfer: {
+        Args: { _recipient_id: string; _transfer_id: string }
+        Returns: {
+          days_transferred: number
+          recipient_days: number
+          sender_days: number
+        }[]
+      }
       complete_mock_day_purchase: {
         Args: {
           _package_code: string

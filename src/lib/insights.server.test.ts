@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { BirthInputSchema, PartnerBirthSchema } from "./insights.schemas";
-import { scoreFromPolicy, type ScoringPolicy } from "./insights.server";
+import { scoreFromPolicy, type ScoringPolicy } from "./insights-scoring";
 import type { computeChart } from "./ephemeris.server";
 
 describe("insight input contracts", () => {
