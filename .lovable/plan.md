@@ -1,6 +1,46 @@
-# Horathai AI — Visual Design Audit & Redesign Master Plan
+# Phase 1 — Obsidian Orrery: Global Design System + Home Page
 
-Note on references: only two of the six images arrived in this thread — the master visual (key art) and the AI astrologer character. The logo, target-UI board, current-home capture and competitor board were not attached. I captured the current app myself with a mobile browser pass, so the audit of the current state is based on the real running screens. The logo and competitor flow board still need to be re-uploaded before those parts can be honored exactly.
+Scope approved: global visual system and the Home/Dashboard page only. Chart, Transit, AI, Premium, Onboarding and Settings keep their current code this phase. Untouched: LINE LIFF auth, Supabase schema, user identity flow, the Suriyayart calculation engine, server-function contracts, routing, entitlements.
+
+References received: master visual (key art) and the official astrologer portrait. The logo, target-UI board and competitor board were not attached in this thread — the logo lockup stays an open asset gap.
+
+## What gets built
+
+**1. Global tokens (`src/styles.css`)** — replace the light-purple atmosphere with a true obsidian foundation. New tokens: `--void` (near-black), `--indigo-deep`, `--royal` (restrained purple), `--gold-bronze`, `--gold`, `--gold-hot`, `--ember`, `--ivory` (warm text), `--muted-foreground` (cooled), plus success / warning / danger. Gold becomes a material: a `gold-metal` treatment with a dark bronze edge, a narrow hot specular band, inner top light and a restrained warm glow — no flat yellow anywhere.
+
+**2. Surface hierarchy** — three distinct utilities replacing the single glass look: `surface-hero` (deep, gold hairline, heavy shadow, inner top light, 30px radius), `surface-card` (mid depth, 22px), `surface-inset` (recessed, darker than the page, 16px). Different depth, border, lighting and radius so no two levels read alike.
+
+**3. Typography** — Noto Serif Thai for Thai headings, Noto Sans Thai for body, Cinzel restricted to numerals, dates and Latin eyebrows. Fixed mobile-safe scale checked at 320px.
+
+**4. Thai identity components** (`src/components/thai/`) — original low-opacity SVG: `KanokCorner`, `CelestialDivider`, `ThaiFrame`, `ThaiHouseNumber` (๑–๑๒), `PlanetGlyph` (nine Thai planets with their numerals). All drawn from scratch, nothing traced from competitors.
+
+**5. Background system** — rewrite `LiveUniverse` / `LiveUniverseGL`: near-black base, small deep-violet nebula pools instead of a full-screen wash, restrained stars, one warm directional key light, strong vignette, faint astrology geometry ring. Contrast checked against body text.
+
+**6. AstrologerHero** — the attached portrait registered as an immutable brand asset (CDN pointer, not regenerated, not re-rendered by an image model). A reusable component with framing that keeps forehead, eyes and chin fully visible from 320px up, gold rim frame, kanok corner, and a static-image-only render path.
+
+**7. Home page rebuild** in the requested order: identity header (LINE avatar, name, ascendant, premium/trial state) → cinematic hero (astrologer + orrery + active transit planet, headline "ดาวย้ายครั้งนี้ เปลี่ยนดวงคุณด้านไหน", primary CTA "เปิดดวงของฉัน", secondary "ดูดาวที่กำลังส่งผล") → today score (one large central score plus career/money/love/health) → major transit card (planet, previous sign, new sign, affected personal house, personalized effect, date range) → time-travel preview → destiny timeline preview → AI consultation → premium trial → bottom nav.
+
+**8. First-run experience** — no blank page and no skeleton as the first impression. Without birth data the full composition renders from a clearly labelled demo chart with a "ตัวอย่าง" ribbon and a CTA to enter birth data. The demo is computed live from the real engine with fixed demo birth values and is never written to the profile store or the database.
+
+**9. Motion** — slow orrery rotation, gentle gold specular drift, staggered card entrances, subtle particles kept away from text. No shake, no fast parallax, `prefers-reduced-motion` respected.
+
+**10. Performance** — the home hero orrery is SVG + CSS, not WebGL, so only the background can own a canvas and there is never more than one. Static gradient paints first, WebGL lazy-loads after hydration, rendering pauses when the tab is hidden, Battery Saver drops WebGL entirely.
+
+**11. QA** — visual pass at 320 / 375 / 390 / 430 / 768 / 1440, checking face cropping, Thai wrapping, CTA visibility, safe areas, overflow, dead space, contrast and fallback states.
+
+## Technical notes
+
+Real transit data for the major-transit card comes from the existing `getReading` server function called at three time offsets (−45d, today, +45d) through the existing `useReading` hook — no engine, schema or contract change. Previous sign, new sign and the affecting window are derived from those three real results; the affected personal house is derived client-side from the natal ascendant. The destiny-timeline preview plots the overall scores from the same three real readings. Nothing is fabricated and nothing is persisted.
+
+### Files
+
+Changed: `src/styles.css`, `src/components/AppShell.tsx`, `src/components/cosmos/LiveUniverse.tsx`, `src/components/cosmos/LiveUniverseGL.tsx`, `src/components/ScoreCard.tsx`, `src/routes/index.tsx`.
+
+New: `src/components/brand/AstrologerHero.tsx`, `src/components/thai/*` (ornaments, glyphs, numerals), `src/components/home/*` (HeroOrrery, MajorTransitCard, TodayScore, TimeTravelPreview, DestinyTimelinePreview, AiConsultCard, PremiumStatusCard), `src/hooks/useHomeReading.ts`, `src/assets/astrologer-master.png.asset.json`.
+
+---
+
+# Appendix — original visual audit
 
 ---
 
@@ -70,7 +110,7 @@ New: splash/boot sequence, logo lockup, life-timeline 3D view, astrology calenda
 
 ---
 
-## 4. Page-by-page redesign plan
+## 4. Page-by-page redesign plan (later phases)
 
 **Boot / splash.** Logo lockup ignites from dark, orrery rings spin up and dissolve into the app. Around 900ms, skipped on repeat visits.
 
