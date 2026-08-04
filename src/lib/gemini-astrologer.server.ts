@@ -8,7 +8,7 @@ type GeminiResponse = {
   error?: { code?: number; message?: string; status?: string };
 };
 
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
+const GEMINI_MODEL = "gemini-flash-lite-latest";
 
 function buildSystemInstruction(facts: string) {
   return [
