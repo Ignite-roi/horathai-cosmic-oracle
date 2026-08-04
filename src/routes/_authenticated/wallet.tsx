@@ -80,12 +80,13 @@ function WalletPage() {
     <AppShell><PageTransition>
       {step === 0 ? (
         <>
-          <SectionTitle kicker="Day Wallet" title="กระเป๋าวันใช้งาน" right={<Button size="sm" className="btn-gold rounded-full" onClick={() => setStep(1)}>เติมวัน</Button>} />
+           <SectionTitle kicker="Day Wallet" title="กระเป๋าวันใช้งาน" right={<Button size="sm" className="btn-gold rounded-full" onClick={() => setStep(1)}>ดูแพ็กเกจ</Button>} />
           {!isSignedIn ? (
             <section className="surface-hero grain p-7 text-center">
               <ShieldCheck className="mx-auto h-8 w-8 text-primary" />
               <h1 className="thai-heading mt-4 text-xl text-gold">เก็บวันใช้งานไว้กับบัญชีคุณ</h1>
-              <p className="mt-2 text-[12px] leading-6 text-muted-foreground">เข้าสู่ระบบด้วย LINE เพื่อดูยอด เติมวัน และเก็บประวัติอย่างปลอดภัย</p>
+               <p className="mt-2 text-[12px] leading-6 text-muted-foreground">ดูแพ็กเกจและราคาได้ทันที การเพิ่มวันและแต้มต้องเข้าสู่ระบบ และยังไม่เปิดรับชำระเงินจริงระหว่างเชื่อม Payment Gateway</p>
+               <Button variant="outline" className="mt-4 h-11 w-full rounded-2xl" onClick={() => setStep(1)}>ดูแพ็กเกจและเงื่อนไข</Button>
               <Button className="btn-gold mt-5 h-12 w-full rounded-2xl" onClick={() => void login()}>เข้าสู่ระบบด้วย LINE</Button>
             </section>
           ) : (
@@ -123,8 +124,9 @@ function WalletPage() {
             </motion.div>
           </AnimatePresence>
           {error && <p className="mt-4 text-center text-xs text-destructive">{error}</p>}
-          <Button className="btn-gold mt-6 h-13 w-full rounded-2xl" disabled={!selected || !isSignedIn} onClick={() => step < 4 ? setStep(step + 1) : void pay()}>{step < 4 ? "ถัดไป" : `ชำระ ฿${payable.toLocaleString("th-TH")} (จำลอง)`}</Button>
+           <Button className="btn-gold mt-6 h-13 w-full rounded-2xl" disabled={!selected || !isSignedIn} onClick={() => step < 4 ? setStep(step + 1) : void pay()}>{step < 4 ? "ถัดไป" : `ยังไม่เปิดชำระเงินจริง · ฿${payable.toLocaleString("th-TH")}`}</Button>
           {!isSignedIn && <Button variant="outline" className="mt-3 h-12 w-full rounded-2xl" onClick={() => void login()}>เข้าสู่ระบบเพื่อเติมวัน</Button>}
+           <p className="mt-5 text-center text-[10px] leading-5 text-muted-foreground"><Link to="/terms" className="text-primary">ข้อกำหนดและนโยบายคืนเงิน</Link> · <Link to="/privacy" className="text-primary">ความเป็นส่วนตัว</Link> · <Link to="/service-info" className="text-primary">ข้อมูลบริการและติดต่อ</Link></p>
         </section>
       )}
     </PageTransition></AppShell>
@@ -139,7 +141,7 @@ function PointsStep({ balance, value, max, discount, onChange }: { balance: numb
   return <section className="surface-card p-5"><Coins className="h-6 w-6 text-warning" /><h2 className="thai-heading mt-3 text-lg text-gold">ใช้แต้มเป็นส่วนลด</h2><p className="mt-1 text-xs text-muted-foreground">มี {balance.toLocaleString("th-TH")} แต้ม · ทุก 10 แต้มลด 1 บาท</p><input className="mt-6 w-full accent-[var(--gold)]" type="range" min={0} max={max} step={10} value={value} onChange={(event) => onChange(Number(event.target.value))} /><div className="mt-3 flex justify-between text-xs"><span>{value.toLocaleString("th-TH")} แต้ม</span><span className="text-primary">ลด ฿{discount.toLocaleString("th-TH")}</span></div></section>;
 }
 
-function PaymentStep() { return <section className="surface-card p-5"><p className="eyebrow">Mock provider</p><div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary bg-primary/10 p-4"><CreditCard className="h-5 w-5 text-primary" /><div className="flex-1"><p className="text-sm text-foreground">ระบบชำระเงินจำลอง</p><p className="text-[10px] text-muted-foreground">ไม่ตัดเงินจริง · พร้อมเปลี่ยน provider ภายหลัง</p></div><Check className="h-4 w-4 text-primary" /></div></section>; }
+function PaymentStep() { return <section className="surface-card p-5"><p className="eyebrow">Gateway status</p><div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary bg-primary/10 p-4"><CreditCard className="h-5 w-5 text-primary" /><div className="flex-1"><p className="text-sm text-foreground">อยู่ระหว่างเชื่อม Payment Gateway</p><p className="text-[10px] text-muted-foreground">ยังไม่รับชำระและไม่ตัดเงินจริงในเว็บไซต์รอบตรวจนี้</p></div><Clock3 className="h-4 w-4 text-primary" /></div></section>; }
 
 function ReviewStep({ item, points, discount, payable }: { item: WalletPackage; points: number; discount: number; payable: number }) { return <section className="surface-hero grain p-5"><Sparkles className="h-6 w-6 text-primary" /><h2 className="thai-heading mt-3 text-xl text-gold">ตรวจสอบการเติมวัน</h2><dl className="mt-5 space-y-3 text-xs"><div className="flex justify-between"><dt className="text-muted-foreground">แพ็กเกจ</dt><dd>{item.name_th}</dd></div><div className="flex justify-between"><dt className="text-muted-foreground">วันได้รับทั้งหมด</dt><dd>{packageTotalDays(item)} วัน</dd></div><div className="flex justify-between"><dt className="text-muted-foreground">ใช้แต้ม</dt><dd>{points.toLocaleString("th-TH")} แต้ม</dd></div><div className="flex justify-between"><dt className="text-muted-foreground">ส่วนลด</dt><dd>-฿{discount.toLocaleString("th-TH")}</dd></div><div className="flex justify-between border-t border-border pt-3 text-base"><dt>ยอดชำระ</dt><dd className="text-gold">฿{payable.toLocaleString("th-TH")}</dd></div></dl></section>; }
 

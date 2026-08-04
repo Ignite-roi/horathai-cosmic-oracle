@@ -8,6 +8,8 @@ import { useProfile } from "@/store/useProfile";
 import { useSession } from "@/hooks/useAuth";
 import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { getPublicReviewReading } from "@/lib/public-review.functions";
+import { readGuestBirthContext } from "@/lib/guest-birth";
+import { useEffect, useState } from "react";
 
 /** Fixed sample birth used only to render the demo composition. Never persisted. */
 export const DEMO_BIRTH = {
@@ -66,15 +68,26 @@ export function useHomeReading() {
   const fetchReviewReading = useServerFn(getPublicReviewReading);
   const { session } = useSession();
   const { data: context } = useBirthContext();
+  const [guestBirth, setGuestBirth] = useState<ReturnType<typeof readGuestBirthContext>>(null);
+  useEffect(() => {
+    if (!session) setGuestBirth(readGuestBirthContext());
+  }, [session]);
   const saved = context?.birthProfile ?? null;
+  const temporary = guestBirth?.birthProfile ?? null;
 
-  const isDemo = !saved && !birthDate;
+  const isDemo = !saved && !temporary && !birthDate;
   const input = saved
     ? {
         birthDate: saved.birth_date,
         birthTime: (saved.birth_time ?? "12:00").slice(0, 5),
         province: saved.province,
       }
+    : temporary
+      ? {
+          birthDate: temporary.birth_date,
+          birthTime: (temporary.birth_time ?? "12:00").slice(0, 5),
+          province: temporary.province,
+        }
     : isDemo
       ? DEMO_BIRTH
       : { birthDate, birthTime: birthTime || "12:00", province };
@@ -93,7 +106,7 @@ export function useHomeReading() {
       ],
       staleTime: 1000 * 60 * 30,
       queryFn: () =>
-        PUBLIC_REVIEW_MODE && !session
+        PUBLIC_REVIEW_MODE && !session && !temporary
           ? (fetchReviewReading({ data: { at: isoAt(offset) } }) as Promise<ReadingResult>)
           : (fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>),
     })),

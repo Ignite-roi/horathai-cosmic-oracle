@@ -24,6 +24,7 @@ import {
 import { PROVINCES } from "@/lib/provinces";
 import { calculateGuestBirthChart } from "@/lib/guest-birth.functions";
 import { readGuestBirthContext, writeGuestBirthContext } from "@/lib/guest-birth";
+import { useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -93,6 +94,7 @@ function Onboarding() {
   const { session, loading: sessionLoading } = useSession();
   const { data: account } = useAccount();
   const calculateGuest = useServerFn(calculateGuestBirthChart);
+  const setProfile = useProfile((state) => state.setProfile);
   const { data: context } = useQuery({
     queryKey: ["birth-context"],
     queryFn: () => getMyBirthContext(),
@@ -197,6 +199,14 @@ function Onboarding() {
           },
         });
         writeGuestBirthContext(temporary);
+        setProfile({
+          name: temporary.birthProfile.nickname ?? form.nickname.trim(),
+          birthDate: temporary.birthProfile.birth_date,
+          birthTime: (temporary.birthProfile.birth_time ?? "12:00").slice(0, 5),
+          province: temporary.birthProfile.province,
+          country: temporary.birthProfile.country,
+          onboarded: true,
+        });
         chart = temporary.chart;
       }
       setProgress(100);
@@ -233,7 +243,7 @@ function Onboarding() {
         </p>
         {!sessionLoading && !session && (
           <div className="mb-4 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">
-            ดวงชั่วคราว — ยังไม่ได้บันทึก · ใช้งานได้โดยไม่ต้องล็อกอินระหว่างพัฒนา
+            ดวงชั่วคราว — ยังไม่ได้บันทึกถาวร · เก็บไว้เฉพาะในแท็บเบราว์เซอร์นี้
           </div>
         )}
 

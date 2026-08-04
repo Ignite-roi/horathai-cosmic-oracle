@@ -3,16 +3,16 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/_authenticated/premium")({
   head: () => ({
     meta: [
-      { title: "พรีเมียมฟรี 30 วัน | Horathai AI" },
+      { title: "แพ็กเกจวันใช้งาน | Horathai AI" },
       {
         name: "description",
         content:
-          "ปลดล็อกรายงานดวงเชิงลึก โหร AI ไม่จำกัด และพยากรณ์ดาวย้ายรายเดือน ทดลองฟรี 30 วัน",
+          "รายละเอียดแพ็กเกจวันใช้งาน ราคา และสถานะการเชื่อม Payment Gateway ของ Horathai AI",
       },
-      { property: "og:title", content: "พรีเมียมฟรี 30 วัน | Horathai AI" },
+      { property: "og:title", content: "แพ็กเกจวันใช้งาน | Horathai AI" },
       {
         property: "og:description",
-        content: "ไม่ต้องใช้บัตรเครดิต ยกเลิกได้ทุกเมื่อ พร้อมรายงานดวงเชิงลึกฉบับเต็ม",
+        content: "ดูราคาและเงื่อนไขแพ็กเกจ โดยยังไม่เปิดรับชำระเงินจริงในรอบตรวจเว็บไซต์",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

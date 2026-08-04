@@ -1,23 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { getRequestIP } from "@tanstack/react-start/server";
 
-const BirthInput = z.object({
-  birthDate: z.string().min(4),
-  birthTime: z.string().default("12:00"),
-  province: z.string().default("กรุงเทพมหานคร"),
-  timezone: z.string().default("Asia/Bangkok"),
-  /** ISO timestamp to evaluate transits at; defaults to now */
-  at: z.string().optional(),
-});
+import { PublicReadingInput } from "./astro.schemas";
 
 export const getReading = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => BirthInput.parse(input))
+  .inputValidator((input: unknown) => PublicReadingInput.parse(input))
   .handler(async ({ data }) => {
+    const { assertPublicRateLimit } = await import("./public-rate-limit.server");
+    assertPublicRateLimit("public-reading", getRequestIP({ xForwardedFor: true }) ?? "unknown", 30);
     const { computeChart, buildReading } = await import("./ephemeris.server");
     const { findProvince } = await import("./provinces");
 
     const { zonedWallClockToUtc } = await import("./timezone");
     const place = findProvince(data.province);
+    if (!place) throw new Error("ไม่พบจังหวัดที่เลือก");
     // Real zone offset for the birth instant, not a fixed assumption.
     const birth = zonedWallClockToUtc(
       data.birthDate,
@@ -26,6 +22,9 @@ export const getReading = createServerFn({ method: "POST" })
     );
     const when = data.at ? new Date(data.at) : new Date();
     if (Number.isNaN(birth.getTime())) throw new Error("รูปแบบวันเกิดไม่ถูกต้อง");
+    if (Number.isNaN(when.getTime())) throw new Error("วันที่ดาวจรไม่ถูกต้อง");
+    if (birth.getTime() > Date.now()) throw new Error("วันเกิดต้องไม่เป็นวันในอนาคต");
+    if (birth.getUTCFullYear() < 1900) throw new Error("ปีเกิดต้องไม่เก่ากว่า พ.ศ. ๒๔๔๓");
 
     const natal = computeChart(birth, place.lat, place.lon);
     const transit = computeChart(when, place.lat, place.lon);
