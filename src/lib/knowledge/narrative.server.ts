@@ -1,4 +1,12 @@
 import type { KnowledgeRule, RuleMatch } from "./types";
+import { deterministicHash } from "./canonical-json.server";
+
+export type SentenceLineage = {
+  sentence: string;
+  outcomeId: string;
+  ruleId: string;
+  citationIds: string[];
+};
 
 export type DeterministicNarrative = {
   headline: string;
@@ -6,6 +14,9 @@ export type DeterministicNarrative = {
   trace: RuleMatch[];
   limitations: string[];
   renderer: "horathai_template_th_v1";
+  rendererVersion: "1.1.0-draft";
+  sentenceLineage: SentenceLineage[];
+  outputHash: string;
 };
 
 function outcomeText(rule: KnowledgeRule): string {
@@ -24,11 +35,17 @@ export function renderThaiNarrative(
     const rule = byId.get(match.ruleId);
     return rule ? [outcomeText(rule)] : [];
   });
+  const sentenceLineage = matches.flatMap((match) => {
+    const rule = byId.get(match.ruleId);
+    return rule
+      ? [{ sentence: outcomeText(rule), outcomeId: match.outcomeId, ruleId: match.ruleId, citationIds: match.citations.map((citation) => citation.id) }]
+      : [];
+  });
   const limitations = Array.from(
     new Set([...factSheetLimitations, ...matches.flatMap((match) => match.limitations)]),
   );
 
-  return {
+  const narrative = {
     headline: matches.length
       ? `พบประเด็นสำคัญ ${matches.length} ข้อ`
       : "ยังไม่พบกฎที่ตรงกับข้อมูลชุดนี้",
@@ -38,5 +55,8 @@ export function renderThaiNarrative(
     trace: matches,
     limitations,
     renderer: "horathai_template_th_v1",
-  };
+    rendererVersion: "1.1.0-draft",
+    sentenceLineage,
+  } as const;
+  return { ...narrative, outputHash: deterministicHash(narrative) };
 }
