@@ -77,7 +77,7 @@ export function CinematicHero({
 
         <div className="mt-5 space-y-2.5">
           <Link
-            to={isDemo ? "/onboarding" : "/chart"}
+            to={isDemo ? "/onboarding" : "/birth-chart"}
             className="press gold-metal flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-semibold"
           >
             <Sparkles className="h-4 w-4" strokeWidth={2} />
