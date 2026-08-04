@@ -15,7 +15,7 @@ function StarField({ count, tint }: { count: number; tint: string }) {
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = r * Math.cos(phi) - 8;
-      sizes[i] = 0.02 + Math.random() * 0.07;
+      sizes[i] = 0.015 + Math.random() * 0.05;
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
@@ -34,10 +34,10 @@ function StarField({ count, tint }: { count: number; tint: string }) {
     <points ref={ref} geometry={geometry}>
       <pointsMaterial
         color={tint}
-        size={0.06}
+        size={0.045}
         sizeAttenuation
         transparent
-        opacity={0.85}
+        opacity={0.62}
         depthWrite={false}
         blending={THREE.AdditiveBlending}
       />
@@ -63,7 +63,7 @@ function Nebula({ hue, energy }: { hue: string; energy: number }) {
           <meshBasicMaterial
             color={hue}
             transparent
-            opacity={0.05 + energy * 0.05}
+            opacity={0.03 + energy * 0.05}
             blending={THREE.AdditiveBlending}
             depthWrite={false}
           />
