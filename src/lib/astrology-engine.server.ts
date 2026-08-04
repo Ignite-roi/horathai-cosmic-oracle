@@ -103,7 +103,17 @@ export type AscendantResult = {
 };
 
 /** Exaltation sign per planet (อุจจ์) in the Thai system. */
-const EXALTATION: Record<number, number> = { 1: 1, 2: 2, 3: 10, 4: 6, 5: 4, 6: 12, 7: 7, 8: 3, 9: 9 };
+const EXALTATION: Record<number, number> = {
+  1: 1,
+  2: 2,
+  3: 10,
+  4: 6,
+  5: 4,
+  6: 12,
+  7: 7,
+  8: 3,
+  9: 9,
+};
 /** Debilitation is the opposite sign (นิจ). */
 const debilitation = (n: number) => (((EXALTATION[n] ?? 1) + 5) % 12) + 1;
 
@@ -182,9 +192,7 @@ export async function calculateNatal(input: BirthInput): Promise<NatalChartPaylo
 
   // Without an exact birth time the rising degree is undetermined; we compute
   // planets (which move slowly enough to stay meaningful) but return no ลัคนา.
-  const asc = input.birthTimeKnown
-    ? ascendantDetail(utc, input.latitude, input.longitude)
-    : null;
+  const asc = input.birthTimeKnown ? ascendantDetail(utc, input.latitude, input.longitude) : null;
 
   const ascendant: AscendantResult | null = asc
     ? {
@@ -206,7 +214,10 @@ export async function calculateNatal(input: BirthInput): Promise<NatalChartPaylo
     planets,
     // Whole-sign houses counted from the ascendant sign; when the time is
     // unknown they are counted from the Moon sign and labelled as such in UI.
-    houses: buildHouses(ascendant?.signId ?? planets.find((p) => p.num === 2)?.signId ?? 1, planets),
+    houses: buildHouses(
+      ascendant?.signId ?? planets.find((p) => p.num === 2)?.signId ?? 1,
+      planets,
+    ),
     standards: buildStandards(planets),
     calculationVersion: CALCULATION_VERSION,
     engine: ENGINE_LABEL,

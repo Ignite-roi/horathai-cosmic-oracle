@@ -35,7 +35,7 @@ export type MajorTransit = {
 
 /** House of a longitude counted from the natal ascendant (presentation only). */
 export function houseFromAscendant(longitude: number, ascendant: number) {
-  const delta = ((longitude - ascendant) % 360 + 360) % 360;
+  const delta = (((longitude - ascendant) % 360) + 360) % 360;
   return Math.floor(delta / 30) + 1;
 }
 
@@ -79,7 +79,14 @@ export function useHomeReading() {
 
   const results = useQueries({
     queries: offsets.map((offset) => ({
-      queryKey: ["home-reading", input.birthDate, input.birthTime, input.province, offset, isoAt(offset)],
+      queryKey: [
+        "home-reading",
+        input.birthDate,
+        input.birthTime,
+        input.province,
+        offset,
+        isoAt(offset),
+      ],
       staleTime: 1000 * 60 * 30,
       queryFn: () =>
         fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>,

@@ -6,7 +6,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const BirthProfileInput = z.object({
   nickname: z.string().trim().min(1, "กรุณากรอกชื่อเล่น").max(40),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "รูปแบบวันเกิดไม่ถูกต้อง"),
-  birth_time: z.string().regex(/^\d{2}:\d{2}$/, "รูปแบบเวลาเกิดไม่ถูกต้อง").optional(),
+  birth_time: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "รูปแบบเวลาเกิดไม่ถูกต้อง")
+    .optional(),
   birth_time_known: z.boolean(),
   country: z.string().trim().min(1).max(60),
   province: z.string().trim().min(1, "กรุณาเลือกจังหวัด").max(60),
@@ -129,7 +132,7 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
       locality: data.district?.trim() || data.province,
       birth_time_estimated: !data.birth_time_known,
       utc_birth_datetime: new Date(
-        `${data.birth_date}T${(data.birth_time_known ? (data.birth_time ?? "12:00") : "12:00")}:00+07:00`,
+        `${data.birth_date}T${data.birth_time_known ? (data.birth_time ?? "12:00") : "12:00"}:00+07:00`,
       ).toISOString(),
       calculation_system: "sidereal_lahiri_dev",
       calculation_settings_json: {

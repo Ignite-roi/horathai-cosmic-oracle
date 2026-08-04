@@ -47,7 +47,14 @@ export function zonedWallClockToUtc(date: string, time: string, timeZone: string
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   const t = /^(\d{2}):(\d{2})$/.exec(time);
   if (!m || !t) throw new Error("รูปแบบวันเวลาเกิดไม่ถูกต้อง");
-  const naive = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(t[1]), Number(t[2]), 0);
+  const naive = Date.UTC(
+    Number(m[1]),
+    Number(m[2]) - 1,
+    Number(m[3]),
+    Number(t[1]),
+    Number(t[2]),
+    0,
+  );
   if (Number(t[1]) > 23 || Number(t[2]) > 59) throw new Error("เวลาเกิดไม่ถูกต้อง");
 
   let utc = naive - offsetMinutesAt(naive, timeZone) * 60000;

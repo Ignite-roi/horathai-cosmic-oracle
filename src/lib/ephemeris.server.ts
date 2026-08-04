@@ -286,7 +286,14 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
         if (orb <= asp.orb) {
           const benefic =
             asp.kind === "conjunction" ? BENEFIC.has(a.num) && BENEFIC.has(b.num) : asp.benefic;
-          aspects.push({ a: a.num, b: b.num, kind: asp.kind, angle: asp.angle, orb: Math.round(orb * 10) / 10, benefic });
+          aspects.push({
+            a: a.num,
+            b: b.num,
+            kind: asp.kind,
+            angle: asp.angle,
+            orb: Math.round(orb * 10) / 10,
+            benefic,
+          });
           break;
         }
       }
@@ -372,7 +379,9 @@ export function scoreAreas(natal: ChartResult, transit: ChartResult): AreaScore[
       if (!keys.includes(np.num)) continue;
       if (houses.includes(np.house)) {
         score += Math.round(np.strength * 12);
-        reasons.push(`ดวงกำเนิดมีดาว${np.th}สถิต${HOUSES[np.house - 1]!.th} เป็นพื้นดวงที่ดีของ${th}`);
+        reasons.push(
+          `ดวงกำเนิดมีดาว${np.th}สถิต${HOUSES[np.house - 1]!.th} เป็นพื้นดวงที่ดีของ${th}`,
+        );
       }
     }
 
@@ -415,7 +424,13 @@ export function buildReading(natal: ChartResult, transit: ChartResult): ReadingR
   highlights.push({
     title: `จันทร์จรราศี${moon.signTh}`,
     body: `อารมณ์ประจำวันถูกปรับด้วยธาตุ${moon.element} เหมาะกับการ${
-      moon.element === "ไฟ" ? "ลงมือทำอย่างเด็ดขาด" : moon.element === "ดิน" ? "จัดระเบียบและวางแผนระยะยาว" : moon.element === "ลม" ? "เจรจาและติดต่อสื่อสาร" : "ดูแลจิตใจและคนใกล้ตัว"
+      moon.element === "ไฟ"
+        ? "ลงมือทำอย่างเด็ดขาด"
+        : moon.element === "ดิน"
+          ? "จัดระเบียบและวางแผนระยะยาว"
+          : moon.element === "ลม"
+            ? "เจรจาและติดต่อสื่อสาร"
+            : "ดูแลจิตใจและคนใกล้ตัว"
     }`,
     tone: "neutral",
   });

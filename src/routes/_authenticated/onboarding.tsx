@@ -1,7 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin, User } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  Clock,
+  MapPin,
+  User,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
@@ -18,7 +26,10 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
     meta: [
       { title: "เริ่มต้นผูกดวง | Horathai AI" },
-      { name: "description", content: "กรอกวันเวลาเกิดและสถานที่เกิด เพื่อคำนวณผังดวงโหราศาสตร์ไทยของคุณ" },
+      {
+        name: "description",
+        content: "กรอกวันเวลาเกิดและสถานที่เกิด เพื่อคำนวณผังดวงโหราศาสตร์ไทยของคุณ",
+      },
       { property: "og:title", content: "เริ่มต้นผูกดวง | Horathai AI" },
       { property: "og:description", content: "ผูกดวงกำเนิดด้วยหลักสุริยยาตร์ ภายใน 5 ขั้นตอน" },
       { property: "og:type", content: "website" },
@@ -50,7 +61,15 @@ function SkyOrb() {
   );
 }
 
-function Field({ label, icon: Icon, children }: { label: string; icon: typeof Clock; children: React.ReactNode }) {
+function Field({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string;
+  icon: typeof Clock;
+  children: React.ReactNode;
+}) {
   return (
     <label className="surface-inset block rounded-2xl p-4">
       <span className="flex items-center gap-2 text-[11px] text-muted-foreground">
@@ -109,7 +128,8 @@ function Onboarding() {
   }, [context, account, hydrated]);
 
   const stepValid = useMemo(() => {
-    if (step === 0) return form.nickname.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(form.birth_date);
+    if (step === 0)
+      return form.nickname.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(form.birth_date);
     if (step === 1) return !form.birth_time_known || /^\d{2}:\d{2}$/.test(form.birth_time);
     if (step === 2) return form.province.trim().length > 0;
     return true;
@@ -195,9 +215,17 @@ function Onboarding() {
 
         <AnimatePresence mode="wait">
           {step === 0 && (
-            <motion.div key="s0" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="space-y-3">
+            <motion.div
+              key="s0"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              className="space-y-3"
+            >
               <h1 className="display text-2xl font-semibold text-gold">เริ่มผูกดวงกำเนิด</h1>
-              <p className="pb-1 text-xs text-muted-foreground">บอกชื่อที่อยากให้เราเรียก และวันเกิดของคุณ</p>
+              <p className="pb-1 text-xs text-muted-foreground">
+                บอกชื่อที่อยากให้เราเรียก และวันเกิดของคุณ
+              </p>
               <Field label="ชื่อเล่น" icon={User}>
                 <input
                   className={inputCls}
@@ -219,9 +247,17 @@ function Onboarding() {
           )}
 
           {step === 1 && (
-            <motion.div key="s1" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="space-y-3">
+            <motion.div
+              key="s1"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              className="space-y-3"
+            >
               <h1 className="display text-2xl font-semibold text-gold">เวลาเกิด</h1>
-              <p className="pb-1 text-xs text-muted-foreground">ยิ่งเวลาแม่นยำ ลัคนาและเรือนชะตายิ่งตรง</p>
+              <p className="pb-1 text-xs text-muted-foreground">
+                ยิ่งเวลาแม่นยำ ลัคนาและเรือนชะตายิ่งตรง
+              </p>
               <Field label="เวลาเกิด" icon={Clock}>
                 <input
                   type="time"
@@ -236,15 +272,25 @@ function Onboarding() {
                 className="press surface-inset flex w-full items-center justify-between rounded-2xl px-4 py-3 text-[13px] text-foreground"
               >
                 <span>ไม่ทราบเวลาเกิด (ใช้เที่ยงวันแทน)</span>
-                <span className={`h-5 w-9 rounded-full transition-colors ${form.birth_time_known ? "bg-muted" : "bg-primary"}`}>
-                  <span className={`block h-5 w-5 rounded-full bg-background transition-transform ${form.birth_time_known ? "" : "translate-x-4"}`} />
+                <span
+                  className={`h-5 w-9 rounded-full transition-colors ${form.birth_time_known ? "bg-muted" : "bg-primary"}`}
+                >
+                  <span
+                    className={`block h-5 w-5 rounded-full bg-background transition-transform ${form.birth_time_known ? "" : "translate-x-4"}`}
+                  />
                 </span>
               </button>
             </motion.div>
           )}
 
           {step === 2 && (
-            <motion.div key="s2" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="space-y-3">
+            <motion.div
+              key="s2"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              className="space-y-3"
+            >
               <h1 className="display text-2xl font-semibold text-gold">สถานที่เกิด</h1>
               <p className="pb-1 text-xs text-muted-foreground">ใช้พิกัดจังหวัดเพื่อคำนวณลัคนา</p>
               <Field label="จังหวัดที่เกิด" icon={MapPin}>
@@ -276,13 +322,22 @@ function Onboarding() {
           )}
 
           {step === 3 && (
-            <motion.div key="s3" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="space-y-3">
+            <motion.div
+              key="s3"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              className="space-y-3"
+            >
               <h1 className="display text-2xl font-semibold text-gold">ตรวจทานข้อมูล</h1>
               <div className="surface-card space-y-3 rounded-2xl p-5 text-[13px]">
                 {[
                   ["ชื่อเล่น", form.nickname],
                   ["วันเกิด", form.birth_date],
-                  ["เวลาเกิด", form.birth_time_known ? form.birth_time + " น." : "ไม่ทราบเวลา (เที่ยงวัน)"],
+                  [
+                    "เวลาเกิด",
+                    form.birth_time_known ? form.birth_time + " น." : "ไม่ทราบเวลา (เที่ยงวัน)",
+                  ],
                   ["จังหวัด", form.province],
                   ["อำเภอ/เขต", form.district || "—"],
                   ["ประเทศ", form.country],
@@ -301,14 +356,25 @@ function Onboarding() {
           )}
 
           {step === 4 && !result && (
-            <motion.div key="s4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-4 text-center">
+            <motion.div
+              key="s4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="pt-4 text-center"
+            >
               <div className="h-[300px] w-full overflow-hidden rounded-3xl border border-primary/15">
                 <SkyOrb />
               </div>
               <h2 className="display mt-6 text-xl font-semibold text-gold">กำลังผูกดวงกำเนิด</h2>
-              <p className="mt-1 text-xs text-muted-foreground">คำนวณสมผุสดาวและลัคนา · {progress}%</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                คำนวณสมผุสดาวและลัคนา · {progress}%
+              </p>
               <div className="mx-auto mt-4 h-1.5 w-56 overflow-hidden rounded-full bg-muted">
-                <motion.div className="btn-gold h-full" animate={{ width: `${progress}%` }} transition={{ ease: "linear", duration: 0.1 }} />
+                <motion.div
+                  className="btn-gold h-full"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ ease: "linear", duration: 0.1 }}
+                />
               </div>
             </motion.div>
           )}
@@ -366,14 +432,21 @@ function ChartResult({
   const utc = chart.utc_birth_datetime ? new Date(chart.utc_birth_datetime) : null;
 
   return (
-    <motion.div key="done" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+    <motion.div
+      key="done"
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-4"
+    >
       <h1 className="display text-2xl font-semibold text-gold">ผูกดวงสำเร็จ</h1>
 
       <div className="surface-card rounded-2xl p-5 text-center">
         <p className="text-[11px] tracking-[0.2em] text-primary/70">ลัคนา</p>
         {chart.ascendant_known ? (
           <>
-            <p className="display mt-1 text-3xl font-semibold text-gold">ราศี{chart.ascendant_sign}</p>
+            <p className="display mt-1 text-3xl font-semibold text-gold">
+              ราศี{chart.ascendant_sign}
+            </p>
             <p className="numeral mt-1 text-[12px] text-muted-foreground">
               {asc.degree ?? 0}° {String(asc.minute ?? 0).padStart(2, "0")}′ ·{" "}
               {(asc.siderealLongitude ?? chart.ascendant_degree).toFixed(2)}° นิรายนะ
@@ -397,7 +470,10 @@ function ChartResult({
                 ? `${chart.latitude.toFixed(2)}°N, ${chart.longitude.toFixed(2)}°E`
                 : "—",
             ],
-            ["ระบบเรือน", chart.house_system === "whole_sign" ? "ราศีเต็มดวง (whole sign)" : chart.house_system],
+            [
+              "ระบบเรือน",
+              chart.house_system === "whole_sign" ? "ราศีเต็มดวง (whole sign)" : chart.house_system,
+            ],
             ["อายนางศะ (ลาหิรี)", chart.ayanamsa !== null ? `${chart.ayanamsa.toFixed(4)}°` : "—"],
             ["เอนจิน", `${chart.engine_type} · ${chart.calculation_version}`],
           ] as const
@@ -410,7 +486,10 @@ function ChartResult({
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onEdit} className="press surface-inset h-14 flex-1 rounded-2xl text-[14px] text-foreground">
+        <button
+          onClick={onEdit}
+          className="press surface-inset h-14 flex-1 rounded-2xl text-[14px] text-foreground"
+        >
           แก้ไขข้อมูลเกิด
         </button>
         <button
