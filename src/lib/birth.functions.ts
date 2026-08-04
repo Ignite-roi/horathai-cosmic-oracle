@@ -2,14 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { CivilTimeSchema } from "@/lib/civil-time";
 
 const BirthProfileInput = z.object({
   nickname: z.string().trim().min(1, "กรุณากรอกชื่อเล่น").max(40),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "รูปแบบวันเกิดไม่ถูกต้อง"),
-  birth_time: z
-    .string()
-    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "รูปแบบเวลาเกิดไม่ถูกต้อง")
-    .optional(),
+  birth_time: CivilTimeSchema.optional(),
   birth_time_known: z.boolean(),
   country: z.string().trim().min(1).max(60),
   province: z.string().trim().min(1, "กรุณาเลือกจังหวัด").max(60),

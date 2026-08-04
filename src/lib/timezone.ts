@@ -45,7 +45,7 @@ export function isValidTimeZone(timeZone: string): boolean {
 export function zonedWallClockToUtc(date: string, time: string, timeZone: string): Date {
   if (!isValidTimeZone(timeZone)) throw new Error(`โซนเวลาไม่ถูกต้อง: ${timeZone}`);
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  const t = /^(\d{2}):(\d{2})$/.exec(time);
+  const t = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(time);
   if (!m || !t) throw new Error("รูปแบบวันเวลาเกิดไม่ถูกต้อง");
   const naive = Date.UTC(
     Number(m[1]),
@@ -55,8 +55,6 @@ export function zonedWallClockToUtc(date: string, time: string, timeZone: string
     Number(t[2]),
     0,
   );
-  if (Number(t[1]) > 23 || Number(t[2]) > 59) throw new Error("เวลาเกิดไม่ถูกต้อง");
-
   let utc = naive - offsetMinutesAt(naive, timeZone) * 60000;
   utc = naive - offsetMinutesAt(utc, timeZone) * 60000;
   const result = new Date(utc);

@@ -2,11 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { CivilTimeSchema } from "@/lib/civil-time";
 
 const ProfileInput = z.object({
   display_name: z.string().min(1).max(80).optional(),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  birth_time: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+  birth_time: CivilTimeSchema.optional(),
   province: z.string().min(1).max(80).optional(),
   country: z.string().min(1).max(80).optional(),
   onboarded: z.boolean().optional(),

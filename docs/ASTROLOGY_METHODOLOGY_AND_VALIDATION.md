@@ -24,7 +24,11 @@ The previously owner-approved Horathai acceptance case gives sidereal ascendant 
 
 This case has **not yet been independently reproduced with Swiss Ephemeris in the build environment**. It is therefore a transparent regression fixture, not an independent accuracy benchmark. Independent Swiss/JPL multi-epoch reproduction remains pending.
 
-The distinct civil input `5 May 1988 24:00` normalizes to `6 May 1988 00:00`; it must never be conflated with the midnight at the start of 5 May.
+## Thai civil-time input contract
+
+All Thai user-facing birth-time inputs and displays use 24-hour civil time in canonical `HH:mm` form (`00:00`–`23:59`). `00:00` means midnight and `12:00` means noon. The canonical birth-time boundary rejects day-period strings and `24:00`; an end-of-day value must be entered explicitly as `00:00` on the following civil date. Display formatters use `th-TH-u-hc-h23` with `hour12: false`. This presentation/validation contract does not alter the existing IANA timezone conversion or UTC calculation pipeline.
+
+Rollback: revert the shared civil-time schema/formatter and 24-hour selector changes together. Do not roll back or modify timezone conversion, UTC provenance, or astrology calculation code.
 
 ## Tolerances and limits
 

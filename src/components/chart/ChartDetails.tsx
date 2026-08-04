@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { HOUSES, PLANET_BY_NUM, ZODIACS, formatDegree, thaiDate } from "@/lib/astro";
 import type { ChartHouse, ChartPlanet, PlanetStandard } from "@/lib/astrology-engine.server";
 import type { BirthProfileRow, NatalChartRow } from "@/lib/birth.functions";
+import { formatThaiDateTime } from "@/lib/civil-time";
 
 export function AscendantRevealCard({ ascendant, houseSystem }: { ascendant: { signId: number; signTh: string; degree: number; minute: number }; houseSystem: string }) {
   const zodiac = ZODIACS.find((z) => z.id === ascendant.signId);
@@ -17,7 +18,7 @@ export function PlanetPositionGrid({ planets, onSelect }: { planets: ChartPlanet
 }
 
 export function BirthDataCertificate({ profile, chart }: { profile: BirthProfileRow; chart: NatalChartRow }) {
-  const facts = [["ชื่อ",profile.nickname],["วันเกิด",thaiDate(new Date(`${profile.birth_date}T12:00:00`))],["เวลาเกิด",profile.birth_time_known ? `${profile.birth_time?.slice(0,5)} น. · เวลาจริง` : "ไม่ทราบเวลา"],["UTC ที่ใช้",chart.utc_birth_datetime ? new Date(chart.utc_birth_datetime).toISOString() : "—"],["สถานที่",`${profile.province}, ${profile.country}`],["พิกัด",`${profile.latitude.toFixed(4)}, ${profile.longitude.toFixed(4)}`],["Timezone",profile.timezone],["เอนจิน",chart.engine_type],["เวอร์ชัน",chart.calculation_version],["Lahiri ayanamsha",chart.ayanamsa === null ? "—" : `${chart.ayanamsa.toFixed(4)}°`],["ระบบภพ",chart.house_system],["คำนวณเมื่อ",new Date(chart.calculated_at).toLocaleString("th-TH")]];
+  const facts = [["ชื่อ",profile.nickname],["วันเกิด",thaiDate(new Date(`${profile.birth_date}T12:00:00`))],["เวลาเกิด",profile.birth_time_known ? `${profile.birth_time?.slice(0,5)} น. · เวลาจริง` : "ไม่ทราบเวลา"],["UTC ที่ใช้",chart.utc_birth_datetime ? new Date(chart.utc_birth_datetime).toISOString() : "—"],["สถานที่",`${profile.province}, ${profile.country}`],["พิกัด",`${profile.latitude.toFixed(4)}, ${profile.longitude.toFixed(4)}`],["Timezone",profile.timezone],["เอนจิน",chart.engine_type],["เวอร์ชัน",chart.calculation_version],["Lahiri ayanamsha",chart.ayanamsa === null ? "—" : `${chart.ayanamsa.toFixed(4)}°`],["ระบบภพ",chart.house_system],["คำนวณเมื่อ",formatThaiDateTime(chart.calculated_at)]];
   return <section className="surface-card grain mt-8 p-5"><SectionHeading kicker="Birth certificate" title="ใบรับรองข้อมูลดวง"/><div className="grid grid-cols-2 gap-x-4 gap-y-4">{facts.map(([label,value]) => <div key={label} className="min-w-0 border-b border-primary/10 pb-3"><p className="text-[10px] text-muted-foreground">{label}</p><p className="mt-1 break-words text-[12px] leading-5 text-foreground/85">{value}</p></div>)}</div><Button asChild variant="outline" className="mt-5 h-11 w-full rounded-xl border-primary/30"><Link to="/onboarding"><Edit3/>แก้ไขข้อมูลเกิด</Link></Button></section>;
 }
 

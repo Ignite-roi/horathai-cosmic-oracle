@@ -103,7 +103,7 @@ function WalletPage() {
                 {isLoading ? <p className="py-8 text-center text-xs text-muted-foreground">กำลังโหลด…</p> : data.transactions.length === 0 ? <p className="surface-card p-5 text-center text-xs text-muted-foreground">ยังไม่มีประวัติการรับหรือใช้วัน</p> : data.transactions.map((item) => (
                   <div key={item.id} className="surface-card flex items-center gap-3 p-4">
                     <span className="surface-inset grid h-10 w-10 place-items-center"><CircleDollarSign className="h-4 w-4 text-primary" /></span>
-                    <div className="min-w-0 flex-1"><p className="text-[13px] text-foreground">{transactionLabel(item.type)}</p><p className="truncate text-[10px] text-muted-foreground">{item.note ?? new Intl.DateTimeFormat("th-TH-u-ca-buddhist", { dateStyle: "medium" }).format(new Date(item.created_at))}</p></div>
+                    <div className="min-w-0 flex-1"><p className="text-[13px] text-foreground">{transactionLabel(item.type)}</p><p className="truncate text-[10px] text-muted-foreground">{item.note ?? formatThaiBuddhistDate(item.created_at)}</p></div>
                     <span className={`numeral text-sm ${item.days > 0 ? "text-primary" : "text-destructive"}`}>{item.days > 0 ? "+" : ""}{item.days.toLocaleString("th-TH")} วัน</span>
                   </div>
                 ))}

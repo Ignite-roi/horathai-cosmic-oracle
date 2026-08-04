@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
+import { Time24Field } from "@/components/Time24Field";
 import { useAccount, useSession } from "@/hooks/useAuth";
 import {
   calculateAndSaveChart,
@@ -24,6 +25,7 @@ import {
 import { PROVINCES } from "@/lib/provinces";
 import { calculateGuestBirthChart } from "@/lib/guest-birth.functions";
 import { readGuestBirthContext, writeGuestBirthContext } from "@/lib/guest-birth";
+import { isCivilTime } from "@/lib/civil-time";
 import { useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
@@ -142,7 +144,7 @@ function Onboarding() {
   const stepValid = useMemo(() => {
     if (step === 0)
       return form.nickname.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(form.birth_date);
-    if (step === 1) return !form.birth_time_known || /^\d{2}:\d{2}$/.test(form.birth_time);
+    if (step === 1) return !form.birth_time_known || isCivilTime(form.birth_time);
     if (step === 2) return form.province.trim().length > 0;
     return true;
   }, [step, form]);
@@ -303,12 +305,10 @@ function Onboarding() {
                 ยิ่งเวลาแม่นยำ ลัคนาและเรือนชะตายิ่งตรง
               </p>
               <Field label="เวลาเกิด" icon={Clock}>
-                <input
-                  type="time"
+                <Time24Field
                   disabled={!form.birth_time_known}
-                  className={`${inputCls} disabled:opacity-40`}
                   value={form.birth_time}
-                  onChange={(e) => setForm({ ...form, birth_time: e.target.value })}
+                  onChange={(birth_time) => setForm({ ...form, birth_time })}
                 />
               </Field>
               <button
