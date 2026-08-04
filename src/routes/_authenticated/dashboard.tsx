@@ -8,15 +8,19 @@ import { AppShell, PageTransition } from "@/components/AppShell";
 import { CinematicHero } from "@/components/home/CinematicHero";
 import {
   AstrologerConsult,
+  DemoCallout,
+  DevAccessNotice,
   DestinyTimeline,
   PremiumStatus,
   TimeTravelPreview,
   type DestinyPoint,
 } from "@/components/home/HomeSections";
 import { MajorTransitCard } from "@/components/home/MajorTransitCard";
+import { PlanetMovement, buildMovements } from "@/components/home/PlanetMovement";
 import { TodayScore } from "@/components/home/TodayScore";
 import { useLineAuth } from "@/context/LineAuthContext";
-import { LOOKAHEAD_DAYS, useHomeReading } from "@/hooks/useHomeReading";
+import { LOOKAHEAD_DAYS, LOOKBACK_DAYS, useHomeReading } from "@/hooks/useHomeReading";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { dailyCheckIn } from "@/lib/profile.functions";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
@@ -46,6 +50,7 @@ function Index() {
   const profile = useProfile();
   const checkIn = useProfile((s) => s.checkIn);
   const { isSignedIn } = useLineAuth();
+  const access = useFeatureAccess();
   const queryClient = useQueryClient();
   const { data, past, future, majorTransit, isDemo, isLoading } = useHomeReading();
   const [reward, setReward] = useState<number | null>(null);
@@ -79,6 +84,9 @@ function Index() {
   const consultQuestion = majorTransit
     ? `ดาว${majorTransit.planet.th}เข้า${HOUSES.find((h) => h.n === majorTransit.house)?.th ?? "ภพสำคัญ"} ผมควรระวังเรื่องอะไรบ้าง`
     : "ช่วงนี้ดวงการงานและการเงินของฉันเป็นอย่างไร";
+
+  const movements =
+    past && data ? buildMovements(past.transit, data.transit, data.natal.ascendant.longitude) : [];
 
   return (
     <AppShell
@@ -129,9 +137,9 @@ function Index() {
         </div>
 
         {isDemo && (
-          <p className="mt-3 text-center text-[11.5px] leading-relaxed text-muted-foreground">
-            ตัวเลขด้านล่างเป็นตัวอย่างจากดวงสาธิต ระบบยังไม่บันทึกเป็นดวงของคุณ
-          </p>
+          <div className="mt-4">
+            <DemoCallout />
+          </div>
         )}
 
         {/* C. today score */}
@@ -147,6 +155,13 @@ function Index() {
         {majorTransit && (
           <div className="mt-5">
             <MajorTransitCard transit={majorTransit} />
+          </div>
+        )}
+
+        {/* E. before / after planet movement */}
+        {movements.length > 0 && (
+          <div className="mt-5">
+            <PlanetMovement movements={movements} days={LOOKBACK_DAYS} />
           </div>
         )}
 
@@ -197,6 +212,13 @@ function Index() {
         <div className="mt-5">
           <PremiumStatus daysLeft={daysLeft} />
         </div>
+
+        {/* I. development full access notice */}
+        {access.unlockedForEveryone && (
+          <div className="mt-4">
+            <DevAccessNotice />
+          </div>
+        )}
       </PageTransition>
     </AppShell>
   );
