@@ -178,6 +178,19 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
     const b = birth.data as BirthProfileRow;
 
     const { calculateNatal, CALCULATION_VERSION } = await import("./astrology-engine.server");
+
+    // Fingerprint of every input that can change the result. Re-binding the
+    // same details reuses the stored chart instead of recalculating.
+    const inputHash = await fingerprint([
+      b.birth_date,
+      b.birth_time_known ? (b.birth_time ?? "") : "unknown",
+      String(b.birth_time_known),
+      b.latitude.toFixed(4),
+      b.longitude.toFixed(4),
+      b.timezone,
+      CALCULATION_VERSION,
+    ]);
+
     let payload;
     try {
       payload = await calculateNatal({
