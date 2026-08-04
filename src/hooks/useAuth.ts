@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   getLiffIdToken,
   initLiff,
+  isInsideLine,
   isLiffLoggedIn,
   liffLogin,
   liffLogout,
@@ -78,6 +79,7 @@ export function useLineAuth() {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<LineStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [inLine, setInLine] = useState(false);
   const { data: account } = useAccount();
   const setProfile = useProfile((s) => s.setProfile);
 
