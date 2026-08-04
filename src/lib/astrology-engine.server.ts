@@ -8,7 +8,10 @@
 import { HOUSES, PLANET_BY_NUM, ZODIACS, type PlacedPlanet } from "./astro";
 
 /** Bump when the calculation output changes; cached charts are recomputed. */
-export const CALCULATION_VERSION = "suriyayart-1.0.0";
+export const CALCULATION_VERSION = "sidereal-lahiri-dev-2.0.0";
+/** Honest label of what is actually implemented today. */
+export const ENGINE_LABEL = "sidereal_lahiri_dev";
+export const HOUSE_SYSTEM = "whole_sign";
 
 export type BirthInput = {
   birthDate: string; // YYYY-MM-DD (Gregorian)
@@ -16,7 +19,7 @@ export type BirthInput = {
   birthTimeKnown: boolean;
   latitude: number;
   longitude: number;
-  timezone: string; // IANA, currently Asia/Bangkok only
+  timezone: string; // IANA zone of the birthplace
 };
 
 export type ChartPlanet = {
@@ -66,13 +69,36 @@ export type TransitSummary = {
 };
 
 export type NatalChartPayload = {
-  ascendant: { signId: number; signTh: string; degree: number; longitude: number };
+  /** null when the birth time is unknown — no ลัคนา is fabricated. */
+  ascendant: AscendantResult | null;
+  ascendantKnown: boolean;
   planets: ChartPlanet[];
   houses: ChartHouse[];
   standards: PlanetStandard[];
   calculationVersion: string;
+  engine: string;
+  houseSystem: string;
+  ayanamsaName: string;
+  ayanamsa: number;
+  utcBirthDatetime: string;
+  utcOffset: string;
+  timezone: string;
+  latitude: number;
+  longitude: number;
   calculatedAt: string;
   birthTimeKnown: boolean;
+};
+
+export type AscendantResult = {
+  signId: number;
+  signTh: string;
+  degree: number;
+  minute: number;
+  longitude: number;
+  tropicalLongitude: number;
+  siderealLongitude: number;
+  ayanamsa: number;
+  julianDay: number;
 };
 
 /** Exaltation sign per planet (อุจจ์) in the Thai system. */
@@ -135,28 +161,62 @@ function buildStandards(planets: ChartPlanet[]): PlanetStandard[] {
   });
 }
 
-function birthMoment(input: BirthInput): Date {
+/** Validates the input and converts the local wall clock to a true UTC instant. */
+export function birthMoment(input: BirthInput): Date {
+  if (!Number.isFinite(input.latitude) || Math.abs(input.latitude) > 90) {
+    throw new Error("ละติจูดของสถานที่เกิดไม่ถูกต้อง");
+  }
+  if (!Number.isFinite(input.longitude) || Math.abs(input.longitude) > 180) {
+    throw new Error("ลองจิจูดของสถานที่เกิดไม่ถูกต้อง");
+  }
   const time = input.birthTimeKnown && input.birthTime ? input.birthTime : "12:00";
-  const d = new Date(`${input.birthDate}T${time}:00+07:00`);
-  if (Number.isNaN(d.getTime())) throw new Error("รูปแบบวันเวลาเกิดไม่ถูกต้อง");
-  return d;
+  return zonedWallClockToUtc(input.birthDate, time, input.timezone);
 }
 
 export async function calculateNatal(input: BirthInput): Promise<NatalChartPayload> {
-  const { computeChart } = await import("./ephemeris.server");
-  const chart = computeChart(birthMoment(input), input.latitude, input.longitude);
+  const { computeChart, ascendantDetail } = await import("./ephemeris.server");
+  const utc = birthMoment(input);
+  const chart = computeChart(utc, input.latitude, input.longitude);
   const planets = chart.planets.map(toPlanet);
+
+  // Without an exact birth time the rising degree is undetermined; we compute
+  // planets (which move slowly enough to stay meaningful) but return no ลัคนา.
+  const asc = input.birthTimeKnown
+    ? ascendantDetail(utc, input.latitude, input.longitude)
+    : null;
+
+  const ascendant: AscendantResult | null = asc
+    ? {
+        signId: asc.signId,
+        signTh: asc.signTh,
+        degree: asc.degree,
+        minute: asc.minute,
+        longitude: asc.siderealLongitude,
+        tropicalLongitude: asc.tropicalLongitude,
+        siderealLongitude: asc.siderealLongitude,
+        ayanamsa: asc.ayanamsa,
+        julianDay: asc.julianDay,
+      }
+    : null;
+
   return {
-    ascendant: {
-      signId: chart.ascendant.signId,
-      signTh: chart.ascendant.signTh,
-      degree: chart.ascendant.degree,
-      longitude: chart.ascendant.longitude,
-    },
+    ascendant,
+    ascendantKnown: Boolean(ascendant),
     planets,
-    houses: buildHouses(chart.ascendant.signId, planets),
+    // Whole-sign houses counted from the ascendant sign; when the time is
+    // unknown they are counted from the Moon sign and labelled as such in UI.
+    houses: buildHouses(ascendant?.signId ?? planets.find((p) => p.num === 2)?.signId ?? 1, planets),
     standards: buildStandards(planets),
     calculationVersion: CALCULATION_VERSION,
+    engine: ENGINE_LABEL,
+    houseSystem: HOUSE_SYSTEM,
+    ayanamsaName: "lahiri",
+    ayanamsa: chart.ayanamsa,
+    utcBirthDatetime: utc.toISOString(),
+    utcOffset: offsetLabel(utc, input.timezone),
+    timezone: input.timezone,
+    latitude: input.latitude,
+    longitude: input.longitude,
     calculatedAt: new Date().toISOString(),
     birthTimeKnown: input.birthTimeKnown,
   };
