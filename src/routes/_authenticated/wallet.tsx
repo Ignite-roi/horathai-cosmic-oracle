@@ -96,7 +96,7 @@ function WalletPage() {
                 <p className="mt-3 flex items-center gap-2 text-[12px] text-muted-foreground"><Clock3 className="h-4 w-4 text-primary" /> ใช้ได้ถึง {formatThaiBuddhistDate(data.expiresAt)}</p>
                 <div className="mt-5 flex items-center justify-between border-t border-border pt-4"><span className="flex items-center gap-2 text-[12px] text-muted-foreground"><Coins className="h-4 w-4 text-warning" /> แต้มสะสม</span><strong className="numeral text-gold">{data.points.toLocaleString("th-TH")} แต้ม</strong></div>
               </section>
-               <div className="mt-4 grid grid-cols-2 gap-2"><Button asChild variant="outline" className="h-12 rounded-2xl bg-background/45"><Link to="/invite">ชวนเพื่อน <ChevronRight /></Link></Button><Button asChild variant="outline" className="h-12 rounded-2xl bg-background/45"><Link to="/gift-days">โอนวัน <ChevronRight /></Link></Button></div>
+               <Button asChild variant="outline" className="mt-4 h-12 w-full rounded-2xl bg-background/45"><Link to="/invite">ชวนเพื่อนรับแต้ม <ChevronRight /></Link></Button>
               <SectionTitle kicker="History" title="ประวัติวันใช้งาน" />
               <div className="space-y-2.5">
                 {isLoading ? <p className="py-8 text-center text-xs text-muted-foreground">กำลังโหลด…</p> : data.transactions.length === 0 ? <p className="surface-card p-5 text-center text-xs text-muted-foreground">ยังไม่มีประวัติการรับหรือใช้วัน</p> : data.transactions.map((item) => (
