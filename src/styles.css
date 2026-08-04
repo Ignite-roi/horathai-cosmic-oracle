@@ -428,6 +428,44 @@
   animation: breathe 7s ease-in-out infinite;
 }
 
+/* ---------- Flagship natal orrery ---------- */
+.orrery-shell {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 49%, color-mix(in oklab, var(--royal) 34%, transparent), transparent 31%),
+    radial-gradient(circle at 18% 24%, color-mix(in oklab, var(--gold) 18%, transparent) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 18%, color-mix(in oklab, var(--gold-hot) 15%, transparent) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 76%, color-mix(in oklab, var(--ivory) 11%, transparent) 0 1px, transparent 2px),
+    linear-gradient(155deg, color-mix(in oklab, var(--indigo-deep) 92%, transparent), var(--void));
+  border: 1px solid color-mix(in oklab, var(--gold) 35%, transparent);
+  box-shadow: var(--shadow-e3), inset 0 1px 0 color-mix(in oklab, var(--gold-hot) 18%, transparent), inset 0 0 80px oklch(0 0 0 / 72%);
+}
+.orrery-ring { fill: none; stroke: color-mix(in oklab, var(--gold) 23%, transparent); stroke-width: .8; }
+.orrery-ring-strong { fill: none; stroke: color-mix(in oklab, var(--gold) 60%, transparent); stroke-width: 1.3; }
+.orrery-line { stroke: color-mix(in oklab, var(--gold) 27%, transparent); stroke-width: .7; }
+.orrery-zodiac { fill: var(--gold); font-family: var(--font-display); font-size: 17px; }
+.orrery-label { fill: color-mix(in oklab, var(--ivory) 82%, transparent); font-family: var(--font-thai); font-size: 8px; }
+.orrery-house { fill: color-mix(in oklab, var(--gold) 57%, transparent); font-family: var(--font-thai); font-size: 6px; }
+.orrery-leader { stroke: color-mix(in oklab, var(--gold) 22%, transparent); stroke-width: .7; stroke-dasharray: 2 3; }
+.orrery-planet-number { fill: var(--primary-foreground); font-family: var(--font-display); font-size: 8px; pointer-events: none; }
+.orrery-planet-label { fill: var(--ivory); font-family: var(--font-thai); font-size: 8px; paint-order: stroke; stroke: var(--void); stroke-width: 3px; stroke-linejoin: round; }
+.orrery-aspect-good { stroke: color-mix(in oklab, var(--success) 46%, transparent); stroke-width: .7; }
+.orrery-aspect-watch { stroke: color-mix(in oklab, var(--danger) 38%, transparent); stroke-width: .7; }
+.orrery-asc { stroke: var(--gold-hot); stroke-width: 1.4; stroke-dasharray: 5 4; filter: drop-shadow(0 0 4px var(--gold)); }
+.orrery-asc-marker { fill: var(--gold-hot); }
+.orrery-asc-label { fill: var(--gold-hot); font-family: var(--font-thai); font-size: 9px; paint-order: stroke; stroke: var(--void); stroke-width: 4px; }
+.orrery-center-label { fill: color-mix(in oklab, var(--ivory) 72%, transparent); font-family: var(--font-serif-thai); font-size: 8px; }
+.orrery-core { transform-origin: 240px 240px; animation: breathe 7s ease-in-out infinite; }
+.orrery-drift { transform-origin: 240px 240px; animation: orbit-spin 240s linear infinite; }
+.orrery-shell[data-motion="paused"] .orrery-drift,
+.orrery-shell[data-motion="paused"] .orrery-core { animation-play-state: paused; }
+.planet-card { border-radius: 14px; background: linear-gradient(155deg, color-mix(in oklab, var(--card) 90%, transparent), color-mix(in oklab, var(--void) 96%, transparent)); border: 1px solid color-mix(in oklab, var(--gold) 20%, transparent); box-shadow: inset 0 1px 0 color-mix(in oklab, var(--gold-hot) 9%, transparent), var(--shadow-e1); }
+.planet-sphere { display: inline-grid; height: 34px; width: 34px; flex-shrink: 0; place-items: center; border-radius: 999px; color: var(--planet-color); background: radial-gradient(circle at 30% 24%, color-mix(in oklab, var(--planet-color) 92%, var(--ivory)), color-mix(in oklab, var(--planet-color) 55%, var(--void)) 42%, var(--void) 82%); border: 1px solid color-mix(in oklab, var(--planet-color) 60%, transparent); box-shadow: 0 0 16px -5px var(--planet-color), inset 0 1px 0 color-mix(in oklab, var(--ivory) 35%, transparent); font-family: var(--font-display); }
+
+@media (prefers-reduced-motion: reduce) {
+  .orrery-drift, .orrery-core, .animate-orbit-spin, .animate-orbit-slow-rev, .animate-breathe { animation: none !important; }
+}
+
 @utility sheen {
   position: relative;
   overflow: hidden;
