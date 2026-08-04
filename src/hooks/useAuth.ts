@@ -5,11 +5,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getLiffIdToken,
+  getLiffContextType,
+  hasDecodedIdToken,
   initLiff,
   isInsideLine,
   isLiffLoggedIn,
   liffLogin,
   liffLogout,
+  liffReauthorize,
+  canAttemptReauthorization,
+  clearReauthorizationGuard,
+  missingIdTokenError,
   missingLiffIdError,
   resetLiffInitialization,
   sanitizeRedirectUrl,
@@ -39,6 +45,7 @@ export type LineStatus =
   | "authenticated"
   | "ready"
   | "configuration_error"
+  | "reauthorization_required"
   | "initialization_error";
 
 /** Session state driven by Cloud auth. */
