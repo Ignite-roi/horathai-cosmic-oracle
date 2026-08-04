@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { AlertTriangle, ChevronDown, ExternalLink, RefreshCw } from "lucide-react";
+import { AlertTriangle, ChevronDown, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { APP_ACCESS_MODE } from "@/config/access";
@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
         content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
-      { property: "og:description", content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE" },
+      {
+        property: "og:description",
+        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -63,7 +66,8 @@ function Orb({ label }: { label: string }) {
 /** Safe, secret-free diagnostics. Only rendered while access is unlocked. */
 function Diagnostics() {
   const [open, setOpen] = useState(false);
-  const { status, liffError, inLine, initialized, lineLoggedIn, configured } = useLineAuth();
+  const { status, liffError, inLine, initialized, lineLoggedIn, configured, diagnostics } =
+    useLineAuth();
   const { data: server } = useQuery({
     queryKey: ["liff-diagnostics"],
     queryFn: () => getLiffDiagnostics(),
@@ -90,6 +94,9 @@ function Diagnostics() {
     ["Inside LINE", inLine ? "yes" : "no"],
     ["LIFF initialized", initialized ? "yes" : "no"],
     ["LINE logged in", lineLoggedIn ? "yes" : "no"],
+    ["Has ID token", diagnostics.hasIdToken ? "yes" : "no"],
+    ["Has decoded ID token", diagnostics.hasDecodedIdToken ? "yes" : "no"],
+    ["Context type", diagnostics.contextType],
     ["Provider status", status],
     ["Error code", liffError?.code ?? "—"],
     ["Error message", liffError?.message ?? "—"],
@@ -120,7 +127,17 @@ function Diagnostics() {
 
 function Entry() {
   const navigate = useNavigate();
-  const { status, error, liffError, isSignedIn, login, retry, inLine } = useLineAuth();
+  const {
+    status,
+    error,
+    liffError,
+    isSignedIn,
+    login,
+    retry,
+    inLine,
+    needsReauthorization,
+    reauthorize,
+  } = useLineAuth();
   const { data: account } = useAccount();
 
   useEffect(() => {
@@ -156,6 +173,43 @@ function Entry() {
     );
 
   const isConfigError = status === "configuration_error";
+
+  if (needsReauthorization)
+    return (
+      <Shell>
+        <h1 className="display text-2xl text-foreground">ต้องอนุญาต LINE ใหม่</h1>
+        <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-4 text-left text-[12px] leading-relaxed text-foreground">
+          <p className="flex items-start gap-2">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              LINE เข้าสู่ระบบให้แล้ว แต่ยังไม่ได้มอบสิทธิ์ข้อมูลโปรไฟล์ (openid) ให้แอปนี้
+              ระบบจึงยังยืนยันตัวตนของคุณไม่ได้ กรุณากดปุ่มด้านล่างเพื่ออนุญาตใหม่อีกครั้ง
+            </span>
+          </p>
+          <p className="mt-2 text-[10px] tracking-[0.12em] text-muted-foreground">
+            {liffError?.code ?? "LINE_ID_TOKEN_MISSING"}
+          </p>
+        </div>
+
+        <button
+          onClick={() => void reauthorize()}
+          className="press btn-gold mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+        >
+          อนุญาต LINE ใหม่
+        </button>
+
+        {APP_ACCESS_MODE === "development_unlocked" && (
+          <Link
+            to="/transit"
+            className="press mt-3 inline-flex h-11 w-full items-center justify-center rounded-2xl border border-primary/30 text-[13px] text-foreground"
+          >
+            สำรวจแบบผู้เยี่ยมชมก่อน
+          </Link>
+        )}
+
+        <Diagnostics />
+      </Shell>
+    );
 
   return (
     <Shell>
