@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      birth_profiles: {
+        Row: {
+          birth_date: string
+          birth_time: string | null
+          birth_time_known: boolean
+          calculation_system: string
+          country: string
+          created_at: string
+          district: string | null
+          id: string
+          is_primary: boolean
+          latitude: number
+          longitude: number
+          nickname: string
+          province: string
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birth_date: string
+          birth_time?: string | null
+          birth_time_known?: boolean
+          calculation_system?: string
+          country?: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_primary?: boolean
+          latitude?: number
+          longitude?: number
+          nickname?: string
+          province?: string
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birth_date?: string
+          birth_time?: string | null
+          birth_time_known?: boolean
+          calculation_system?: string
+          country?: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_primary?: boolean
+          latitude?: number
+          longitude?: number
+          nickname?: string
+          province?: string
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       entitlements: {
         Row: {
           created_at: string
@@ -68,6 +125,53 @@ export type Database = {
         }
         Relationships: []
       }
+      natal_charts: {
+        Row: {
+          ascendant_degree: number
+          ascendant_sign: string
+          birth_profile_id: string
+          calculated_at: string
+          calculation_version: string
+          houses_json: Json
+          id: string
+          planets_json: Json
+          standards_json: Json
+          user_id: string
+        }
+        Insert: {
+          ascendant_degree?: number
+          ascendant_sign: string
+          birth_profile_id: string
+          calculated_at?: string
+          calculation_version?: string
+          houses_json?: Json
+          id?: string
+          planets_json?: Json
+          standards_json?: Json
+          user_id: string
+        }
+        Update: {
+          ascendant_degree?: number
+          ascendant_sign?: string
+          birth_profile_id?: string
+          calculated_at?: string
+          calculation_version?: string
+          houses_json?: Json
+          id?: string
+          planets_json?: Json
+          standards_json?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "natal_charts_birth_profile_id_fkey"
+            columns: ["birth_profile_id"]
+            isOneToOne: false
+            referencedRelation: "birth_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -77,9 +181,15 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          last_login_at: string | null
           line_user_id: string | null
           onboarded: boolean
+          onboarding_completed: boolean
+          picture_url: string | null
           province: string
+          subscription_status: string
+          trial_ends_at: string | null
+          trial_started_at: string | null
           updated_at: string
         }
         Insert: {
@@ -90,9 +200,15 @@ export type Database = {
           created_at?: string
           display_name?: string
           id: string
+          last_login_at?: string | null
           line_user_id?: string | null
           onboarded?: boolean
+          onboarding_completed?: boolean
+          picture_url?: string | null
           province?: string
+          subscription_status?: string
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -103,9 +219,15 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          last_login_at?: string | null
           line_user_id?: string | null
           onboarded?: boolean
+          onboarding_completed?: boolean
+          picture_url?: string | null
           province?: string
+          subscription_status?: string
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
         }
         Relationships: []
