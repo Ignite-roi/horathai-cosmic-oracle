@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Check, Crown, Gift, Sparkles, Trophy, Users } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
-import { useLineAuth } from "@/hooks/useAuth";
+import { useLineAuth } from "@/context/LineAuthContext";
 import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
