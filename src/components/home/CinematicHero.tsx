@@ -28,7 +28,11 @@ export function CinematicHero({
       {/* stage: orrery behind, astrologer in front */}
       <div className="relative h-[268px] w-full sm:h-[300px]">
         <div className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 opacity-90 sm:h-[340px] sm:w-[340px]">
-          <HeroOrrery planets={planets} ascendant={ascendant} {...(activePlanet ? { activeNum: activePlanet.num } : {})} />
+          <HeroOrrery
+            planets={planets}
+            ascendant={ascendant}
+            {...(activePlanet ? { activeNum: activePlanet.num } : {})}
+          />
         </div>
 
         <motion.div
@@ -37,7 +41,11 @@ export function CinematicHero({
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="absolute bottom-0 left-1/2 w-[146px] -translate-x-1/2 sm:w-[164px]"
         >
-          <AstrologerHero variant="hero" priority className="drop-shadow-[0_24px_48px_oklch(0_0_0/0.7)]" />
+          <AstrologerHero
+            variant="hero"
+            priority
+            className="drop-shadow-[0_24px_48px_oklch(0_0_0/0.7)]"
+          />
         </motion.div>
 
         {activePlanet && (
@@ -77,7 +85,7 @@ export function CinematicHero({
 
         <div className="mt-5 space-y-2.5">
           <Link
-            to={isDemo ? "/onboarding" : "/chart"}
+            to={isDemo ? "/onboarding" : "/birth-chart"}
             className="press gold-metal flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-semibold"
           >
             <Sparkles className="h-4 w-4" strokeWidth={2} />
