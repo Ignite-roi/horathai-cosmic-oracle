@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -165,6 +166,11 @@ function PremiumPage() {
           <button className="rounded-full bg-[#06C755] px-4 py-2 text-xs font-semibold text-white">
             ชวนเลย
           </button>
+        </div>
+
+        <div className="mt-5 flex justify-center gap-4 text-[11px] text-muted-foreground">
+          <Link to="/terms" className="underline underline-offset-4">ข้อกำหนดการใช้งาน</Link>
+          <Link to="/privacy" className="underline underline-offset-4">นโยบายความเป็นส่วนตัว</Link>
         </div>
 
         <AnimatePresence>
