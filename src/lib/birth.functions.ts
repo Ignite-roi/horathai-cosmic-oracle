@@ -63,6 +63,14 @@ const BIRTH_COLUMNS =
 const CHART_COLUMNS =
   "id, ascendant_sign, ascendant_degree, planets_json, houses_json, standards_json, calculation_version, calculated_at, ascendant_json, ascendant_known, utc_birth_datetime, timezone, latitude, longitude, house_system, ayanamsa, engine_type, input_hash";
 
+/** Stable SHA-256 fingerprint of the calculation inputs. */
+async function fingerprint(parts: string[]): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(parts.join("|")));
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 /** The user's saved birth profile plus its cached natal chart. */
 export const getMyBirthContext = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
