@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import { Check, Crown, Gift, Sparkles, Trophy, Users } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
 import { useLineAuth } from "@/context/LineAuthContext";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
@@ -32,18 +35,36 @@ const PERKS = [
 function PremiumPage() {
   const { premiumTrialStartedAt, startTrial, points, streak } = useProfile();
   const { isSignedIn, login } = useLineAuth();
+  const access = useFeatureAccess();
+  const queryClient = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [trialError, setTrialError] = useState<string | null>(null);
   const daysLeft = trialDaysLeft(premiumTrialStartedAt);
 
+  /** Opens the confirmation dialog — the trial never starts automatically. */
   const handleStartTrial = async () => {
+    setTrialError(null);
     if (!isSignedIn) {
       const ok = await login();
       if (!ok) return;
     }
-    startTrial();
+    setConfirmOpen(true);
+  };
+
+  const confirmTrial = async () => {
+    setPending(true);
+    setTrialError(null);
     try {
-      await startPremiumTrial();
+      await startPremiumTrial({ data: { confirm: true } });
+      startTrial();
+      await queryClient.invalidateQueries({ queryKey: ["account"] });
+      setConfirmOpen(false);
     } catch (err) {
       console.error("[trial] start failed", err);
+      setTrialError("เริ่มทดลองใช้ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setPending(false);
     }
   };
 
@@ -62,6 +83,11 @@ function PremiumPage() {
           <p className="mt-3 text-[11px] uppercase tracking-[0.34em] text-primary/80">Free Premium</p>
           <h1 className="display mt-1 text-4xl font-bold text-gold">30 วัน</h1>
           <p className="mt-2 text-xs text-muted-foreground">ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ</p>
+          {access.unlockedForEveryone && (
+            <p className="mt-2 text-[11px] text-primary/80">
+              ช่วงพัฒนา: ทุกฟีเจอร์เปิดให้ใช้ฟรีอยู่แล้ว การเริ่มทดลองใช้เป็นการยืนยันด้วยตัวคุณเอง
+            </p>
+          )}
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={handleStartTrial}
