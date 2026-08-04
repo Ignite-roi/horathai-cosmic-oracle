@@ -17,6 +17,8 @@ export const PUBLIC_REVIEW_ROUTES = [
   "/transits",
   "/ai-astrologer",
   "/premium",
+  "/wallet",
+  "/invite",
   "/settings",
 ] as const;
 

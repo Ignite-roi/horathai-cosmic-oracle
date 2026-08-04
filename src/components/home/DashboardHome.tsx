@@ -11,7 +11,7 @@ import {
   DemoCallout,
   DevAccessNotice,
   DestinyTimeline,
-  PremiumStatus,
+  DayWalletStatus,
   TimeTravelPreview,
   type DestinyPoint,
 } from "@/components/home/HomeSections";
@@ -21,9 +21,10 @@ import { TodayScore } from "@/components/home/TodayScore";
 import { useLineAuth } from "@/context/LineAuthContext";
 import { LOOKAHEAD_DAYS, LOOKBACK_DAYS, useHomeReading } from "@/hooks/useHomeReading";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useWallet } from "@/hooks/useWallet";
 import { dailyCheckIn } from "@/lib/profile.functions";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
-import { trialDaysLeft, useProfile } from "@/store/useProfile";
+import { useProfile } from "@/store/useProfile";
 import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 
 export function DashboardHome() {
@@ -31,10 +32,10 @@ export function DashboardHome() {
   const checkIn = useProfile((s) => s.checkIn);
   const { isSignedIn } = useLineAuth();
   const access = useFeatureAccess();
+  const wallet = useWallet();
   const queryClient = useQueryClient();
   const { data, past, future, majorTransit, isDemo, isLoading } = useHomeReading();
   const [reward, setReward] = useState<number | null>(null);
-  const daysLeft = trialDaysLeft(profile.premiumTrialStartedAt);
 
   const handleCheckIn = async () => {
     if (!isSignedIn) {
@@ -100,9 +101,7 @@ export function DashboardHome() {
             <span className="gold-hairline flex items-center gap-1.5 rounded-full px-2.5 py-1.5">
               <Flame className="h-3.5 w-3.5 text-[var(--gold)]" />
               <span className="numeral text-[11px] text-foreground">
-                {daysLeft !== null && daysLeft > 0
-                  ? `${toThaiDigits(daysLeft)} วัน`
-                  : toThaiDigits(profile.points)}
+                {`${toThaiDigits(wallet.data.daysRemaining)} วัน`}
               </span>
             </span>
             <Link
@@ -204,7 +203,7 @@ export function DashboardHome() {
 
         {/* H. premium */}
         <div className="mt-5">
-          <PremiumStatus daysLeft={daysLeft} />
+          <DayWalletStatus days={wallet.data.daysRemaining} points={wallet.data.points} />
         </div>
 
         {/* I. development full access notice */}
