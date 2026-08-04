@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -10,29 +10,36 @@ import {
   isLiffLoggedIn,
   liffLogin,
   liffLogout,
+  missingLiffIdError,
+  resetLiffInitialization,
+  sanitizeRedirectUrl,
+  type LiffError,
 } from "@/lib/liff-browser";
 import { getLiffConfig, signInWithLine } from "@/lib/line-auth.functions";
 import { getMyAccount, type AccountData } from "@/lib/profile.functions";
 import { useProfile } from "@/store/useProfile";
 
 /**
- * booting        – LIFF SDK is initialising
- * external       – opened outside the LINE app (login still possible)
- * logged-out     – LIFF ready, user has not authorised yet
- * verifying      – exchanging the LINE ID token with our backend
- * ready          – verified session available
- * unconfigured   – no LIFF id configured on the server
- * error          – init / login / verification failed, retry available
+ * idle                 – nothing started yet
+ * loading_config       – fetching the public LIFF config from the server
+ * initializing         – LIFF SDK is initialising
+ * login_required       – LIFF ready, user has not authorised yet
+ * signing_in           – exchanging the LINE ID token with our backend
+ * authenticated        – verified Cloud session available
+ * ready                – boot finished without a session (e.g. outside LINE)
+ * configuration_error  – LIFF id missing / wrong / endpoint mismatch
+ * initialization_error – SDK failed for a transient reason
  */
 export type LineStatus =
   | "idle"
-  | "booting"
-  | "external"
-  | "logged-out"
-  | "verifying"
+  | "loading_config"
+  | "initializing"
+  | "login_required"
+  | "signing_in"
+  | "authenticated"
   | "ready"
-  | "unconfigured"
-  | "error";
+  | "configuration_error"
+  | "initialization_error";
 
 /** Session state driven by Cloud auth. */
 export function useSession() {
@@ -73,30 +80,35 @@ export function useAccount() {
 export type LineAuthState = ReturnType<typeof useLineAuthMachine>;
 
 /**
- * Boots LIFF, auto-signs the user in when the app is opened from LINE, and
- * mirrors the account row into the local store so every screen keeps working.
+ * Boots LIFF once, auto-signs the user in when LINE already knows them, and
+ * mirrors the account row into the local store.
  *
- * Internal: mount exactly once via <LineAuthProvider>. Screens should import
- * `useLineAuth` from "@/context/LineAuthContext".
+ * Internal: mount exactly once via <LineAuthProvider>.
  */
 export function useLineAuthMachine() {
   const { session, loading } = useSession();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<LineStatus>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [liffError, setLiffError] = useState<LiffError | null>(null);
   const [inLine, setInLine] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+  const [lineLoggedIn, setLineLoggedIn] = useState(false);
   const { data: account } = useAccount();
   const setProfile = useProfile((s) => s.setProfile);
 
-  const { data: config } = useQuery({
+  const {
+    data: config,
+    isLoading: configLoading,
+    refetch: refetchConfig,
+  } = useQuery({
     queryKey: ["liff-config"],
     queryFn: () => getLiffConfig(),
     staleTime: Infinity,
   });
 
   const doSignIn = useCallback(async () => {
-    setError(null);
-    setStatus("verifying");
+    setLiffError(null);
+    setStatus("signing_in");
     try {
       const idToken = await getLiffIdToken();
       if (!idToken) throw new Error("ไม่ได้รับ ID token จาก LINE");
@@ -107,51 +119,73 @@ export function useLineAuthMachine() {
       });
       if (sessionError) throw sessionError;
       await queryClient.invalidateQueries({ queryKey: ["account"] });
-      setStatus("ready");
+      setStatus("authenticated");
       return true;
     } catch (err) {
-      console.error("[line] sign-in", err);
-      setError(err instanceof Error ? err.message : "เข้าสู่ระบบด้วย LINE ไม่สำเร็จ");
-      setStatus("error");
+      console.error("[line] sign-in failed");
+      setLiffError({
+        code: "SIGN_IN_FAILED",
+        message: err instanceof Error ? err.message : "เข้าสู่ระบบด้วย LINE ไม่สำเร็จ",
+        isConfigurationError: false,
+        isOutsideLine: false,
+        timestamp: new Date().toISOString(),
+      });
+      setStatus("initialization_error");
       return false;
     }
   }, [queryClient]);
 
-  // Boot LIFF, then finish sign-in automatically when LINE already knows the user.
+  /** One centralized boot sequence. Never runs in parallel with itself. */
+  const boot = useCallback(
+    async (liffId: string | null) => {
+      if (!liffId) {
+        setLiffError(missingLiffIdError());
+        setStatus("configuration_error");
+        return false;
+      }
+      setStatus("initializing");
+      const result = await initLiff(liffId);
+      if (!result.ok) {
+        setInitialized(false);
+        setLiffError(result.error);
+        setStatus(result.error.isConfigurationError ? "configuration_error" : "initialization_error");
+        return false;
+      }
+      setInitialized(true);
+      setLiffError(null);
+      const inside = await isInsideLine();
+      setInLine(inside);
+      const loggedIn = await isLiffLoggedIn();
+      setLineLoggedIn(loggedIn);
+      if (session) {
+        setStatus("authenticated");
+        return true;
+      }
+      if (loggedIn) return doSignIn();
+      setStatus(inside ? "login_required" : "ready");
+      return false;
+    },
+    [session, doSignIn],
+  );
+
+  // Boot exactly once per config value.
+  const bootedFor = useRef<string | null | undefined>(undefined);
   useEffect(() => {
     if (loading) return;
-    if (config === undefined) return;
-    if (!config.liffId) {
-      setStatus("unconfigured");
+    if (configLoading) {
+      setStatus((s) => (s === "idle" ? "loading_config" : s));
       return;
     }
-    let cancelled = false;
-    setStatus((s) => (s === "idle" ? "booting" : s));
-    void (async () => {
-      const ok = await initLiff(config.liffId);
-      if (cancelled) return;
-      if (!ok) {
-        setStatus("error");
-        setError("เริ่มต้น LIFF ไม่สำเร็จ");
-        return;
-      }
-      const inLine = await isInsideLine();
-      if (cancelled) return;
-      setInLine(inLine);
-      if (session) {
-        setStatus("ready");
-        return;
-      }
-      if (await isLiffLoggedIn()) {
-        await doSignIn();
-        return;
-      }
-      if (!cancelled) setStatus(inLine ? "logged-out" : "external");
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [config, loading, session, doSignIn]);
+    if (config === undefined) return;
+    if (bootedFor.current === config.liffId) return;
+    bootedFor.current = config.liffId;
+    void boot(config.liffId);
+  }, [config, configLoading, loading, boot]);
+
+  // A session arriving later (e.g. restored from storage) promotes the state.
+  useEffect(() => {
+    if (session) setStatus((s) => (s === "signing_in" ? s : "authenticated"));
+  }, [session]);
 
   // Mirror the database row into the local store.
   useEffect(() => {
@@ -174,18 +208,20 @@ export function useLineAuthMachine() {
   }, [account, setProfile]);
 
   const login = useCallback(async () => {
-    setError(null);
+    setLiffError(null);
     if (!config?.liffId) {
-      setError("ยังไม่ได้ตั้งค่า LIFF ID");
+      setLiffError(missingLiffIdError());
+      setStatus("configuration_error");
       return false;
     }
-    const ok = await initLiff(config.liffId);
-    if (!ok) {
-      setError("เริ่มต้น LIFF ไม่สำเร็จ");
+    const result = await initLiff(config.liffId);
+    if (!result.ok) {
+      setLiffError(result.error);
+      setStatus(result.error.isConfigurationError ? "configuration_error" : "initialization_error");
       return false;
     }
     if (!(await isLiffLoggedIn())) {
-      await liffLogin(window.location.href);
+      await liffLogin(sanitizeRedirectUrl());
       return false; // page navigates to LINE
     }
     return doSignIn();
@@ -198,32 +234,34 @@ export function useLineAuthMachine() {
     useProfile.getState().reset();
   }, [queryClient]);
 
-  /** Re-run the whole boot sequence after a failure. */
+  /** Clears the error, resets LIFF and performs a true fresh init. */
   const retry = useCallback(async () => {
-    setError(null);
-    setStatus("booting");
-    if (!config?.liffId) {
-      setStatus("unconfigured");
-      return false;
-    }
-    const ok = await initLiff(config.liffId);
-    if (!ok) {
-      setError("เริ่มต้น LIFF ไม่สำเร็จ");
-      setStatus("error");
-      return false;
-    }
-    if (await isLiffLoggedIn()) return doSignIn();
-    setStatus((await isInsideLine()) ? "logged-out" : "external");
-    return false;
-  }, [config, doSignIn]);
+    setLiffError(null);
+    setInitialized(false);
+    setStatus("loading_config");
+    resetLiffInitialization();
+    const next = await refetchConfig();
+    const liffId = next.data?.liffId ?? config?.liffId ?? null;
+    bootedFor.current = liffId;
+    return boot(liffId);
+  }, [refetchConfig, config, boot]);
 
   return {
     session,
     isSignedIn: Boolean(session),
     status,
-    error,
+    /** Sanitized structured error for diagnostics. */
+    liffError,
+    /** Human readable message for existing screens. */
+    error: liffError?.message ?? null,
     inLine,
-    booting: status === "idle" || status === "booting" || status === "verifying",
+    initialized,
+    lineLoggedIn,
+    booting:
+      status === "idle" ||
+      status === "loading_config" ||
+      status === "initializing" ||
+      status === "signing_in",
     retry,
     configured: Boolean(config?.liffId),
     account,
