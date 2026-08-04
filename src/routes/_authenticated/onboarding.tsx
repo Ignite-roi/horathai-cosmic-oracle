@@ -9,7 +9,7 @@ import { saveMyProfile, startPremiumTrial } from "@/lib/profile.functions";
 import { PROVINCES } from "@/lib/provinces";
 import { useProfile } from "@/store/useProfile";
 
-export const Route = createFileRoute("/onboarding")({
+export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
     meta: [
       { title: "เริ่มต้นผูกดวง | Horathai AI" },

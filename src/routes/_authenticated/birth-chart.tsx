@@ -10,7 +10,7 @@ import { ASPECT_LABEL, HOUSES, PLANET_BY_NUM, formatDegree, toThaiDigits, type P
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";
 
-export const Route = createFileRoute("/chart")({
+export const Route = createFileRoute("/_authenticated/birth-chart")({
   head: () => ({
     meta: [
       { title: "จักรวาลดวงชะตา 3 มิติ | Horathai AI" },

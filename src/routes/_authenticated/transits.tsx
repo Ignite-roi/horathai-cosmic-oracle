@@ -16,7 +16,7 @@ import {
 } from "@/lib/astro";
 import { useProfile } from "@/store/useProfile";
 
-export const Route = createFileRoute("/transit")({
+export const Route = createFileRoute("/_authenticated/transits")({
   head: () => ({
     meta: [
       { title: "ดาวจร & ท่องเวลา | Horathai AI" },

@@ -11,7 +11,7 @@ import { askAstrologer } from "@/lib/ai.functions";
 import { ASPECT_LABEL, HOUSES, PLANET_BY_NUM, formatDegree, moonPhaseLabel, type ReadingResult } from "@/lib/astro";
 import { useProfile } from "@/store/useProfile";
 
-export const Route = createFileRoute("/ai")({
+export const Route = createFileRoute("/_authenticated/ai-astrologer")({
   head: () => ({
     meta: [
       { title: "โหรา AI ส่วนตัว | Horathai AI" },

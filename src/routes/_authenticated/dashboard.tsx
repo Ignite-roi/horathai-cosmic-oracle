@@ -21,7 +21,7 @@ import { dailyCheckIn } from "@/lib/profile.functions";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Horathai AI — โหราศาสตร์ไทยสุริยยาตร์ ด้วยพลัง AI" },

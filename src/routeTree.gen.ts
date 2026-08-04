@@ -9,180 +9,181 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AiRouteImport } from './routes/ai'
-import { Route as ChartRouteImport } from './routes/chart'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as PremiumRouteImport } from './routes/premium'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as TransitRouteImport } from './routes/transit'
+import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
+import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedAiAstrologerRoute =
+  AuthenticatedAiAstrologerRouteImport.update({
+    id: '/_authenticated/ai-astrologer',
+    path: '/ai-astrologer',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedBirthChartRoute = AuthenticatedBirthChartRouteImport.update({
+  id: '/_authenticated/birth-chart',
+  path: '/birth-chart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AiRoute = AiRouteImport.update({
-  id: '/ai',
-  path: '/ai',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/_authenticated/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChartRoute = ChartRouteImport.update({
-  id: '/chart',
-  path: '/chart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/_authenticated/onboarding',
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PremiumRoute = PremiumRouteImport.update({
-  id: '/premium',
+const AuthenticatedPremiumRoute = AuthenticatedPremiumRouteImport.update({
+  id: '/_authenticated/premium',
   path: '/premium',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/_authenticated/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TransitRoute = TransitRouteImport.update({
-  id: '/transit',
-  path: '/transit',
+const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
+  id: '/_authenticated/transits',
+  path: '/transits',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/ai': typeof AiRoute
-  '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
-  '/transit': typeof TransitRoute
+  '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/premium': typeof AuthenticatedPremiumRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/ai': typeof AiRoute
-  '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
-  '/transit': typeof TransitRoute
+  '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/premium': typeof AuthenticatedPremiumRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/ai': typeof AiRoute
-  '/chart': typeof ChartRoute
-  '/onboarding': typeof OnboardingRoute
-  '/premium': typeof PremiumRoute
-  '/settings': typeof SettingsRoute
-  '/transit': typeof TransitRoute
+  '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/premium': typeof AuthenticatedPremiumRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/transits': typeof AuthenticatedTransitsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/ai'
-    | '/chart'
+    | '/ai-astrologer'
+    | '/birth-chart'
+    | '/dashboard'
     | '/onboarding'
     | '/premium'
     | '/settings'
-    | '/transit'
+    | '/transits'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/ai'
-    | '/chart'
+    | '/ai-astrologer'
+    | '/birth-chart'
+    | '/dashboard'
     | '/onboarding'
     | '/premium'
     | '/settings'
-    | '/transit'
+    | '/transits'
   id:
     | '__root__'
-    | '/'
-    | '/ai'
-    | '/chart'
-    | '/onboarding'
-    | '/premium'
-    | '/settings'
-    | '/transit'
+    | '/_authenticated/ai-astrologer'
+    | '/_authenticated/birth-chart'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/onboarding'
+    | '/_authenticated/premium'
+    | '/_authenticated/settings'
+    | '/_authenticated/transits'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AiRoute: typeof AiRoute
-  ChartRoute: typeof ChartRoute
-  OnboardingRoute: typeof OnboardingRoute
-  PremiumRoute: typeof PremiumRoute
-  SettingsRoute: typeof SettingsRoute
-  TransitRoute: typeof TransitRoute
+  AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
+  AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/_authenticated/ai-astrologer': {
+      id: '/_authenticated/ai-astrologer'
+      path: '/ai-astrologer'
+      fullPath: '/ai-astrologer'
+      preLoaderRoute: typeof AuthenticatedAiAstrologerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ai': {
-      id: '/ai'
-      path: '/ai'
-      fullPath: '/ai'
-      preLoaderRoute: typeof AiRouteImport
+    '/_authenticated/birth-chart': {
+      id: '/_authenticated/birth-chart'
+      path: '/birth-chart'
+      fullPath: '/birth-chart'
+      preLoaderRoute: typeof AuthenticatedBirthChartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chart': {
-      id: '/chart'
-      path: '/chart'
-      fullPath: '/chart'
-      preLoaderRoute: typeof ChartRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/onboarding': {
-      id: '/onboarding'
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/premium': {
-      id: '/premium'
+    '/_authenticated/premium': {
+      id: '/_authenticated/premium'
       path: '/premium'
       fullPath: '/premium'
-      preLoaderRoute: typeof PremiumRouteImport
+      preLoaderRoute: typeof AuthenticatedPremiumRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/transit': {
-      id: '/transit'
-      path: '/transit'
-      fullPath: '/transit'
-      preLoaderRoute: typeof TransitRouteImport
+    '/_authenticated/transits': {
+      id: '/_authenticated/transits'
+      path: '/transits'
+      fullPath: '/transits'
+      preLoaderRoute: typeof AuthenticatedTransitsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AiRoute: AiRoute,
-  ChartRoute: ChartRoute,
-  OnboardingRoute: OnboardingRoute,
-  PremiumRoute: PremiumRoute,
-  SettingsRoute: SettingsRoute,
-  TransitRoute: TransitRoute,
+  AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
+  AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

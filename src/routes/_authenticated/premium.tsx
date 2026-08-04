@@ -7,7 +7,7 @@ import { useLineAuth } from "@/hooks/useAuth";
 import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
-export const Route = createFileRoute("/premium")({
+export const Route = createFileRoute("/_authenticated/premium")({
   head: () => ({
     meta: [
       { title: "พรีเมียมฟรี 30 วัน | Horathai AI" },
