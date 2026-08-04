@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
         content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
-      { property: "og:description", content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE" },
+      {
+        property: "og:description",
+        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -179,9 +182,8 @@ function Entry() {
           <p className="flex items-start gap-2">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              LINE เข้าสู่ระบบให้แล้ว แต่ยังไม่ได้มอบสิทธิ์ข้อมูลโปรไฟล์ (openid)
-              ให้แอปนี้ ระบบจึงยังยืนยันตัวตนของคุณไม่ได้
-              กรุณากดปุ่มด้านล่างเพื่ออนุญาตใหม่อีกครั้ง
+              LINE เข้าสู่ระบบให้แล้ว แต่ยังไม่ได้มอบสิทธิ์ข้อมูลโปรไฟล์ (openid) ให้แอปนี้
+              ระบบจึงยังยืนยันตัวตนของคุณไม่ได้ กรุณากดปุ่มด้านล่างเพื่ออนุญาตใหม่อีกครั้ง
             </span>
           </p>
           <p className="mt-2 text-[10px] tracking-[0.12em] text-muted-foreground">
