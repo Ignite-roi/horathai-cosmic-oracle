@@ -1,0 +1,368 @@
+{
+  "schema": "horathai.master-knowledge-pack/v1",
+  "packId": "horathai-master-brain-foundation",
+  "version": "0.1.0-draft",
+  "createdAt": "2026-08-04T00:00:00+07:00",
+  "runtimePolicy": {
+    "networkAllowed": false,
+    "aiRequired": false,
+    "failClosed": true,
+    "unknownBirthTimePolicy": "omit_ascendant_houses_angles",
+    "competitorMaterialPolicy": "observations_only"
+  },
+  "baseline": {
+    "conceptCountExpected": 49,
+    "existingPublishedEditorialRuleCountExpected": 5,
+    "knowledgeReleaseCountExpected": 0,
+    "strategy": "reference_then_promote",
+    "abortOnMismatch": true
+  },
+  "activation": {
+    "mode": "dry_run_only",
+    "productionEligible": false,
+    "reason": "No immutable reviewed knowledge release exists"
+  },
+  "systems": [
+    {
+      "id": "sidereal_lahiri",
+      "version": "3.0.0",
+      "status": "active",
+      "runtimeEligible": true,
+      "zodiac": "sidereal",
+      "ayanamsa": "lahiri_polynomial_v1",
+      "houseSystem": "whole_sign",
+      "nodeMode": "mean",
+      "limitations": ["Independent Swiss/JPL multi-epoch benchmark is pending"]
+    },
+    {
+      "id": "competitor_compatible_experimental",
+      "version": "0.0.0-observation.1",
+      "status": "research_only",
+      "runtimeEligible": false,
+      "limitations": ["Observed outputs do not establish the proprietary method or correctness"]
+    },
+    {
+      "id": "thai_suriyayatra",
+      "version": "0.0.0-planned",
+      "status": "planned_unimplemented",
+      "runtimeEligible": false,
+      "limitations": ["Requires reviewed formulas, source citations, expert review and benchmarks"]
+    },
+    {
+      "id": "numerology_th",
+      "version": "0.1.0-draft",
+      "status": "research_only",
+      "runtimeEligible": false,
+      "limitations": ["Digit segmentation, direction and positional weighting require sourced rules"]
+    }
+  ],
+  "interpretationProfiles": [
+    {
+      "id": "lahiri_natal_th",
+      "version": "0.1.0-draft",
+      "systemId": "sidereal_lahiri",
+      "systemVersion": "3.0.0",
+      "calculationProfileId": "sidereal_lahiri",
+      "calculationProfileVersion": "3.0.0",
+      "releaseId": null,
+      "locale": "th-TH",
+      "status": "draft",
+      "runtimeEligible": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "astronomy_engine",
+      "authority": "Don Cross / cosinekitty",
+      "tradition": "astronomy",
+      "evidence": "primary_software",
+      "url": "https://github.com/cosinekitty/astronomy",
+      "rights": "MIT",
+      "allowedUses": ["production_runtime", "modify", "validation"],
+      "forbiddenClaims": ["NASA endorsed", "exact for every epoch"],
+      "status": "approved"
+    },
+    {
+      "id": "jpl_horizons",
+      "authority": "NASA/JPL Solar System Dynamics",
+      "tradition": "astronomy",
+      "evidence": "official_ephemeris_service",
+      "url": "https://ssd.jpl.nasa.gov/horizons/manual.html",
+      "rights": "review_service_and_data_terms",
+      "allowedUses": ["golden_fixtures", "independent_validation"],
+      "forbiddenClaims": ["JPL endorses astrology", "JPL certifies Horathai"],
+      "status": "approved_for_validation"
+    },
+    {
+      "id": "iana_tzdb",
+      "authority": "IANA",
+      "tradition": "civil_time",
+      "evidence": "official_machine_readable_database",
+      "url": "https://www.iana.org/time-zones",
+      "rights": "public_domain",
+      "allowedUses": ["production_runtime"],
+      "limitations": ["Pre-1970 regional history can be uncertain"],
+      "status": "approved"
+    },
+    {
+      "id": "iers_time_rotation",
+      "authority": "IERS",
+      "tradition": "astronomy",
+      "evidence": "official_standard_and_bulletins",
+      "url": "https://data.iers.org/bulletins.php",
+      "rights": "terms_review",
+      "allowedUses": ["time_validation", "UT1_and_leap_second_fixtures"],
+      "status": "approved_for_validation"
+    },
+    {
+      "id": "iau_sofa",
+      "authority": "IAU SOFA Board",
+      "tradition": "astronomy",
+      "evidence": "official_reference_software",
+      "url": "https://www.iausofa.org/terms-and-conditions",
+      "rights": "SOFA_license",
+      "allowedUses": ["internal_validation_pending_legal"],
+      "forbiddenClaims": ["IAU endorsement"],
+      "status": "legal_review"
+    },
+    {
+      "id": "swiss_ephemeris",
+      "authority": "Astrodienst",
+      "tradition": "multi_astrology_calculation",
+      "evidence": "primary_software_documentation",
+      "url": "https://www.astro.com/swisseph/swephinfo_e.htm",
+      "rights": "AGPL_or_professional_license",
+      "allowedUses": ["internal_benchmark_pending_license"],
+      "forbiddenClaims": ["Swiss-certified", "public runtime without license decision"],
+      "status": "blocked_for_production"
+    },
+    {
+      "id": "nlt_suriyayatra_544",
+      "authority": "National Library of Thailand",
+      "tradition": "thai_suriyayatra",
+      "evidence": "primary_manuscript_catalog",
+      "url": "https://digital.nlt.go.th/dlib/items/show/4054",
+      "rights": "scan_OCR_permission_required",
+      "allowedUses": ["catalog_reference", "manual_scholarly_review"],
+      "forbiddenClaims": ["complete formula from metadata", "bulk OCR without permission"],
+      "status": "rights_review"
+    },
+    {
+      "id": "nlt_suriyayatra_manat_715",
+      "authority": "National Library of Thailand",
+      "tradition": "thai_suriyayatra",
+      "evidence": "primary_manuscript_catalog",
+      "url": "https://digital.nlt.go.th/dlib/items/show/1879",
+      "rights": "scan_OCR_permission_required",
+      "allowedUses": ["catalog_reference", "manual_scholarly_review"],
+      "status": "rights_review"
+    },
+    {
+      "id": "myhora_thai_help",
+      "authority": "MyHora",
+      "tradition": "thai_multi_method",
+      "evidence": "vendor_documentation",
+      "url": "https://myhora.com/astrology/thai/help.aspx",
+      "rights": "copyrighted_site_content",
+      "allowedUses": ["taxonomy", "limited_black_box_benchmark"],
+      "forbiddenClaims": ["official standard", "copy predictions", "copy text"],
+      "status": "benchmark_only"
+    },
+    {
+      "id": "india_rashtriya_panchang",
+      "authority": "Positional Astronomy Centre, Government of India",
+      "tradition": "vedic_lahiri_calendar",
+      "evidence": "official_government_almanac",
+      "url": "https://www.packolkata.gov.in/rashtriya-panchang-english.php",
+      "rights": "no_open_license_confirmed",
+      "allowedUses": ["limited_fixtures", "citation"],
+      "status": "validation_only"
+    },
+    {
+      "id": "brihat_jataka_1905",
+      "authority": "Varahamihira / N. Chidambaram Aiyar",
+      "tradition": "vedic_classical",
+      "evidence": "classical_text_old_translation",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Brihat_jataka_(IA_brihatjataka00varaiala).pdf",
+      "rights": "PD_US_Thailand_review_required",
+      "allowedUses": ["human_rule_extraction", "chapter_verse_citation"],
+      "status": "editorial_review"
+    },
+    {
+      "id": "tetrabiblos_ashmand",
+      "authority": "Ptolemy / J. M. Ashmand",
+      "tradition": "western_classical_tropical",
+      "evidence": "classical_text",
+      "url": "https://www.gutenberg.org/ebooks/70850",
+      "rights": "PD_US_local_jurisdiction_review",
+      "allowedUses": ["human_rule_extraction", "chapter_citation"],
+      "status": "editorial_review"
+    },
+    {
+      "id": "zinzae_competitor_observed",
+      "authority": "zinzaebarcode.com",
+      "tradition": "proprietary_unknown",
+      "evidence": "observational_black_box",
+      "url": "https://zinzaebarcode.com/",
+      "rights": "copyrighted_premium_service",
+      "allowedUses": ["feature_inventory", "limited_input_output_fixtures"],
+      "forbiddenClaims": ["formula known", "content replication", "premium bulk capture"],
+      "status": "benchmark_only"
+    }
+  ],
+  "conditionAst": {
+    "allowedOperators": ["all", "any", "not", "eq", "in", "gt", "gte", "lt", "lte", "between", "exists", "angularWithin"],
+    "prohibited": ["eval", "javascript", "prose_conditions"],
+    "factKeyPolicy": "canonical_registry_only"
+  },
+  "seedOutcomes": [
+    {
+      "outcomeId": "out-unknown-time-001",
+      "summaryTh": "ข้อมูลนี้ไม่ระบุเวลาเกิด จึงสรุปได้เฉพาะส่วนที่ไม่พึ่งลัคนาและเรือนชะตา",
+      "safetyTags": ["methodology"]
+    },
+    {
+      "outcomeId": "out-transit-observe-001",
+      "summaryTh": "มีมุมสัมพันธ์ของดาวจรที่บันทึกได้ในช่วงนี้ เหมาะสำหรับใช้เป็นหัวข้อทบทวนร่วมกับสถานการณ์จริง",
+      "safetyTags": ["reflective", "non_deterministic"]
+    },
+    {
+      "outcomeId": "out-retro-review-001",
+      "summaryTh": "ดาวดวงนี้อยู่ในช่วงพักร์ตามแบบคำนวณที่เลือก การตีความควรอ้างอิงกฎของสำนักเดียวกันและพิจารณาบริบทอื่นประกอบ",
+      "safetyTags": ["reflective", "methodology"]
+    }
+  ],
+  "seedRules": [
+    {
+      "ruleId": "draft-context-unknown-time-001",
+      "ruleCode": "CTX-UNKNOWN-TIME-001",
+      "version": "0.1.0",
+      "family": "context_quality",
+      "systemId": "sidereal_lahiri",
+      "systemVersion": "3.0.0",
+      "condition": {"op": "eq", "fact": "birth.time_known", "value": false},
+      "outcomeId": "out-unknown-time-001",
+      "status": "draft",
+      "evidenceLevel": "editorial",
+      "confidence": 1.0,
+      "priority": 1000,
+      "citationIds": [],
+      "runtimeEligible": false
+    },
+    {
+      "ruleId": "draft-transit-observation-001",
+      "ruleCode": "TRANSIT-OBSERVE-001",
+      "version": "0.1.0",
+      "family": "transit_reflection",
+      "systemId": "sidereal_lahiri",
+      "systemVersion": "3.0.0",
+      "condition": {"op": "exists", "fact": "transit.aspect.type"},
+      "outcomeId": "out-transit-observe-001",
+      "status": "draft",
+      "evidenceLevel": "editorial",
+      "confidence": 0.25,
+      "priority": 10,
+      "citationIds": [],
+      "runtimeEligible": false
+    },
+    {
+      "ruleId": "draft-retrograde-context-001",
+      "ruleCode": "TRANSIT-RETRO-CONTEXT-001",
+      "version": "0.1.0",
+      "family": "transit_reflection",
+      "systemId": "sidereal_lahiri",
+      "systemVersion": "3.0.0",
+      "condition": {"op": "eq", "fact": "transit.planet.retrograde", "value": true},
+      "outcomeId": "out-retro-review-001",
+      "status": "draft",
+      "evidenceLevel": "editorial",
+      "confidence": 0.25,
+      "priority": 10,
+      "citationIds": [],
+      "runtimeEligible": false
+    }
+  ],
+  "narrativeTemplates": {
+    "renderer": "horathai_template_th_v1",
+    "version": "1.1.0-draft",
+    "templates": {
+      "no_match": "ระบบยังแสดงข้อเท็จจริงจากการคำนวณได้ แต่จะไม่สร้างคำพยากรณ์แทนกฎที่ยังไม่ผ่านการตรวจทาน",
+      "reflective_observation": "{summaryTh} โปรดใช้เป็นข้อมูลประกอบการพิจารณา ไม่ใช่ข้อยืนยันเหตุการณ์ในอนาคต",
+      "unknown_birth_time": "ไม่ทราบเวลาเกิด จึงไม่ใช้ลัคนา เรือนชะตา หรือมุมที่พึ่งเวลาเกิดในการสรุปผล",
+      "sensitive_health": "ข้อมูลนี้ไม่ใช่การวินิจฉัย หากมีอาการหรือความกังวลควรปรึกษาผู้เชี่ยวชาญด้านสุขภาพ",
+      "sensitive_legal_finance": "ข้อมูลนี้ไม่ใช่คำแนะนำทางกฎหมายหรือการเงิน ควรตรวจสอบกับผู้เชี่ยวชาญก่อนตัดสินใจ"
+    },
+    "prohibitedPhrases": ["รับประกัน", "เกิดแน่นอน", "หายแน่นอน", "ลงทุนแล้วได้กำไรแน่นอน"]
+  },
+  "benchmarks": [
+    {
+      "id": "competitor-chaiyaphum-1988-05-05-0000",
+      "source": "competitor",
+      "status": "observed",
+      "input": {
+        "localDate": "1988-05-05",
+        "localTime": "00:00",
+        "timezone": "Asia/Bangkok",
+        "latitude": 15.8068,
+        "longitude": 102.0315
+      },
+      "observation": {"ascendantSignTh": "ธนู"},
+      "methodKnown": false,
+      "usableAsTruthFixture": false
+    },
+    {
+      "id": "jpl-multi-epoch-placeholder",
+      "source": "jpl",
+      "status": "unverified",
+      "methodKnown": false,
+      "usableAsTruthFixture": false
+    },
+    {
+      "id": "swiss-multi-epoch-placeholder",
+      "source": "swiss",
+      "status": "unverified",
+      "methodKnown": false,
+      "usableAsTruthFixture": false
+    }
+  ],
+  "featureContracts": [
+    {"id": "natal", "ruleFamilies": ["planet_in_sign", "planet_in_house", "house_lord", "aspect", "dignity", "natal_synthesis"], "status": "foundation"},
+    {"id": "transit", "ruleFamilies": ["sign_ingress", "house_ingress", "transit_to_natal", "station"], "status": "partial"},
+    {"id": "daily_9_domains", "ruleFamilies": ["domain_contribution", "domain_normalization", "daily_synthesis"], "status": "planned"},
+    {"id": "colors", "ruleFamilies": ["color_by_tradition", "color_by_domain"], "status": "draft_editorial"},
+    {"id": "good_bad_days", "ruleFamilies": ["activity_timing", "day_synthesis"], "status": "draft_editorial"},
+    {"id": "life_graph", "ruleFamilies": ["time_series_sampling", "domain_score_series"], "status": "planned"},
+    {"id": "compatibility_5d", "ruleFamilies": ["interchart_aspect", "element_relation", "house_overlay", "dimension_aggregation"], "status": "partial"},
+    {"id": "phone_digit_pairs", "ruleFamilies": ["digit_segmentation", "pair_meaning", "pair_conflict", "natal_pair_compatibility"], "status": "research_only"},
+    {"id": "feng_shui", "ruleFamilies": ["direction", "building_period", "layout", "placement"], "status": "research_only"},
+    {"id": "remedies", "ruleFamilies": ["reflection", "routine", "color", "placement", "charity", "timing"], "status": "research_only"}
+  ],
+  "validationGates": [
+    "schema_gate",
+    "profile_gate",
+    "rights_gate",
+    "citation_gate",
+    "reviewer_gate",
+    "rule_test_gate",
+    "condition_gate",
+    "unknown_time_gate",
+    "conflict_gate",
+    "benchmark_gate",
+    "narrative_safety_gate",
+    "deterministic_gate",
+    "release_gate",
+    "load_gate",
+    "lineage_gate"
+  ],
+  "productionEligibility": "published && inImmutableRelease && citationsReviewed && rightsCleared && reviewerApproved && testsPassed && exactProfile && noOpenBlockingConflict",
+  "dryRunImport": [
+    "validate schemas",
+    "snapshot live baseline counts and hashes",
+    "map existing systems concepts and five rules by code",
+    "import new metadata as local or staging drafts only",
+    "run validation gates",
+    "generate candidate release report",
+    "require explicit human promotion"
+  ]
+}
+
