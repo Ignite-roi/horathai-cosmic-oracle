@@ -196,6 +196,7 @@ type ColorConfig = {
   categories: Array<{ id: string; label: string; area: string; planets: number[] }>;
   planet_colors: Record<string, { name: string; hex: string }>;
   avoid_policy: string;
+  avoid_reason_template: string;
   reason_template: string;
   scoring_policy: ScoringPolicy;
 };
@@ -315,7 +316,7 @@ export async function calculateDailyInsight(
       hex: avoidColor.hex,
       planet: avoidPlanet.num,
       planetTh: avoidPlanet.th,
-      reason: config.avoid_policy.replace("{planet}", avoidPlanet.th),
+      reason: config.avoid_reason_template.replace("{planet}", avoidPlanet.th),
     },
     scores: reading.scores.map((s) => ({
       area: s.area,
