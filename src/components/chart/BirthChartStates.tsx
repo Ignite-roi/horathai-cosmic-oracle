@@ -3,10 +3,73 @@ import { AlertTriangle, Clock3, Orbit } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-export function BirthChartLoadingState() { return <div className="surface-hero mt-6 flex min-h-80 flex-col items-center justify-center p-8 text-center"><div className="relative h-24 w-24"><div className="absolute inset-0 animate-orbit-spin rounded-full border border-dashed border-primary/45"/><div className="absolute inset-5 animate-orbit-slow-rev rounded-full border border-primary/25"/><div className="absolute inset-0 m-auto h-9 w-9 animate-breathe rounded-full bg-[radial-gradient(circle,var(--gold-hot),var(--gold),transparent_72%)]"/></div><p className="thai-heading mt-6 text-lg text-foreground">กำลังคำนวณลัคนาและตำแหน่งดาว…</p><p className="mt-2 text-xs text-muted-foreground">กำลังเรียงจักรวาลตามข้อมูลเกิดที่บันทึกไว้</p></div>; }
+export function BirthChartLoadingState() {
+  return (
+    <div className="surface-hero mt-6 flex min-h-80 flex-col items-center justify-center p-8 text-center">
+      <div className="relative h-24 w-24">
+        <div className="absolute inset-0 animate-orbit-spin rounded-full border border-dashed border-primary/45" />
+        <div className="absolute inset-5 animate-orbit-slow-rev rounded-full border border-primary/25" />
+        <div className="absolute inset-0 m-auto h-9 w-9 animate-breathe rounded-full bg-[radial-gradient(circle,var(--gold-hot),var(--gold),transparent_72%)]" />
+      </div>
+      <p className="thai-heading mt-6 text-lg text-foreground">กำลังคำนวณลัคนาและตำแหน่งดาว…</p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        กำลังเรียงจักรวาลตามข้อมูลเกิดที่บันทึกไว้
+      </p>
+    </div>
+  );
+}
 
-export function BirthChartEmptyState({ demo = false }: { demo?: boolean }) { return <div className="surface-hero grain mt-6 p-7 text-center"><Orbit className="mx-auto h-12 w-12 text-primary"/><p className="thai-heading mt-4 text-2xl text-foreground">{demo ? "นี่คือตัวอย่างดวงกำเนิด" : "สร้างจักรวาลดวงชะตาของคุณ"}</p><p className="mx-auto mt-3 max-w-sm text-[13px] leading-6 text-muted-foreground">ใช้วัน เวลา และจังหวัดเกิด เพื่อคำนวณตำแหน่งดาวและลัคนาจริง ข้อมูลตัวอย่างจะไม่ถูกบันทึก</p>{!demo && <Button asChild className="gold-metal mt-6 h-12 w-full rounded-xl"><Link to="/onboarding">ผูกดวงจริง</Link></Button>}</div>; }
+export function BirthChartEmptyState({ demo = false }: { demo?: boolean }) {
+  return (
+    <div className="surface-hero grain mt-6 p-7 text-center">
+      <Orbit className="mx-auto h-12 w-12 text-primary" />
+      <p className="thai-heading mt-4 text-2xl text-foreground">
+        {demo ? "นี่คือตัวอย่างดวงกำเนิด" : "สร้างจักรวาลดวงชะตาของคุณ"}
+      </p>
+      <p className="mx-auto mt-3 max-w-sm text-[13px] leading-6 text-muted-foreground">
+        ใช้วัน เวลา และจังหวัดเกิด เพื่อคำนวณตำแหน่งดาวและลัคนาจริง ข้อมูลตัวอย่างจะไม่ถูกบันทึก
+      </p>
+      {!demo && (
+        <Button asChild className="gold-metal mt-6 h-12 w-full rounded-xl">
+          <Link to="/onboarding">ผูกดวงจริง</Link>
+        </Button>
+      )}
+    </div>
+  );
+}
 
-export function BirthTimeUnknownState() { return <div className="surface-card mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-4 p-5"><Clock3 className="h-8 w-8 text-primary"/><div className="min-w-0"><h2 className="thai-heading text-lg text-foreground">ยังคำนวณลัคนาไม่ได้</h2><p className="mt-1 text-[12px] leading-5 text-muted-foreground">ต้องใช้เวลาเกิดที่แม่นยำเพื่อหาลัคนา ขณะนี้ยังดูตำแหน่งดาวได้โดยไม่สร้างลัคนาหรือภพสมมติ</p><Button asChild variant="link" className="mt-2 h-auto p-0 text-primary"><Link to="/onboarding">เพิ่มหรือแก้ไขเวลาเกิด</Link></Button></div></div>; }
+export function BirthTimeUnknownState() {
+  return (
+    <div className="surface-card mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-4 p-5">
+      <Clock3 className="h-8 w-8 text-primary" />
+      <div className="min-w-0">
+        <h2 className="thai-heading text-lg text-foreground">ยังคำนวณลัคนาไม่ได้</h2>
+        <p className="mt-1 text-[12px] leading-5 text-muted-foreground">
+          ต้องใช้เวลาเกิดที่แม่นยำเพื่อหาลัคนา ขณะนี้ยังดูตำแหน่งดาวได้โดยไม่สร้างลัคนาหรือภพสมมติ
+        </p>
+        <Button asChild variant="link" className="mt-2 h-auto p-0 text-primary">
+          <Link to="/onboarding">เพิ่มหรือแก้ไขเวลาเกิด</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
 
-export function BirthChartErrorState({ message, onRetry }: { message: string; onRetry: () => void }) { return <div role="alert" className="surface-card mt-6 p-6 text-center"><AlertTriangle className="mx-auto h-9 w-9 text-destructive"/><p className="thai-heading mt-3 text-lg text-foreground">เปิดผังดวงไม่สำเร็จ</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{message}</p><Button onClick={onRetry} variant="outline" className="mt-5 h-11 rounded-xl">ลองอีกครั้ง</Button></div>; }
+export function BirthChartErrorState({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div role="alert" className="surface-card mt-6 p-6 text-center">
+      <AlertTriangle className="mx-auto h-9 w-9 text-destructive" />
+      <p className="thai-heading mt-3 text-lg text-foreground">เปิดผังดวงไม่สำเร็จ</p>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground">{message}</p>
+      <Button onClick={onRetry} variant="outline" className="mt-5 h-11 rounded-xl">
+        ลองอีกครั้ง
+      </Button>
+    </div>
+  );
+}

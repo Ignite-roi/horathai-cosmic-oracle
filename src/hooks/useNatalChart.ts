@@ -10,13 +10,42 @@ import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { getPublicReviewChart, getPublicReviewReading } from "@/lib/public-review.functions";
 
 const planetSchema = z.object({
-  num: z.number(), th: z.string(), thaiNumeral: z.string(), longitude: z.number(), signId: z.number(),
-  signTh: z.string(), degree: z.number(), minute: z.number(), house: z.number(), retrograde: z.boolean(),
-  strength: z.number(), color: z.string(), meaning: z.string(),
+  num: z.number(),
+  th: z.string(),
+  thaiNumeral: z.string(),
+  longitude: z.number(),
+  signId: z.number(),
+  signTh: z.string(),
+  degree: z.number(),
+  minute: z.number(),
+  house: z.number(),
+  retrograde: z.boolean(),
+  strength: z.number(),
+  color: z.string(),
+  meaning: z.string(),
 });
-const houseSchema = z.object({ n: z.number(), th: z.string(), about: z.string(), signId: z.number(), signTh: z.string(), planets: z.array(z.number()) });
-const standardSchema = z.object({ num: z.number(), th: z.string(), standard: z.string(), note: z.string() });
-const ascendantSchema = z.object({ signId: z.number(), signTh: z.string(), degree: z.number(), minute: z.number(), longitude: z.number(), siderealLongitude: z.number().optional() });
+const houseSchema = z.object({
+  n: z.number(),
+  th: z.string(),
+  about: z.string(),
+  signId: z.number(),
+  signTh: z.string(),
+  planets: z.array(z.number()),
+});
+const standardSchema = z.object({
+  num: z.number(),
+  th: z.string(),
+  standard: z.string(),
+  note: z.string(),
+});
+const ascendantSchema = z.object({
+  signId: z.number(),
+  signTh: z.string(),
+  degree: z.number(),
+  minute: z.number(),
+  longitude: z.number(),
+  siderealLongitude: z.number().optional(),
+});
 
 export function useNatalChart(mode: "natal" | "transit" | "both") {
   const { session, loading: sessionLoading } = useSession();
@@ -40,7 +69,13 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
   });
 
   useEffect(() => {
-    if (context.data?.birthProfile && !context.data.chart && !calculation.isPending && !calculation.isSuccess) calculation.mutate();
+    if (
+      context.data?.birthProfile &&
+      !context.data.chart &&
+      !calculation.isPending &&
+      !calculation.isSuccess
+    )
+      calculation.mutate();
   }, [context.data, calculation]);
 
   const transit = useQuery({
@@ -48,7 +83,13 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
     queryFn: () => {
       const profile = context.data?.birthProfile;
       if (!profile) throw new Error("ยังไม่พบข้อมูลวันเกิด");
-       return fetchReading({ data: { birthDate: profile.birth_date, birthTime: (profile.birth_time ?? "12:00").slice(0, 5), province: profile.province } });
+      return fetchReading({
+        data: {
+          birthDate: profile.birth_date,
+          birthTime: (profile.birth_time ?? "12:00").slice(0, 5),
+          province: profile.province,
+        },
+      });
     },
     enabled: Boolean(session && context.data?.chart && mode !== "natal"),
     staleTime: 30 * 60_000,
@@ -72,21 +113,37 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
   const parsedPlanets = saved ? planetSchema.array().safeParse(saved.planets_json) : null;
   const parsedHouses = saved ? houseSchema.array().safeParse(saved.houses_json) : null;
   const parsedStandards = saved ? standardSchema.array().safeParse(saved.standards_json) : null;
-  const parsedAscendant = saved?.ascendant_known ? ascendantSchema.safeParse(saved.ascendant_json) : null;
+  const parsedAscendant = saved?.ascendant_known
+    ? ascendantSchema.safeParse(saved.ascendant_json)
+    : null;
   const publicPlanets = reviewChart.data?.planets ?? [];
   const publicAscendant = reviewChart.data?.ascendant ?? null;
 
   return {
     isDemo: !session,
-    isLoading: sessionLoading || context.isLoading || reviewChart.isLoading || calculation.isPending,
-    error: context.error ?? reviewChart.error ?? calculation.error ?? transit.error ?? reviewTransit.error,
-    retry: () => { void context.refetch(); void reviewChart.refetch(); },
+    isLoading:
+      sessionLoading || context.isLoading || reviewChart.isLoading || calculation.isPending,
+    error:
+      context.error ??
+      reviewChart.error ??
+      calculation.error ??
+      transit.error ??
+      reviewTransit.error,
+    retry: () => {
+      void context.refetch();
+      void reviewChart.refetch();
+    },
     profile: context.data?.birthProfile ?? null,
     chart: saved ?? null,
     planets: parsedPlanets?.success ? parsedPlanets.data : saved ? [] : publicPlanets,
     houses: parsedHouses?.success ? parsedHouses.data : (reviewChart.data?.houses ?? []),
-    standards: parsedStandards?.success ? parsedStandards.data : (reviewChart.data?.standards ?? []),
+    standards: parsedStandards?.success
+      ? parsedStandards.data
+      : (reviewChart.data?.standards ?? []),
     ascendant: parsedAscendant?.success ? parsedAscendant.data : saved ? null : publicAscendant,
-    transitPlanets: mode === "natal" ? [] : (transit.data?.transit.planets ?? reviewTransit.data?.transit.planets ?? []),
+    transitPlanets:
+      mode === "natal"
+        ? []
+        : (transit.data?.transit.planets ?? reviewTransit.data?.transit.planets ?? []),
   };
 }

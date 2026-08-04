@@ -15,9 +15,16 @@ export const Route = createFileRoute("/_authenticated/premium")({
   head: () => ({
     meta: [
       { title: "พรีเมียมฟรี 30 วัน | Horathai AI" },
-      { name: "description", content: "ปลดล็อกรายงานดวงเชิงลึก โหร AI ไม่จำกัด และพยากรณ์ดาวย้ายรายเดือน ทดลองฟรี 30 วัน" },
+      {
+        name: "description",
+        content:
+          "ปลดล็อกรายงานดวงเชิงลึก โหร AI ไม่จำกัด และพยากรณ์ดาวย้ายรายเดือน ทดลองฟรี 30 วัน",
+      },
       { property: "og:title", content: "พรีเมียมฟรี 30 วัน | Horathai AI" },
-      { property: "og:description", content: "ไม่ต้องใช้บัตรเครดิต ยกเลิกได้ทุกเมื่อ พร้อมรายงานดวงเชิงลึกฉบับเต็ม" },
+      {
+        property: "og:description",
+        content: "ไม่ต้องใช้บัตรเครดิต ยกเลิกได้ทุกเมื่อ พร้อมรายงานดวงเชิงลึกฉบับเต็ม",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -48,7 +55,9 @@ function PremiumPage() {
   const handleStartTrial = async () => {
     setTrialError(null);
     if (reviewGuest) {
-      setTrialError("ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ กรุณาเข้าสู่ระบบด้วย LINE เพื่อดำเนินการภายหลัง");
+      setTrialError(
+        "ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ กรุณาเข้าสู่ระบบด้วย LINE เพื่อดำเนินการภายหลัง",
+      );
       return;
     }
     if (!isSignedIn) {
@@ -82,14 +91,22 @@ function PremiumPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="relative overflow-hidden rounded-[28px] border border-primary/30 p-7 text-center"
-          style={{ background: "linear-gradient(160deg, oklch(0.3 0.12 300), oklch(0.16 0.05 288))" }}
+          style={{
+            background: "linear-gradient(160deg, oklch(0.3 0.12 300), oklch(0.16 0.05 288))",
+          }}
         >
           <span className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-primary/25 blur-3xl" />
           <Crown className="mx-auto h-7 w-7 text-primary" />
-          <p className="mt-3 text-[11px] uppercase tracking-[0.34em] text-primary/80">Free Premium</p>
+          <p className="mt-3 text-[11px] uppercase tracking-[0.34em] text-primary/80">
+            Free Premium
+          </p>
           <h1 className="display mt-1 text-4xl font-bold text-gold">30 วัน</h1>
-          <p className="mt-2 text-xs text-muted-foreground">ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ</p>
-          <p className="mt-2 text-[11px] font-medium text-warning">ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ
+          </p>
+          <p className="mt-2 text-[11px] font-medium text-warning">
+            ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ
+          </p>
           {access.unlockedForEveryone && (
             <p className="mt-2 text-[11px] text-primary/80">
               ช่วงพัฒนา: ทุกฟีเจอร์เปิดให้ใช้ฟรีอยู่แล้ว การเริ่มทดลองใช้เป็นการยืนยันด้วยตัวคุณเอง
@@ -104,9 +121,9 @@ function PremiumPage() {
             <Sparkles className="h-4 w-4" />
             {daysLeft !== null
               ? `กำลังทดลองใช้ · เหลือ ${daysLeft} วัน`
-                : isSignedIn
+              : isSignedIn
                 ? "เริ่มทดลองใช้ฟรีทันที"
-                  : "ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ"}
+                : "ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ"}
           </motion.button>
           {trialError && <p className="mt-3 text-[11px] text-warning">{trialError}</p>}
         </motion.div>

@@ -196,8 +196,8 @@ export function DashboardHome() {
               {PUBLIC_REVIEW_MODE && !isSignedIn
                 ? "โหมดอ่านอย่างเดียว · เข้าสู่ระบบเพื่อเช็คอิน"
                 : reward
-                ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
-                : `สตรีค ${toThaiDigits(profile.streak)} วัน · ${moon ? `จันทร์ราศี${moon.signTh}` : "ดวงจันทร์กำลังเคลื่อน"}`}
+                  ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
+                  : `สตรีค ${toThaiDigits(profile.streak)} วัน · ${moon ? `จันทร์ราศี${moon.signTh}` : "ดวงจันทร์กำลังเคลื่อน"}`}
             </span>
           </span>
         </motion.button>

@@ -24,15 +24,16 @@ export function useReading(atIso?: string) {
     queryKey: ["reading", publicReview ? "public-review" : birthDate, birthTime, province, day],
     enabled: ready,
     staleTime: 1000 * 60 * 30,
-    queryFn: () => publicReview
-      ? fetchReviewReading({ data: atIso ? { at: atIso } : {} })
-      : fetchReading({
-        data: {
-          birthDate,
-          birthTime: birthTime || "12:00",
-          province,
-          ...(atIso ? { at: atIso } : {}),
-        },
-      }),
+    queryFn: () =>
+      publicReview
+        ? fetchReviewReading({ data: atIso ? { at: atIso } : {} })
+        : fetchReading({
+            data: {
+              birthDate,
+              birthTime: birthTime || "12:00",
+              province,
+              ...(atIso ? { at: atIso } : {}),
+            },
+          }),
   });
 }

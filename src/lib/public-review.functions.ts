@@ -7,7 +7,9 @@ export const getPublicReviewChart = createServerFn({ method: "GET" }).handler(as
 });
 
 export const getPublicReviewReading = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => z.object({ at: z.string().datetime().optional() }).parse(input))
+  .inputValidator((input: unknown) =>
+    z.object({ at: z.string().datetime().optional() }).parse(input),
+  )
   .handler(async ({ data }) => {
     const { calculatePublicReviewReading } = await import("./public-review.server");
     return calculatePublicReviewReading(data.at);
