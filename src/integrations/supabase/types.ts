@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      entitlements: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          plan: string
+          trial_started_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          plan?: string
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          plan?: string
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gamification: {
+        Row: {
+          created_at: string
+          last_check_in: string | null
+          points: number
+          streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          last_check_in?: string | null
+          points?: number
+          streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          last_check_in?: string | null
+          points?: number
+          streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          birth_date: string | null
+          birth_time: string | null
+          country: string
+          created_at: string
+          display_name: string
+          id: string
+          line_user_id: string | null
+          onboarded: boolean
+          province: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          birth_date?: string | null
+          birth_time?: string | null
+          country?: string
+          created_at?: string
+          display_name?: string
+          id: string
+          line_user_id?: string | null
+          onboarded?: boolean
+          province?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          birth_date?: string | null
+          birth_time?: string | null
+          country?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          line_user_id?: string | null
+          onboarded?: boolean
+          province?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

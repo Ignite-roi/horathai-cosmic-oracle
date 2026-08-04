@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Gauge, Sparkles, User } from "lucide-react";
+import { Gauge, LogOut, MessageCircle, Sparkles, User } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
+import { useLineAuth } from "@/hooks/useAuth";
 import { useQuality } from "@/hooks/useQuality";
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";
@@ -32,12 +33,58 @@ const MODES = [
 function SettingsPage() {
   const { quality, setQuality, reduceMotion, setReduceMotion, showAspects, setShowAspects } = useSettings();
   const resolved = useQuality().quality;
-  const { name, birthDate, birthTime, province } = useProfile();
+  const { name, avatar, birthDate, birthTime, province } = useProfile();
+  const { isSignedIn, configured, error: lineError, login, logout } = useLineAuth();
 
   return (
     <AppShell>
       <PageTransition>
         <SectionTitle kicker="Settings" title="ตั้งค่าประสบการณ์" />
+
+        <div className="glass-deep grain mb-4 rounded-[26px] p-5">
+          <p className="flex items-center gap-2 text-[12px] text-muted-foreground">
+            <MessageCircle className="h-4 w-4 text-[#06C755]" /> บัญชี LINE
+          </p>
+          {isSignedIn ? (
+            <>
+              <div className="mt-3 flex items-center gap-3">
+                {avatar ? (
+                  <img src={avatar} alt={`รูปโปรไฟล์ LINE ของ ${name}`} className="h-11 w-11 rounded-full object-cover" />
+                ) : (
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <User className="h-5 w-5" />
+                  </span>
+                )}
+                <div>
+                  <p className="text-[14px] text-foreground">{name}</p>
+                  <p className="text-[11px] text-muted-foreground">เชื่อมต่อแล้ว · ข้อมูลถูกบันทึกในบัญชีของคุณ</p>
+                </div>
+              </div>
+              <button
+                onClick={() => void logout()}
+                className="press mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-border text-[13px] text-foreground"
+              >
+                <LogOut className="h-4 w-4" /> ออกจากระบบ
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="mt-2 text-[12px] text-muted-foreground">
+                เชื่อมบัญชี LINE เพื่อบันทึกดวงกำเนิด แต้มมงคล และสถานะพรีเมียมไว้ในบัญชีของคุณ
+              </p>
+              <button
+                onClick={() => void login()}
+                className="press mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#06C755] text-[13px] font-semibold text-white"
+              >
+                <MessageCircle className="h-4 w-4" /> เข้าสู่ระบบด้วย LINE
+              </button>
+              {!configured && (
+                <p className="mt-2 text-[11px] text-muted-foreground">ยังไม่ได้ตั้งค่า LINE Login สำหรับแอปนี้</p>
+              )}
+              {lineError && <p className="mt-2 text-[11px] text-destructive">{lineError}</p>}
+            </>
+          )}
+        </div>
 
         <div className="glass-deep grain rounded-[26px] p-5">
           <p className="flex items-center gap-2 text-[12px] text-muted-foreground">

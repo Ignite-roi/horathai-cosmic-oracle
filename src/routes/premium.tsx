@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Check, Crown, Gift, Sparkles, Trophy, Users } from "lucide-react";
 
 import { AppShell, PageTransition, SectionTitle } from "@/components/AppShell";
+import { useLineAuth } from "@/hooks/useAuth";
+import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/premium")({
@@ -29,7 +31,21 @@ const PERKS = [
 
 function PremiumPage() {
   const { premiumTrialStartedAt, startTrial, points, streak } = useProfile();
+  const { isSignedIn, login } = useLineAuth();
   const daysLeft = trialDaysLeft(premiumTrialStartedAt);
+
+  const handleStartTrial = async () => {
+    if (!isSignedIn) {
+      const ok = await login();
+      if (!ok) return;
+    }
+    startTrial();
+    try {
+      await startPremiumTrial();
+    } catch (err) {
+      console.error("[trial] start failed", err);
+    }
+  };
 
   return (
     <AppShell>
@@ -48,11 +64,15 @@ function PremiumPage() {
           <p className="mt-2 text-xs text-muted-foreground">ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ</p>
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={startTrial}
+            onClick={handleStartTrial}
             className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl btn-gold py-4 text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
           >
             <Sparkles className="h-4 w-4" />
-            {daysLeft !== null ? `กำลังทดลองใช้ · เหลือ ${daysLeft} วัน` : "เริ่มทดลองใช้ฟรีทันที"}
+            {daysLeft !== null
+              ? `กำลังทดลองใช้ · เหลือ ${daysLeft} วัน`
+              : isSignedIn
+                ? "เริ่มทดลองใช้ฟรีทันที"
+                : "เข้าสู่ระบบด้วย LINE เพื่อเริ่มทดลอง"}
           </motion.button>
         </motion.div>
 

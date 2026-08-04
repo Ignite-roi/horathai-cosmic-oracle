@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { useLineAuth } from "../hooks/useAuth";
 
 function NotFoundComponent() {
   return (
@@ -129,8 +130,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LineAuthBoot />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );
+}
+
+/** Boots LIFF and restores the LINE session once for the whole app. */
+function LineAuthBoot() {
+  useLineAuth();
+  return null;
 }

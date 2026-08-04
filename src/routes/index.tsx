@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ChevronRight, Flame, Gift, Moon, Settings2, Sparkles } from "lucide-react";
@@ -5,7 +6,9 @@ import { useState } from "react";
 
 import { AppShell, LoadingSky, PageTransition, SectionTitle } from "@/components/AppShell";
 import { ScoreRing } from "@/components/ScoreCard";
+import { useLineAuth } from "@/hooks/useAuth";
 import { useReading } from "@/hooks/useReading";
+import { dailyCheckIn } from "@/lib/profile.functions";
 import { moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
 
@@ -33,9 +36,25 @@ export const Route = createFileRoute("/")({
 function Index() {
   const profile = useProfile();
   const checkIn = useProfile((s) => s.checkIn);
+  const { isSignedIn } = useLineAuth();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useReading();
   const [reward, setReward] = useState<number | null>(null);
   const daysLeft = trialDaysLeft(profile.premiumTrialStartedAt);
+
+  const handleCheckIn = async () => {
+    if (!isSignedIn) {
+      setReward(checkIn());
+      return;
+    }
+    try {
+      const result = await dailyCheckIn();
+      setReward(result.reward);
+      await queryClient.invalidateQueries({ queryKey: ["account"] });
+    } catch (err) {
+      console.error("[checkin] failed", err);
+    }
+  };
 
   const moon = data?.transit.planets.find((p) => p.num === 2);
   const sun = data?.transit.planets.find((p) => p.num === 1);
@@ -138,7 +157,7 @@ function Index() {
 
         <section className="mt-6 grid grid-cols-2 gap-3">
           <button
-            onClick={() => setReward(checkIn())}
+            onClick={() => void handleCheckIn()}
             className="press glass grain flex flex-col items-start gap-1 rounded-[22px] p-4 text-left"
           >
             <Gift className="h-5 w-5 text-primary" />
