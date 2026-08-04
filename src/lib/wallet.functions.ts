@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { WalletData } from "@/lib/wallet";
+import { MockCheckoutInput } from "@/lib/wallet.schemas";
 
 export const getMyWallet = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -40,10 +41,14 @@ export const getMyWallet = createServerFn({ method: "GET" })
 
 export const completeMockCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ packageCode: z.string().regex(/^[a-z0-9_]+$/), pointsToUse: z.number().int().min(0) }).parse(input),
-  )
+  .inputValidator((input: unknown) => MockCheckoutInput.parse(input))
   .handler(async ({ data, context }) => {
+    const { assertMockCheckoutAllowed } = await import("@/lib/mock-checkout.server");
+    assertMockCheckoutAllowed();
+
+    // The authenticated middleware is the sole source of ownership. Package
+    // days and price are loaded by the database RPC from the package code;
+    // client-supplied user IDs, prices, days, or payable amounts are rejected.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: result, error } = await supabaseAdmin.rpc("complete_mock_day_purchase", {
       _user_id: context.userId,
