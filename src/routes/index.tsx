@@ -143,7 +143,7 @@ function Entry() {
 
   useEffect(() => {
     if (PUBLIC_REVIEW_MODE && !isSignedIn) {
-      void navigate({ to: "/dashboard", replace: true });
+      void navigate({ to: "/onboarding", replace: true });
       return;
     }
     if (!isSignedIn || !account) return;

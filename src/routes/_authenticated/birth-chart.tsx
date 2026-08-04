@@ -44,7 +44,7 @@ function BirthChartPage() {
   return <AppShell><PageTransition>
     <BirthChartHero {...(data.ascendant?.signTh ? { ascendant: data.ascendant.signTh } : {})} isDemo={data.isDemo}/>
     <BirthChartTabs value={mode} onChange={setMode}/>
-    {data.isDemo && <div className="mt-3 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">โหมดตัวอย่าง · ข้อมูลนี้ไม่ถูกบันทึกและไม่แทนดวงจริงของคุณ</div>}
+    {data.isDemo && <div className="mt-3 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">{data.isTemporary ? "ดวงชั่วคราว — ยังไม่ได้บันทึก" : "โหมดตัวอย่าง · ข้อมูลนี้ไม่ถูกบันทึกและไม่แทนดวงจริงของคุณ"}</div>}
     {data.isLoading && <BirthChartLoadingState/>}
     {data.error && <BirthChartErrorState message={(data.error as Error).message} onRetry={data.retry}/>} 
     {!data.isLoading && !data.error && data.planets.length === 0 && <BirthChartEmptyState demo={data.isDemo}/>} 
@@ -57,7 +57,7 @@ function BirthChartPage() {
       {data.profile && data.chart && <BirthDataCertificate profile={data.profile} chart={data.chart}/>} 
       <GovernedReading facts={[`เอนจิน ${data.chart?.engine_type ?? "demo"}`, data.ascendant ? `ลัคนาราศี${data.ascendant.signTh}` : "ไม่กำหนดลัคนา", `ตำแหน่งดาว ${data.planets.length} ดวง`]} rules={[]} limitations={["ยังไม่มีกฎ published ใน Master Knowledge Base", "ไม่แสดงคำตีความที่ไม่มี citation", "เอนจิน sidereal_lahiri_dev ยังไม่ผ่าน independent benchmark"]}/>
       <BirthChartActions onShare={() => void share()}/>
-      {data.isDemo && <BirthChartEmptyState demo/>}
+       {data.isDemo && !data.isTemporary && <BirthChartEmptyState demo/>}
     </>}
     <AnimatePresence>{selected && <PlanetSheet planet={selected} onClose={() => setSelected(null)}/>}</AnimatePresence>
   </PageTransition></AppShell>;
