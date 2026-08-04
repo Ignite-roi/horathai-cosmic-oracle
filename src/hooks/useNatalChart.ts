@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 
 import { getReading } from "@/lib/astro.functions";
-import { calculateAndSaveChart, getMyBirthContext, getMyTransit } from "@/lib/birth.functions";
+import { calculateAndSaveChart, getMyBirthContext } from "@/lib/birth.functions";
 import { DEMO_BIRTH } from "@/hooks/useHomeReading";
 import { useSession } from "@/hooks/useAuth";
 
@@ -21,7 +21,6 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
   const { session, loading: sessionLoading } = useSession();
   const queryClient = useQueryClient();
   const bindChart = useServerFn(calculateAndSaveChart);
-  const fetchTransit = useServerFn(getMyTransit);
   const fetchDemo = useServerFn(getReading);
 
   const context = useQuery({
@@ -43,7 +42,11 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
 
   const transit = useQuery({
     queryKey: ["birth-chart-transit", session?.user.id],
-    queryFn: () => fetchTransit({ data: {} }),
+    queryFn: () => {
+      const profile = context.data?.birthProfile;
+      if (!profile) throw new Error("ยังไม่พบข้อมูลวันเกิด");
+      return fetchDemo({ data: { birthDate: profile.birth_date, birthTime: (profile.birth_time ?? "12:00").slice(0, 5), province: profile.province } });
+    },
     enabled: Boolean(session && context.data?.chart && mode !== "natal"),
     staleTime: 30 * 60_000,
   });
@@ -73,6 +76,6 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
     houses: parsedHouses?.success ? parsedHouses.data : [],
     standards: parsedStandards?.success ? parsedStandards.data : [],
     ascendant: parsedAscendant?.success ? parsedAscendant.data : demo.data?.natal.ascendant ? { ...demo.data.natal.ascendant, minute: Math.round((demo.data.natal.ascendant.degree % 1) * 60), signId: demo.data.natal.ascendant.signId, signTh: demo.data.natal.ascendant.signTh } : null,
-    transitPlanets: mode === "natal" ? [] : (transit.data?.planets ?? []),
+    transitPlanets: mode === "natal" ? [] : (transit.data?.transit.planets ?? []),
   };
 }
