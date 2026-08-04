@@ -124,7 +124,17 @@ function Diagnostics() {
 
 function Entry() {
   const navigate = useNavigate();
-  const { status, error, liffError, isSignedIn, login, retry, inLine } = useLineAuth();
+  const {
+    status,
+    error,
+    liffError,
+    isSignedIn,
+    login,
+    retry,
+    inLine,
+    needsReauthorization,
+    reauthorize,
+  } = useLineAuth();
   const { data: account } = useAccount();
 
   useEffect(() => {
@@ -160,6 +170,44 @@ function Entry() {
     );
 
   const isConfigError = status === "configuration_error";
+
+  if (needsReauthorization)
+    return (
+      <Shell>
+        <h1 className="display text-2xl text-foreground">ต้องอนุญาต LINE ใหม่</h1>
+        <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-4 text-left text-[12px] leading-relaxed text-foreground">
+          <p className="flex items-start gap-2">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              LINE เข้าสู่ระบบให้แล้ว แต่ยังไม่ได้มอบสิทธิ์ข้อมูลโปรไฟล์ (openid)
+              ให้แอปนี้ ระบบจึงยังยืนยันตัวตนของคุณไม่ได้
+              กรุณากดปุ่มด้านล่างเพื่ออนุญาตใหม่อีกครั้ง
+            </span>
+          </p>
+          <p className="mt-2 text-[10px] tracking-[0.12em] text-muted-foreground">
+            {liffError?.code ?? "LINE_ID_TOKEN_MISSING"}
+          </p>
+        </div>
+
+        <button
+          onClick={() => void reauthorize()}
+          className="press btn-gold mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
+        >
+          อนุญาต LINE ใหม่
+        </button>
+
+        {APP_ACCESS_MODE === "development_unlocked" && (
+          <Link
+            to="/transit"
+            className="press mt-3 inline-flex h-11 w-full items-center justify-center rounded-2xl border border-primary/30 text-[13px] text-foreground"
+          >
+            สำรวจแบบผู้เยี่ยมชมก่อน
+          </Link>
+        )}
+
+        <Diagnostics />
+      </Shell>
+    );
 
   return (
     <Shell>
