@@ -10,6 +10,11 @@ const ELEMENT_WORDS = {
   น้ำ: "รับรู้อารมณ์ละเอียด ปรับตัวเก่ง และผูกพันกับความหมายภายใน",
 } as const;
 
+/**
+ * @deprecated Production must retrieve published, cited rules through the KB
+ * governance boundary. Kept only for migration compatibility; callers should
+ * use GovernedReading and productionEligibleRules instead.
+ */
 export function buildNatalInterpretations(
   planets: ChartPlanet[],
   houses: ChartHouse[],

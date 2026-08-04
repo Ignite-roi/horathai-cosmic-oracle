@@ -1,0 +1,1 @@
+CREATE POLICY "No direct client access to auth events" ON public.auth_events FOR SELECT TO anon, authenticated USING (false);

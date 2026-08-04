@@ -10,24 +10,28 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
+import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
+import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
+import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -50,38 +54,62 @@ const AuthenticatedAiAstrologerRoute =
   AuthenticatedAiAstrologerRouteImport.update({
     id: '/ai-astrologer',
     path: '/ai-astrologer',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedBirthChartRoute = AuthenticatedBirthChartRouteImport.update({
   id: '/birth-chart',
   path: '/birth-chart',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedKnowledgeAdminRoute =
+  AuthenticatedKnowledgeAdminRouteImport.update({
+    id: '/knowledge-admin',
+    path: '/knowledge-admin',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPremiumRoute = AuthenticatedPremiumRouteImport.update({
   id: '/premium',
   path: '/premium',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   id: '/transits',
   path: '/transits',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedKnowledgeAdminIndexRoute =
+  AuthenticatedKnowledgeAdminIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
+const AuthenticatedKnowledgeAdminEntityRoute =
+  AuthenticatedKnowledgeAdminEntityRouteImport.update({
+    id: '/$entity',
+    path: '/$entity',
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
+const AuthenticatedKnowledgeAdminSourcesSourceIdRoute =
+  AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport.update({
+    id: '/sources/$sourceId',
+    path: '/sources/$sourceId',
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,10 +119,14 @@ export interface FileRoutesByFullPath {
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -108,21 +140,28 @@ export interface FileRoutesByTo {
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
+  '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
+  '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,10 +173,14 @@ export interface FileRouteTypes {
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
+    | '/knowledge-admin'
     | '/onboarding'
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/knowledge-admin/$entity'
+    | '/knowledge-admin/'
+    | '/knowledge-admin/sources/$sourceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +194,9 @@ export interface FileRouteTypes {
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/knowledge-admin/$entity'
+    | '/knowledge-admin'
+    | '/knowledge-admin/sources/$sourceId'
   id:
     | '__root__'
     | '/'
@@ -161,15 +207,19 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
     | '/_authenticated/dashboard'
+    | '/_authenticated/knowledge-admin'
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
     | '/_authenticated/settings'
     | '/_authenticated/transits'
+    | '/_authenticated/knowledge-admin/$entity'
+    | '/_authenticated/knowledge-admin/'
+    | '/_authenticated/knowledge-admin/sources/$sourceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AiRoute: typeof AiRoute
   ChartRoute: typeof ChartRoute
   TransitRoute: typeof TransitRoute
@@ -188,7 +238,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai': {
@@ -217,79 +267,132 @@ declare module '@tanstack/react-router' {
       path: '/ai-astrologer'
       fullPath: '/ai-astrologer'
       preLoaderRoute: typeof AuthenticatedAiAstrologerRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/birth-chart': {
       id: '/_authenticated/birth-chart'
       path: '/birth-chart'
       fullPath: '/birth-chart'
       preLoaderRoute: typeof AuthenticatedBirthChartRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/knowledge-admin': {
+      id: '/_authenticated/knowledge-admin'
+      path: '/knowledge-admin'
+      fullPath: '/knowledge-admin'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/premium': {
       id: '/_authenticated/premium'
       path: '/premium'
       fullPath: '/premium'
       preLoaderRoute: typeof AuthenticatedPremiumRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/transits': {
       id: '/_authenticated/transits'
       path: '/transits'
       fullPath: '/transits'
       preLoaderRoute: typeof AuthenticatedTransitsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/knowledge-admin/': {
+      id: '/_authenticated/knowledge-admin/'
+      path: '/'
+      fullPath: '/knowledge-admin/'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
+    }
+    '/_authenticated/knowledge-admin/$entity': {
+      id: '/_authenticated/knowledge-admin/$entity'
+      path: '/$entity'
+      fullPath: '/knowledge-admin/$entity'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminEntityRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
+    }
+    '/_authenticated/knowledge-admin/sources/$sourceId': {
+      id: '/_authenticated/knowledge-admin/sources/$sourceId'
+      path: '/sources/$sourceId'
+      fullPath: '/knowledge-admin/sources/$sourceId'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
+interface AuthenticatedKnowledgeAdminRouteChildren {
+  AuthenticatedKnowledgeAdminEntityRoute: typeof AuthenticatedKnowledgeAdminEntityRoute
+  AuthenticatedKnowledgeAdminIndexRoute: typeof AuthenticatedKnowledgeAdminIndexRoute
+  AuthenticatedKnowledgeAdminSourcesSourceIdRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
+}
+
+const AuthenticatedKnowledgeAdminRouteChildren: AuthenticatedKnowledgeAdminRouteChildren =
+  {
+    AuthenticatedKnowledgeAdminEntityRoute:
+      AuthenticatedKnowledgeAdminEntityRoute,
+    AuthenticatedKnowledgeAdminIndexRoute:
+      AuthenticatedKnowledgeAdminIndexRoute,
+    AuthenticatedKnowledgeAdminSourcesSourceIdRoute:
+      AuthenticatedKnowledgeAdminSourcesSourceIdRoute,
+  }
+
+const AuthenticatedKnowledgeAdminRouteWithChildren =
+  AuthenticatedKnowledgeAdminRoute._addFileChildren(
+    AuthenticatedKnowledgeAdminRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
   AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
   AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
 }
 
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
   AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedKnowledgeAdminRoute:
+    AuthenticatedKnowledgeAdminRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
 }
 
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AiRoute: AiRoute,
   ChartRoute: ChartRoute,
   TransitRoute: TransitRoute,
@@ -297,3 +400,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -72,10 +72,10 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
     retry: () => { void context.refetch(); void demo.refetch(); },
     profile: context.data?.birthProfile ?? null,
     chart: saved ?? null,
-    planets: parsedPlanets?.success ? parsedPlanets.data : demoPlanets,
+    planets: parsedPlanets?.success ? parsedPlanets.data : saved ? [] : demoPlanets,
     houses: parsedHouses?.success ? parsedHouses.data : [],
     standards: parsedStandards?.success ? parsedStandards.data : [],
-    ascendant: parsedAscendant?.success ? parsedAscendant.data : demo.data?.natal.ascendant ? { ...demo.data.natal.ascendant, minute: Math.round((demo.data.natal.ascendant.degree % 1) * 60), signId: demo.data.natal.ascendant.signId, signTh: demo.data.natal.ascendant.signTh } : null,
+    ascendant: parsedAscendant?.success ? parsedAscendant.data : saved ? null : demo.data?.natal.ascendant ? { ...demo.data.natal.ascendant, minute: Math.round((demo.data.natal.ascendant.degree % 1) * 60), signId: demo.data.natal.ascendant.signId, signTh: demo.data.natal.ascendant.signTh } : null,
     transitPlanets: mode === "natal" ? [] : (transit.data?.transit.planets ?? []),
   };
 }
