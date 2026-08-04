@@ -148,9 +148,17 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
 
   const planets: PlacedPlanet[] = PLANETS.map((meta) => {
     const body = BODY_BY_PLANET[meta.num];
-    const tropical = body ? apparentTropicalLongitude(body, date) : meta.num === 8 ? rahuLongitude(t) : norm360(rahuLongitude(t) + 180);
+    const tropical = body
+      ? apparentTropicalLongitude(body, date)
+      : meta.num === 8
+        ? rahuLongitude(t)
+        : norm360(rahuLongitude(t) + 180);
     const nextDate = new Date(date.getTime() + 86_400_000);
-    const nextTropical = body ? apparentTropicalLongitude(body, nextDate) : meta.num === 8 ? rahuLongitude(centuries(jd + 1)) : norm360(rahuLongitude(centuries(jd + 1)) + 180);
+    const nextTropical = body
+      ? apparentTropicalLongitude(body, nextDate)
+      : meta.num === 8
+        ? rahuLongitude(centuries(jd + 1))
+        : norm360(rahuLongitude(centuries(jd + 1)) + 180);
     let delta = nextTropical - tropical;
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;

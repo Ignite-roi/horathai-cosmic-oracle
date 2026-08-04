@@ -39,11 +39,15 @@ export function layoutRingPlanets(
   const minimumGap = ring === "natal" ? 15 : 14;
   const sorted = [...planets].sort((a, b) => a.longitude - b.longitude);
   const unwrapped = sorted.map((planet, index) => {
-    const longitude = index === 0 ? planet.longitude : planet.longitude + (planet.longitude < sorted[0]!.longitude ? 360 : 0);
+    const longitude =
+      index === 0
+        ? planet.longitude
+        : planet.longitude + (planet.longitude < sorted[0]!.longitude ? 360 : 0);
     return { planet, longitude };
   });
   const slots = unwrapped.map((item) => item.longitude);
-  for (let index = 1; index < slots.length; index += 1) slots[index] = Math.max(slots[index]!, slots[index - 1]! + minimumGap);
+  for (let index = 1; index < slots.length; index += 1)
+    slots[index] = Math.max(slots[index]!, slots[index - 1]! + minimumGap);
   const lastSlot = slots.at(-1);
   const lastPlanet = unwrapped.at(-1);
   if (lastSlot === undefined || !lastPlanet) return [];

@@ -85,7 +85,12 @@ export function useNatalChart(mode: "natal" | "transit" | "both", transitAt?: st
   }, [context.data, calculation]);
 
   const transit = useQuery({
-    queryKey: ["birth-chart-transit", session?.user.id ?? "guest", guestContext?.birthProfile.birth_date, transitAt],
+    queryKey: [
+      "birth-chart-transit",
+      session?.user.id ?? "guest",
+      guestContext?.birthProfile.birth_date,
+      transitAt,
+    ],
     queryFn: () => {
       const profile = context.data?.birthProfile ?? guestContext?.birthProfile;
       if (!profile) throw new Error("ยังไม่พบข้อมูลวันเกิด");

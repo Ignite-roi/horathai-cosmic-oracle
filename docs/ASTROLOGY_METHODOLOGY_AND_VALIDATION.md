@@ -37,7 +37,7 @@ The distinct civil input `5 May 1988 24:00` normalizes to `6 May 1988 00:00`; it
 
 - Astronomy Engine documentation/source: https://github.com/cosinekitty/astronomy
 - JPL approximate planetary positions background: https://ssd.jpl.nasa.gov/planets/approx_pos.html
-- Meeus, *Astronomical Algorithms*, for time/sidereal/coordinate transformations.
+- Meeus, _Astronomical Algorithms_, for time/sidereal/coordinate transformations.
 
 ## Validation suite
 

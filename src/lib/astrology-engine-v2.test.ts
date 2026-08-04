@@ -8,13 +8,25 @@ const PLACE = { latitude: 15.8068, longitude: 102.0315 };
 
 describe("verified calculation contracts", () => {
   it("handles historical timezone offsets and DST deterministically", () => {
-    expect(zonedWallClockToUtc("1988-05-05", "00:00", "Asia/Bangkok").toISOString()).toBe("1988-05-04T17:00:00.000Z");
-    expect(zonedWallClockToUtc("2024-07-01", "12:00", "America/New_York").toISOString()).toBe("2024-07-01T16:00:00.000Z");
-    expect(zonedWallClockToUtc("2024-01-01", "12:00", "America/New_York").toISOString()).toBe("2024-01-01T17:00:00.000Z");
+    expect(zonedWallClockToUtc("1988-05-05", "00:00", "Asia/Bangkok").toISOString()).toBe(
+      "1988-05-04T17:00:00.000Z",
+    );
+    expect(zonedWallClockToUtc("2024-07-01", "12:00", "America/New_York").toISOString()).toBe(
+      "2024-07-01T16:00:00.000Z",
+    );
+    expect(zonedWallClockToUtc("2024-01-01", "12:00", "America/New_York").toISOString()).toBe(
+      "2024-01-01T17:00:00.000Z",
+    );
   });
 
   it("returns planets only when birth time is unknown", async () => {
-    const result = await calculateNatal({ birthDate: "1988-05-05", birthTime: "12:00", birthTimeKnown: false, ...PLACE, timezone: "Asia/Bangkok" });
+    const result = await calculateNatal({
+      birthDate: "1988-05-05",
+      birthTime: "12:00",
+      birthTimeKnown: false,
+      ...PLACE,
+      timezone: "Asia/Bangkok",
+    });
     expect(result.planets).toHaveLength(9);
     expect(result.ascendant).toBeNull();
     expect(result.houses).toEqual([]);
@@ -28,7 +40,11 @@ describe("verified calculation contracts", () => {
 
   it("normalizes sign boundaries without producing 30-degree positions", () => {
     for (let day = 0; day < 40; day += 1) {
-      const chart = computeChart(new Date(Date.UTC(2025, 0, 1 + day)), PLACE.latitude, PLACE.longitude);
+      const chart = computeChart(
+        new Date(Date.UTC(2025, 0, 1 + day)),
+        PLACE.latitude,
+        PLACE.longitude,
+      );
       for (const planet of chart.planets) {
         expect(planet.longitude).toBeGreaterThanOrEqual(0);
         expect(planet.longitude).toBeLessThan(360);
