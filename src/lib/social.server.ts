@@ -29,8 +29,9 @@ export async function createResultShare(
     payload = data as Json;
     title = "พื้นดวงกำเนิด";
   } else if (input.type === "compatibility") {
-    if (!input.sourceId) throw new Error("กรุณาเลือกผลสมพงษ์");
-    const { data, error } = await db.from("compatibility_checks").select("person_label,overall_score,result_json,calculation_engine,calculation_version,rule_ids,citation_snapshot_json,created_at").eq("id", input.sourceId).eq("user_id", userId).maybeSingle();
+    let query = db.from("compatibility_checks").select("person_label,overall_score,result_json,calculation_engine,calculation_version,rule_ids,citation_snapshot_json,created_at").eq("user_id", userId);
+    query = input.sourceId ? query.eq("id", input.sourceId) : query.order("updated_at", { ascending: false }).limit(1);
+    const { data, error } = await query.maybeSingle();
     if (error || !data) throw new Error("ไม่พบผลสมพงษ์ที่เลือก");
     payload = data as Json;
     title = `ดวงสมพงษ์ · ${data.person_label}`;
