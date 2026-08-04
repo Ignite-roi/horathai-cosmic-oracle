@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ServiceInfoRouteImport } from './routes/service-info'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
@@ -60,6 +61,11 @@ const ChartRoute = ChartRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceInfoRoute = ServiceInfoRouteImport.update({
+  id: '/service-info',
+  path: '/service-info',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
+  '/service-info': typeof ServiceInfoRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
+  '/service-info': typeof ServiceInfoRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
+  '/service-info': typeof ServiceInfoRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/chart'
     | '/privacy'
+    | '/service-info'
     | '/terms'
     | '/transit'
     | '/ai-astrologer'
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/chart'
     | '/privacy'
+    | '/service-info'
     | '/terms'
     | '/transit'
     | '/ai-astrologer'
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/chart'
     | '/privacy'
+    | '/service-info'
     | '/terms'
     | '/transit'
     | '/_authenticated/ai-astrologer'
@@ -368,6 +380,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRoute
   ChartRoute: typeof ChartRoute
   PrivacyRoute: typeof PrivacyRoute
+  ServiceInfoRoute: typeof ServiceInfoRoute
   TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
   RTokenRoute: typeof RTokenRoute
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service-info': {
+      id: '/service-info'
+      path: '/service-info'
+      fullPath: '/service-info'
+      preLoaderRoute: typeof ServiceInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -645,6 +665,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRoute,
   ChartRoute: ChartRoute,
   PrivacyRoute: PrivacyRoute,
+  ServiceInfoRoute: ServiceInfoRoute,
   TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
   RTokenRoute: RTokenRoute,
