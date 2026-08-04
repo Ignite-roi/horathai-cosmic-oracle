@@ -4,7 +4,7 @@
 
 V1 is a production-safe foundation for incremental, reviewed research. It does **not** mean that every astrology book has been ingested. The initial corpus contains taxonomy, three isolated system records, and bibliographic metadata for one user-provided scan. It contains no seeded predictive rules.
 
-The current calculation engine remains `sidereal_lahiri_dev`. The record `thai_traditional_unimplemented` is a research namespace only and does not claim Thai Suriyayatra compatibility.
+The current calculation layer is the versioned deterministic Lahiri model. The record `thai_traditional_unimplemented` is a research namespace only and does not claim Thai Suriyayatra compatibility; independent Swiss/JPL multi-epoch benchmarking remains pending.
 
 ## Separation of responsibilities
 

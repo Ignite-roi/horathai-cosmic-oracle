@@ -81,19 +81,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
       {
         name: "description",
-        content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
       { name: "author", content: "Horathai AI" },
       { name: "theme-color", content: "#12101f" },
       { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
-      { property: "og:description", content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE" },
+      {
+        property: "og:description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
-      { name: "twitter:description", content: "ผูกดวงกำเนิดตามหลักสุริยยาตร์ ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png" },
+      {
+        name: "twitter:description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png",
+      },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

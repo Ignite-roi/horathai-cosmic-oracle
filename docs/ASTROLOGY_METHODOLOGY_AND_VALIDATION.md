@@ -2,7 +2,7 @@
 
 ## Declared methodology
 
-Horathai currently implements **sidereal Lahiri astrology using whole-sign houses**. It does **not** claim Thai Suriyayatra compatibility. The calculation ID is `sidereal_lahiri_astronomy_engine`, version `3.0.0`.
+Horathai currently implements a **versioned deterministic Lahiri model using whole-sign houses**. It does **not** claim Thai Suriyayatra compatibility. The calculation ID is `sidereal_lahiri_astronomy_engine`, version `3.0.0`.
 
 ## Calculation pipeline
 
@@ -22,14 +22,14 @@ Input: **5 May 1988, 00:00, Chaiyaphum, Thailand**, `Asia/Bangkok`, 15.8068 N, 1
 
 The previously owner-approved Horathai acceptance case gives sidereal ascendant **278.047959° = Capricorn 8°02′**, consistent with the documented UTC, local sidereal-time and horizon/ecliptic calculation pipeline. Horathai preserves it with a 0.25° regression tolerance. The attached reference image's Sagittarius label is not adopted because its methodology, coordinates and time convention are undocumented. Hard-coding Sagittarius would violate calculation provenance.
 
-This case has **not yet been independently reproduced with Swiss Ephemeris in the build environment**. It is therefore a transparent regression fixture, not an external certification. Independent Swiss/JPL reproduction remains required before a certified-accuracy claim.
+This case has **not yet been independently reproduced with Swiss Ephemeris in the build environment**. It is therefore a transparent regression fixture, not an independent accuracy benchmark. Independent Swiss/JPL multi-epoch reproduction remains pending.
 
 The distinct civil input `5 May 1988 24:00` normalizes to `6 May 1988 00:00`; it must never be conflated with the midnight at the start of 5 May.
 
 ## Tolerances and limits
 
 - Ascendant regression tolerance: 0.25° against the owner-approved fixture.
-- Planet output is deterministic and suitable for sign/degree presentation, but a complete independent multi-epoch Swiss/JPL fixture set is still required before a “certified” label.
+- Planet output comes from the versioned deterministic Lahiri model and is suitable for sign/degree presentation, but a complete independent multi-epoch Swiss/JPL fixture set is still pending.
 - Lahiri is approximated by a documented polynomial; a future release should replace it with an IAU precession-based, independently benchmarked ayanamsa implementation.
 - Mean node is used, not true node.
 - Whole-sign houses do not provide quadrant cusps.
@@ -43,4 +43,4 @@ The distinct civil input `5 May 1988 24:00` normalizes to `6 May 1988 00:00`; it
 
 ## Validation suite
 
-`golden-case.test.ts` preserves the owner-approved Chaiyaphum fixture. `astrology-engine-v2.test.ts` covers UTC/DST conversion, unknown birth time, retrograde state, sign-boundary invariants and canonical provenance consistency.
+`golden-case.test.ts` preserves the owner-approved Chaiyaphum fixture. `astrology-engine-v2.test.ts` covers UTC/DST conversion, unknown birth time, retrograde state, minute carry at sign/zodiac boundaries, sign-boundary invariants and canonical provenance consistency.

@@ -112,7 +112,7 @@ export function buildScoreShifts(base: ReadingResult, target: ReadingResult): Sc
 /**
  * Two real engine readings — "now" as the baseline and the selected date —
  * plus everything the Transit page derives from them. Nothing is invented:
- * both sides come from `getReading` (sidereal_lahiri_dev).
+ * both sides come from `getReading` using the versioned deterministic Lahiri model.
  */
 export function useTimeTravel(offsetDays: number) {
   const birthDate = useProfile((s) => s.birthDate);

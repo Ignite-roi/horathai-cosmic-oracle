@@ -1,8 +1,8 @@
 /**
  * Server-side astronomy engine.
  * Geocentric apparent positions are produced by Astronomy Engine, whose
- * numerical model is validated against JPL Horizons. They are converted to
- * the sidereal zodiac with the explicitly versioned Lahiri approximation.
+ * numerical model is converted to the sidereal zodiac with the explicitly
+ * versioned Lahiri approximation. Independent multi-epoch benchmarking is pending.
  */
 
 import {
@@ -37,6 +37,18 @@ export const HOUSE_SYSTEM_NAME = ASTROLOGY_HOUSE_SYSTEM;
 
 const RAD = Math.PI / 180;
 const norm360 = (x: number) => ((x % 360) + 360) % 360;
+
+export function normalizeLongitudePosition(longitude: number) {
+  const totalMinutes = Math.round(norm360(longitude) * 60) % (360 * 60);
+  const signIndex = Math.floor(totalMinutes / (30 * 60));
+  const withinSignMinutes = totalMinutes % (30 * 60);
+
+  return {
+    signIndex,
+    degree: Math.floor(withinSignMinutes / 60),
+    minute: withinSignMinutes % 60,
+  };
+}
 
 export function julianDay(date: Date): number {
   return date.getTime() / 86400000 + 2440587.5;
@@ -171,9 +183,9 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
     const lon = norm360(tropical - aya);
-    const signIndex = Math.floor(lon / 30);
+    const position = normalizeLongitudePosition(lon);
+    const signIndex = position.signIndex;
     const sign = ZODIACS[signIndex]!;
-    const within = lon - signIndex * 30;
     const house = ((signIndex - ascSignIndex + 12) % 12) + 1;
     // strength: angular houses + own sign + direct motion
     let strength = 0.45;
@@ -196,8 +208,8 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
       signTh: sign.th,
       signSymbol: sign.symbol,
       element: sign.element,
-      degree: Math.floor(within),
-      minute: Math.round((within % 1) * 60),
+      degree: position.degree,
+      minute: position.minute,
       house,
       retrograde: delta < 0,
       strength: Math.min(1, Math.max(0.15, strength)),

@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { GovernedReading } from "@/components/kb/CitationSections";
 import { useNatalChart } from "@/hooks/useNatalChart";
 import { HOUSES, PLANET_BY_NUM, formatDegree } from "@/lib/astro";
+import { ASTROLOGY_CALCULATION_VERSION } from "@/lib/astrology-meta";
 import type { ChartPlanet } from "@/lib/astrology-engine.server";
 
 export const Route = createFileRoute("/_authenticated/birth-chart")({
@@ -180,7 +181,7 @@ function BirthChartPage() {
               limitations={[
                 "ยังไม่มีกฎ published ใน Master Knowledge Base",
                 "ไม่แสดงคำตีความที่ไม่มี citation",
-                "เอนจิน sidereal_lahiri_dev ยังไม่ผ่าน independent benchmark",
+                `โมเดล Lahiri แบบ versioned deterministic (${data.chart?.calculation_version ?? ASTROLOGY_CALCULATION_VERSION}); independent Swiss/JPL multi-epoch benchmark ยังอยู่ระหว่างดำเนินการ`,
               ]}
             />
             <BirthChartActions onShare={() => void share()} />

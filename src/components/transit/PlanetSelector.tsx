@@ -27,7 +27,7 @@ export function PlanetSelector({
       <p className="eyebrow">Planet focus</p>
       <h2 className="thai-heading mt-1 text-[17px] text-foreground">ดาวพระเคราะห์ทั้ง ๙</h2>
       <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-        ตำแหน่งจากเครื่องคำนวณปัจจุบัน (sidereal_lahiri_dev) ณ วันที่เลือก
+        ตำแหน่งจากโมเดล Lahiri แบบ versioned deterministic ณ วันที่เลือก
       </p>
 
       <div
