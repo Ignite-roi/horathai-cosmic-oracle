@@ -9,6 +9,7 @@ import { useLineAuth } from "@/context/LineAuthContext";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { startPremiumTrial } from "@/lib/profile.functions";
 import { trialDaysLeft, useProfile } from "@/store/useProfile";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 
 export const Route = createFileRoute("/_authenticated/premium")({
   head: () => ({
@@ -41,10 +42,15 @@ function PremiumPage() {
   const [pending, setPending] = useState(false);
   const [trialError, setTrialError] = useState<string | null>(null);
   const daysLeft = trialDaysLeft(premiumTrialStartedAt);
+  const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
 
   /** Opens the confirmation dialog — the trial never starts automatically. */
   const handleStartTrial = async () => {
     setTrialError(null);
+    if (reviewGuest) {
+      setTrialError("ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ กรุณาเข้าสู่ระบบด้วย LINE เพื่อดำเนินการภายหลัง");
+      return;
+    }
     if (!isSignedIn) {
       const ok = await login();
       if (!ok) return;
@@ -83,6 +89,7 @@ function PremiumPage() {
           <p className="mt-3 text-[11px] uppercase tracking-[0.34em] text-primary/80">Free Premium</p>
           <h1 className="display mt-1 text-4xl font-bold text-gold">30 วัน</h1>
           <p className="mt-2 text-xs text-muted-foreground">ไม่ต้องใช้บัตรเครดิต · ยกเลิกได้ทุกเมื่อ</p>
+          <p className="mt-2 text-[11px] font-medium text-warning">ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ</p>
           {access.unlockedForEveryone && (
             <p className="mt-2 text-[11px] text-primary/80">
               ช่วงพัฒนา: ทุกฟีเจอร์เปิดให้ใช้ฟรีอยู่แล้ว การเริ่มทดลองใช้เป็นการยืนยันด้วยตัวคุณเอง
@@ -91,15 +98,17 @@ function PremiumPage() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={handleStartTrial}
+            disabled={reviewGuest}
             className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl btn-gold py-4 text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
           >
             <Sparkles className="h-4 w-4" />
             {daysLeft !== null
               ? `กำลังทดลองใช้ · เหลือ ${daysLeft} วัน`
-              : isSignedIn
+                : isSignedIn
                 ? "เริ่มทดลองใช้ฟรีทันที"
-                : "เข้าสู่ระบบด้วย LINE เพื่อเริ่มทดลอง"}
+                  : "ระบบชำระเงินอยู่ระหว่างการเชื่อมต่อ"}
           </motion.button>
+          {trialError && <p className="mt-3 text-[11px] text-warning">{trialError}</p>}
         </motion.div>
 
         <div className="mt-6 space-y-2.5">

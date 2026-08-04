@@ -6,6 +6,7 @@ import { useLineAuth } from "@/context/LineAuthContext";
 import { useQuality } from "@/hooks/useQuality";
 import { useProfile } from "@/store/useProfile";
 import { useSettings } from "@/store/useSettings";
+import { OWNER_REVIEW_BIRTH, PUBLIC_REVIEW_MODE } from "@/config/public-review";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -35,11 +36,17 @@ function SettingsPage() {
   const resolved = useQuality().quality;
   const { name, avatar, birthDate, birthTime, province } = useProfile();
   const { isSignedIn, configured, error: lineError, login, logout } = useLineAuth();
+  const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
 
   return (
     <AppShell>
       <PageTransition>
         <SectionTitle kicker="Settings" title="ตั้งค่าประสบการณ์" />
+        {reviewGuest && (
+          <p className="mb-4 rounded-xl border border-warning/25 bg-warning/8 px-4 py-3 text-[11px] leading-5 text-warning">
+            โหมดตรวจสอบเป็นแบบอ่านอย่างเดียว การเปลี่ยนค่าและข้อมูลดวงจะไม่ถูกบันทึก
+          </p>
+        )}
 
         <div className="glass-deep grain mb-4 rounded-[26px] p-5">
           <p className="flex items-center gap-2 text-[12px] text-muted-foreground">
@@ -95,7 +102,8 @@ function SettingsPage() {
             {MODES.map((m) => (
               <button
                 key={m.id}
-                onClick={() => setQuality(m.id)}
+                 onClick={() => { if (!reviewGuest) setQuality(m.id); }}
+                 disabled={reviewGuest}
                 className={`press flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors ${
                   quality === m.id ? "border-primary/50 bg-primary/10" : "border-border bg-card/40"
                 }`}
@@ -128,6 +136,7 @@ function SettingsPage() {
                 type="checkbox"
                 checked={value as boolean}
                 onChange={(e) => (set as (v: boolean) => void)(e.target.checked)}
+                disabled={reviewGuest}
                 className="h-4 w-4 accent-[var(--gold)]"
               />
             </label>
@@ -139,17 +148,22 @@ function SettingsPage() {
             <User className="h-4 w-4 text-primary" /> ดวงกำเนิด
           </p>
           <div className="mt-3 space-y-1 text-[13px] text-foreground">
-            <p>{name}</p>
+            <p>{reviewGuest ? OWNER_REVIEW_BIRTH.label : name}</p>
             <p className="text-[12px] text-muted-foreground">
-              {birthDate ? `${birthDate} · ${birthTime || "12:00"} น. · ${province}` : "ยังไม่ได้กรอกข้อมูลวันเกิด"}
+              {reviewGuest
+                ? `${OWNER_REVIEW_BIRTH.birthDate} · ${OWNER_REVIEW_BIRTH.birthTime} น. · ${OWNER_REVIEW_BIRTH.province}`
+                : birthDate ? `${birthDate} · ${birthTime || "12:00"} น. · ${province}` : "ยังไม่ได้กรอกข้อมูลวันเกิด"}
             </p>
           </div>
-          <Link
-            to="/onboarding"
-            className="press btn-gold mt-4 flex h-12 items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground"
-          >
-            แก้ไขข้อมูลดวงกำเนิด
-          </Link>
+          {reviewGuest ? (
+            <button onClick={() => void login()} className="press btn-gold mt-4 flex h-12 w-full items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground">
+              เข้าสู่ระบบด้วย LINE เพื่อบันทึกข้อมูล
+            </button>
+          ) : (
+            <Link to="/onboarding" className="press btn-gold mt-4 flex h-12 items-center justify-center rounded-2xl text-[14px] font-semibold text-primary-foreground">
+              แก้ไขข้อมูลดวงกำเนิด
+            </Link>
+          )}
         </div>
       </PageTransition>
     </AppShell>

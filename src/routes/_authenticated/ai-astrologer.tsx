@@ -10,6 +10,8 @@ import { useReading } from "@/hooks/useReading";
 import { askAstrologer } from "@/lib/ai.functions";
 import { ASPECT_LABEL, HOUSES, PLANET_BY_NUM, formatDegree, moonPhaseLabel, type ReadingResult } from "@/lib/astro";
 import { useProfile } from "@/store/useProfile";
+import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
+import { useLineAuth } from "@/context/LineAuthContext";
 
 export const Route = createFileRoute("/_authenticated/ai-astrologer")({
   head: () => ({
@@ -60,6 +62,8 @@ function AiPage() {
   const name = useProfile((s) => s.name);
   const birthDate = useProfile((s) => s.birthDate);
   const { data } = useReading();
+  const { isSignedIn, login } = useLineAuth();
+  const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
   const ask = useServerFn(askAstrologer);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -89,10 +93,17 @@ function AiPage() {
     if (!q || mutation.isPending || !facts) return;
     setMessages((m) => [...m, { role: "user", content: q }]);
     setInput("");
+    if (reviewGuest) {
+      setMessages((m) => [...m, {
+        role: "assistant",
+        content: "โหมดตรวจสอบแสดงดวงตัวอย่างแบบอ่านอย่างเดียว จึงยังไม่ส่งคำถามไปยัง AI กรุณาเข้าสู่ระบบด้วย LINE เพื่อถามจากดวงของคุณ",
+      }]);
+      return;
+    }
     mutation.mutate(q);
   }
 
-  if (!birthDate) {
+  if (!birthDate && !reviewGuest) {
     return (
       <AppShell>
         <PageTransition>
@@ -155,6 +166,11 @@ function AiPage() {
         </div>
 
         <div className="sticky bottom-24 mt-5">
+          {reviewGuest && (
+            <button onClick={() => void login()} className="press mb-3 flex h-11 w-full items-center justify-center rounded-xl border border-primary/30 text-[12px] text-primary">
+              เข้าสู่ระบบด้วย LINE เพื่อถามโหรา AI
+            </button>
+          )}
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {SUGGESTIONS.map((s) => (
               <button
