@@ -26,7 +26,7 @@ Current engine output is recorded only as `actual`. It is never copied into an i
 
 ## Manifest coverage
 
-The manifest contains 44+ unverified inputs (currently generated as a stable immutable list) and covers:
+The manifest contains 44 unverified inputs (generated as a stable immutable list) and covers:
 
 - `00:00`, `00:01`, `11:59`, `12:00`, `23:59`;
 - month/year edges and leap day;

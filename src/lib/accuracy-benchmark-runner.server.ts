@@ -4,7 +4,7 @@ import {
   type AccuracyBenchmarkCase,
   type IndependentExpected,
 } from "./accuracy-benchmark-manifest";
-import { ascendantDetail, computeChart } from "./ephemeris.server";
+import { ascendantDetail, ayanamsa, computeChart, julianDay } from "./ephemeris.server";
 import { zonedWallClockToUtc } from "./timezone";
 
 type Difference<T> = {
@@ -97,13 +97,14 @@ export function runAccuracyBenchmark(item: AccuracyBenchmarkCase): AccuracyBench
   const calculationInstant = item.kind === "transit" ? new Date(item.input.transitAt ?? "") : natalUtc;
   if (Number.isNaN(calculationInstant.getTime())) throw new Error(`Invalid transit instant: ${item.id}`);
   const chart = computeChart(calculationInstant, item.input.latitude, item.input.longitude);
+  const exactAyanamsa = ayanamsa(julianDay(calculationInstant));
   const asc = item.input.birthTimeKnown
     ? ascendantDetail(calculationInstant, item.input.latitude, item.input.longitude)
     : null;
   const expected = item.independentExpected;
   const actualPlanets = chart.planets.map((planet) => ({
     planetId: planet.num,
-    tropicalLongitude: (planet.longitude + chart.ayanamsa + 360) % 360,
+    tropicalLongitude: (planet.longitude + exactAyanamsa + 360) % 360,
     siderealLongitude: planet.longitude,
     signId: planet.signId,
     degree: planet.degree,

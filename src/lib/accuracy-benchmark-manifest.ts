@@ -146,12 +146,14 @@ const unknownTimeCases = ["1950-06-15", "1988-05-05", "2000-02-29", "2026-08-04"
         localDate,
         localTime: "12:00",
         birthTimeKnown: false,
-        ...PLACES[THAI_PLACES[index]!] ,
+        ...PLACES[THAI_PLACES[index]!],
       },
     }),
 );
 
-const transitCases = [
+const TRANSIT_SEEDS: ReadonlyArray<
+  readonly [string, string, string, keyof typeof PLACES, string]
+> = [
   ["transit-bangkok-1950-2026", "1950-01-01", "00:00", "bangkok", "2026-08-04T00:00:00.000Z"],
   ["transit-chiangmai-1988-2000", "1988-05-05", "12:00", "chiangMai", "2000-02-29T12:00:00.000Z"],
   ["transit-ubon-2000-2026", "2000-02-29", "23:59", "ubon", "2026-12-31T23:59:00.000Z"],
@@ -159,7 +161,9 @@ const transitCases = [
   ["transit-london-dst", "1988-05-05", "00:01", "london", "2026-06-21T00:00:00.000Z"],
   ["transit-newyork-year-edge", "2000-01-01", "11:59", "newYork", "2026-01-01T00:00:00.000Z"],
   ["transit-tokyo-leap", "2000-02-29", "12:00", "tokyo", "2028-02-29T12:00:00.000Z"],
-].map(([id, localDate, localTime, placeKey, transitAt]) =>
+];
+
+const transitCases = TRANSIT_SEEDS.map(([id, localDate, localTime, placeKey, transitAt]) =>
   unverified({
     id: id!,
     kind: "transit",
@@ -168,7 +172,7 @@ const transitCases = [
       localDate: localDate!,
       localTime: localTime!,
       birthTimeKnown: true,
-      transitAt,
+      transitAt: transitAt,
       ...PLACES[placeKey as keyof typeof PLACES],
     },
   }),
