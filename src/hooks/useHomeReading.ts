@@ -1,8 +1,9 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 
 import { getReading } from "@/lib/astro.functions";
 import type { PlacedPlanet, ReadingResult } from "@/lib/astro";
+import { getMyBirthContext } from "@/lib/birth.functions";
 import { useProfile } from "@/store/useProfile";
 
 /** Fixed sample birth used only to render the demo composition. Never persisted. */
@@ -42,16 +43,35 @@ export function houseFromAscendant(longitude: number, ascendant: number) {
  * now, and 45 days ahead. Everything the hero and the transit card show is
  * derived from those, so nothing is invented.
  */
+/** Saved birth profile + cached natal chart for the signed-in user. */
+export function useBirthContext() {
+  const lineUserId = useProfile((s) => s.lineUserId);
+  return useQuery({
+    queryKey: ["birth-context"],
+    queryFn: () => getMyBirthContext(),
+    staleTime: 60_000,
+    enabled: Boolean(lineUserId),
+  });
+}
+
 export function useHomeReading() {
   const birthDate = useProfile((s) => s.birthDate);
   const birthTime = useProfile((s) => s.birthTime);
   const province = useProfile((s) => s.province);
   const fetchReading = useServerFn(getReading);
+  const { data: context } = useBirthContext();
+  const saved = context?.birthProfile ?? null;
 
-  const isDemo = !birthDate;
-  const input = isDemo
-    ? DEMO_BIRTH
-    : { birthDate, birthTime: birthTime || "12:00", province };
+  const isDemo = !saved && !birthDate;
+  const input = saved
+    ? {
+        birthDate: saved.birth_date,
+        birthTime: (saved.birth_time ?? "12:00").slice(0, 5),
+        province: saved.province,
+      }
+    : isDemo
+      ? DEMO_BIRTH
+      : { birthDate, birthTime: birthTime || "12:00", province };
 
   const offsets = [-LOOKBACK_DAYS, 0, LOOKAHEAD_DAYS];
 
