@@ -44,12 +44,16 @@ export function layoutRingPlanets(
   });
   const slots = unwrapped.map((item) => item.longitude);
   for (let index = 1; index < slots.length; index += 1) slots[index] = Math.max(slots[index]!, slots[index - 1]! + minimumGap);
-  const overflow = slots[slots.length - 1]! - unwrapped[unwrapped.length - 1]!.longitude;
+  const lastSlot = slots.at(-1);
+  const lastPlanet = unwrapped.at(-1);
+  if (lastSlot === undefined || !lastPlanet) return [];
+  const overflow = lastSlot - lastPlanet.longitude;
   if (overflow > 0) for (let index = 0; index < slots.length; index += 1) slots[index] -= overflow / 2;
 
   return unwrapped.map(({ planet }, index) => {
     const point = polarPoint(planet.longitude, markerRadius);
-    const label = polarPoint(slots[index]!, labelRadius);
+    const labelLongitude = slots[index] ?? planet.longitude;
+    const label = polarPoint(labelLongitude, labelRadius);
     return { ...planet, ...point, labelX: label.x, labelY: label.y };
   });
 }

@@ -48,7 +48,7 @@ const ascendantSchema = z.object({
   siderealLongitude: z.number().optional(),
 });
 
-export function useNatalChart(mode: "natal" | "transit" | "both") {
+export function useNatalChart(mode: "natal" | "transit" | "both", transitAt?: string) {
   const { session, loading: sessionLoading } = useSession();
   const queryClient = useQueryClient();
   const bindChart = useServerFn(calculateAndSaveChart);
@@ -85,19 +85,20 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
   }, [context.data, calculation]);
 
   const transit = useQuery({
-    queryKey: ["birth-chart-transit", session?.user.id],
+    queryKey: ["birth-chart-transit", session?.user.id ?? "guest", guestContext?.birthProfile.birth_date, transitAt],
     queryFn: () => {
-      const profile = context.data?.birthProfile;
+      const profile = context.data?.birthProfile ?? guestContext?.birthProfile;
       if (!profile) throw new Error("ยังไม่พบข้อมูลวันเกิด");
       return fetchReading({
         data: {
           birthDate: profile.birth_date,
           birthTime: (profile.birth_time ?? "12:00").slice(0, 5),
           province: profile.province,
+          ...(transitAt ? { at: transitAt } : {}),
         },
       });
     },
-    enabled: Boolean(session && context.data?.chart && mode !== "natal"),
+    enabled: Boolean((context.data?.chart || guestContext?.chart) && mode !== "natal"),
     staleTime: 30 * 60_000,
   });
 
@@ -109,8 +110,8 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
   });
 
   const reviewTransit = useQuery({
-    queryKey: ["public-review-chart-transit", mode],
-    queryFn: () => fetchReviewReading({ data: {} }),
+    queryKey: ["public-review-chart-transit", mode, transitAt],
+    queryFn: () => fetchReviewReading({ data: transitAt ? { at: transitAt } : {} }),
     enabled: PUBLIC_REVIEW_MODE && !sessionLoading && !session && !guestContext && mode !== "natal",
     staleTime: 30 * 60_000,
   });
@@ -153,5 +154,6 @@ export function useNatalChart(mode: "natal" | "transit" | "both") {
       mode === "natal"
         ? []
         : (transit.data?.transit.planets ?? reviewTransit.data?.transit.planets ?? []),
+    transitProvenance: transit.data?.provenance ?? reviewTransit.data?.provenance ?? null,
   };
 }
