@@ -9,7 +9,7 @@ import {
   isLiffLoggedIn,
   liffLogin,
   liffLogout,
-} from "@/lib/liff.client";
+} from "@/lib/liff-browser";
 import { getLiffConfig, signInWithLine } from "@/lib/line-auth.functions";
 import { getMyAccount, type AccountData } from "@/lib/profile.functions";
 import { useProfile } from "@/store/useProfile";
