@@ -143,14 +143,14 @@ export function AstrologerConsult({ question }: { question: string }) {
   );
 }
 
-/* ---------- H. Premium trial ---------- */
+/* ---------- H. Day wallet ---------- */
 
-export function PremiumStatus({ daysLeft }: { daysLeft: number | null }) {
-  const active = daysLeft !== null && daysLeft > 0;
+export function DayWalletStatus({ days, points }: { days: number; points: number }) {
 
   return (
     <Link
-      to="/premium"
+      to="/wallet"
+      search={{ checkout: undefined, returnTo: undefined }}
       className="press surface-card relative flex items-center gap-4 overflow-hidden p-5"
     >
       <span
@@ -166,10 +166,10 @@ export function PremiumStatus({ daysLeft }: { daysLeft: number | null }) {
       </span>
       <div className="min-w-0 flex-1">
         <p className="thai-heading text-[15px] text-gold">
-          {active ? `พรีเมียมเหลือ ${toThaiDigits(daysLeft)} วัน` : "ทดลองพรีเมียมฟรี ๓๐ วัน"}
+          {days > 0 ? `วันใช้งานคงเหลือ ${toThaiDigits(days)} วัน` : "เติมวันเพื่อเปิดประสบการณ์เชิงลึก"}
         </p>
         <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-          คำพยากรณ์เชิงลึก เสียงโหร AI และแจ้งเตือนดาวย้ายรายวัน
+          มี {toThaiDigits(points)} แต้ม · แตะเพื่อดูยอด ประวัติ และแพ็กเกจ
         </p>
       </div>
       <ChevronRight className="h-5 w-5 shrink-0 text-[var(--gold)]" />
