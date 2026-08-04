@@ -60,10 +60,20 @@ export const saveMyProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ProfileInput.parse(input))
   .handler(async ({ data, context }) => {
-    const patch: Record<string, string | boolean> = {};
-    for (const [key, value] of Object.entries(data)) {
-      if (value !== undefined) patch[key] = value;
-    }
+    const patch: {
+      display_name?: string;
+      birth_date?: string;
+      birth_time?: string;
+      province?: string;
+      country?: string;
+      onboarded?: boolean;
+    } = {};
+    if (data.display_name !== undefined) patch.display_name = data.display_name;
+    if (data.birth_date !== undefined) patch.birth_date = data.birth_date;
+    if (data.birth_time !== undefined) patch.birth_time = data.birth_time;
+    if (data.province !== undefined) patch.province = data.province;
+    if (data.country !== undefined) patch.country = data.country;
+    if (data.onboarded !== undefined) patch.onboarded = data.onboarded;
     const { error } = await context.supabase
       .from("profiles")
       .update(patch)
