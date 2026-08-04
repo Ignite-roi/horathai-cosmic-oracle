@@ -84,7 +84,7 @@ export function CinematicHero({
             {isDemo ? "กรอกวันเกิดเพื่อเปิดดวงของฉัน" : "เปิดดวงของฉัน"}
           </Link>
           <Link
-            to="/transit"
+            to="/transits"
             className="press surface-inset flex h-12 w-full items-center justify-center gap-2 text-[13.5px] text-foreground"
           >
             ดูดาวที่กำลังส่งผล
