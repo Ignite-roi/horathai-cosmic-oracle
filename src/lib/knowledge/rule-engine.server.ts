@@ -38,7 +38,6 @@ export function matchKnowledgeRules(
   };
 }
 
-
 export function productionRuleIsValid(rule: KnowledgeRule): boolean {
   return rule.status === "published" && rule.citations.length > 0;
 }

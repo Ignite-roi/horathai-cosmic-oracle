@@ -89,7 +89,6 @@ describe("knowledge V1 contracts", () => {
   });
 });
 
-
 describe("database invariants represented by migration", () => {
   it("treats duplicate checksum and event hash as unique identifiers", () => {
     const sourceChecksums = new Set(["sha256:a"]);

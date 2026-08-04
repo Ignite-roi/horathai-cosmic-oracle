@@ -64,7 +64,6 @@ export async function createDraftKnowledgeRule(input: {
   return result.data;
 }
 
-
 export async function attachRuleCitation(input: {
   ruleId: string;
   citationId: string;
@@ -82,6 +81,7 @@ export async function attachRuleCitation(input: {
   if (result.error) throw new Error(result.error.message);
   return result.data;
 }
+
 
 export async function transitionKnowledgeRule(input: {
   actorId: string;

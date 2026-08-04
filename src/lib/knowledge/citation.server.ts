@@ -9,7 +9,6 @@ export function validateRuleCitations(rule: KnowledgeRule): KnowledgeCitation[] 
   );
 }
 
-
 export function citationSnapshot(rules: KnowledgeRule[]): KnowledgeCitation[] {
   const citations = rules.flatMap(validateRuleCitations);
   return Array.from(new Map(citations.map((citation) => [citation.id, citation])).values());

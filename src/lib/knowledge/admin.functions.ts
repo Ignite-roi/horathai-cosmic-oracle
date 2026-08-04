@@ -66,7 +66,6 @@ export const createKnowledgeDraftRule = createServerFn({ method: "POST" })
     return createDraftKnowledgeRule({ actorId: context.userId, ...data });
   });
 
-
 export const attachKnowledgeCitation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
@@ -89,6 +88,7 @@ export const attachKnowledgeCitation = createServerFn({ method: "POST" })
     const { attachRuleCitation } = await import("./source-registry.server");
     return attachRuleCitation(data);
   });
+
 
 export const changeKnowledgeRuleStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
