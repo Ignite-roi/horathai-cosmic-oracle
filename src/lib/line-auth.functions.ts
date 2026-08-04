@@ -23,12 +23,17 @@ export const getLiffDiagnostics = createServerFn({ method: "GET" }).handler(asyn
   const { APP_ACCESS_MODE } = await import("@/config/access");
   if (APP_ACCESS_MODE !== "development_unlocked") return null;
   const liffId = process.env["LINE_LIFF_ID"] ?? null;
+  const loginChannelId = process.env["LINE_LOGIN_CHANNEL_ID"] ?? null;
+  const liffPrefix = liffId?.split("-")[0] ?? null;
   return {
     accessMode: APP_ACCESS_MODE,
     hasLiffId: Boolean(liffId),
     maskedLiffId: maskId(liffId),
     liffIdLooksValid: Boolean(liffId && /^\d{10}-[0-9a-zA-Z]{8}$/.test(liffId)),
     hasLoginChannelId: Boolean(process.env["LINE_LOGIN_CHANNEL_ID"]),
+    loginChannelMatchesLiffPrefix: Boolean(
+      liffPrefix && loginChannelId && liffPrefix === loginChannelId.trim(),
+    ),
     hasChannelSecret: Boolean(process.env["LINE_CHANNEL_SECRET"]),
     hasBridgeSecret: Boolean(process.env["LINE_AUTH_BRIDGE_SECRET"]),
   };
