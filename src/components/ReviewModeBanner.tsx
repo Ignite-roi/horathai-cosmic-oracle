@@ -2,10 +2,12 @@ import { LogIn, ShieldCheck } from "lucide-react";
 
 import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { useLineAuth } from "@/context/LineAuthContext";
+import { readGuestBirthContext } from "@/lib/guest-birth";
 
 export function ReviewModeBanner() {
   const { isSignedIn, login } = useLineAuth();
   if (!PUBLIC_REVIEW_MODE || isSignedIn) return null;
+  const hasTemporaryChart = readGuestBirthContext() !== null;
 
   return (
     <aside className="mb-4 rounded-xl border border-primary/25 bg-card/75 px-3 py-2.5 backdrop-blur-xl">
@@ -13,7 +15,9 @@ export function ReviewModeBanner() {
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
         <div className="min-w-0 flex-1">
           <p className="text-[11px] leading-5 text-foreground">
-            โหมดตรวจสอบเว็บไซต์ — กำลังแสดงดวงตัวอย่างของเจ้าของระบบ ข้อมูลนี้เป็นแบบอ่านอย่างเดียว
+            {hasTemporaryChart
+              ? "ดวงชั่วคราว — ยังไม่ได้บันทึก ข้อมูลจะหายเมื่อปิดแท็บ"
+              : "โหมดพัฒนา — กรอกวันเกิดและดูดวงชั่วคราวได้โดยไม่ต้องล็อกอิน"}
           </p>
           <button
             type="button"

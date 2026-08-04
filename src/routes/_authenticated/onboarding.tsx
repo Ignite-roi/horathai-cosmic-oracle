@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -13,7 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { AppShell, PageTransition } from "@/components/AppShell";
-import { useAccount } from "@/hooks/useAuth";
+import { useAccount, useSession } from "@/hooks/useAuth";
 import {
   calculateAndSaveChart,
   getMyBirthContext,
@@ -21,6 +22,8 @@ import {
   type NatalChartRow,
 } from "@/lib/birth.functions";
 import { PROVINCES } from "@/lib/provinces";
+import { calculateGuestBirthChart } from "@/lib/guest-birth.functions";
+import { readGuestBirthContext, writeGuestBirthContext } from "@/lib/guest-birth";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -87,10 +90,13 @@ const inputCls =
 function Onboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { session, loading: sessionLoading } = useSession();
   const { data: account } = useAccount();
+  const calculateGuest = useServerFn(calculateGuestBirthChart);
   const { data: context } = useQuery({
     queryKey: ["birth-context"],
     queryFn: () => getMyBirthContext(),
+    enabled: Boolean(session),
     staleTime: 60_000,
   });
 
@@ -113,8 +119,9 @@ function Onboarding() {
   // Prefill from LINE display name and any previously saved answers.
   useEffect(() => {
     if (hydrated) return;
-    if (context === undefined) return;
-    const b = context.birthProfile;
+    if (sessionLoading) return;
+    if (session && context === undefined) return;
+    const b = session ? context?.birthProfile : readGuestBirthContext()?.birthProfile;
     setForm((f) => ({
       nickname: b?.nickname || account?.profile?.display_name || f.nickname,
       birth_date: b?.birth_date ?? f.birth_date,
@@ -125,7 +132,7 @@ function Onboarding() {
       country: b?.country ?? f.country,
     }));
     setHydrated(true);
-  }, [context, account, hydrated]);
+  }, [context, account, hydrated, session, sessionLoading]);
 
   const stepValid = useMemo(() => {
     if (step === 0)
@@ -136,6 +143,7 @@ function Onboarding() {
   }, [step, form]);
 
   const persist = async () => {
+    if (!session) return;
     await saveBirthProfile({
       data: {
         nickname: form.nickname.trim(),
@@ -168,13 +176,31 @@ function Onboarding() {
     setStep(4);
     setProgress(0);
     try {
-      await persist();
-      const bound = await calculateAndSaveChart();
-      await queryClient.invalidateQueries({ queryKey: ["account"] });
-      await queryClient.invalidateQueries({ queryKey: ["birth-context"] });
-      await queryClient.invalidateQueries({ queryKey: ["home-reading"] });
+      let chart: NatalChartRow;
+      if (session) {
+        await persist();
+        const bound = await calculateAndSaveChart();
+        chart = bound.chart;
+        await queryClient.invalidateQueries({ queryKey: ["account"] });
+        await queryClient.invalidateQueries({ queryKey: ["birth-context"] });
+        await queryClient.invalidateQueries({ queryKey: ["home-reading"] });
+      } else {
+        const temporary = await calculateGuest({
+          data: {
+            nickname: form.nickname.trim(),
+            birth_date: form.birth_date,
+            birth_time: form.birth_time_known ? form.birth_time : undefined,
+            birth_time_known: form.birth_time_known,
+            country: form.country.trim() || "ประเทศไทย",
+            province: form.province,
+            district: form.district.trim() || null,
+          },
+        });
+        writeGuestBirthContext(temporary);
+        chart = temporary.chart;
+      }
       setProgress(100);
-      setResult(bound.chart);
+      setResult(chart);
     } catch (e) {
       setError(e instanceof Error ? e.message : "คำนวณดวงกำเนิดไม่สำเร็จ");
       setStep(3);
@@ -205,6 +231,11 @@ function Onboarding() {
         <p className="mb-5 text-[11px] tracking-[0.2em] text-primary/70">
           ขั้นที่ {step + 1}/5 · {STEPS[step]}
         </p>
+        {!sessionLoading && !session && (
+          <div className="mb-4 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">
+            ดวงชั่วคราว — ยังไม่ได้บันทึก · ใช้งานได้โดยไม่ต้องล็อกอินระหว่างพัฒนา
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-[12px] text-foreground">
@@ -350,7 +381,9 @@ function Onboarding() {
               </div>
               <p className="text-[11px] text-muted-foreground">
                 เมื่อกด “ผูกดวง” ระบบจะคำนวณตำแหน่งดาวและลัคนาจากวันเวลาและพิกัดจริงของคุณ
-                แล้วบันทึกผังดวงไว้ให้ใช้ในครั้งต่อ ๆ ไป
+                {session
+                  ? " แล้วบันทึกผังดวงไว้ให้ใช้ในครั้งต่อ ๆ ไป"
+                  : " โดยเก็บผลชั่วคราวเฉพาะแท็บนี้และไม่บันทึกลงบัญชี"}
               </p>
             </motion.div>
           )}
@@ -386,7 +419,7 @@ function Onboarding() {
                 setResult(null);
                 setStep(0);
               }}
-              onContinue={() => void navigate({ to: "/dashboard", replace: true })}
+               onContinue={() => void navigate({ to: "/birth-chart", replace: true })}
             />
           )}
         </AnimatePresence>

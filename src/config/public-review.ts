@@ -11,6 +11,7 @@ export const OWNER_REVIEW_BIRTH = Object.freeze({
 });
 
 export const PUBLIC_REVIEW_ROUTES = [
+  "/onboarding",
   "/dashboard",
   "/birth-chart",
   "/transits",

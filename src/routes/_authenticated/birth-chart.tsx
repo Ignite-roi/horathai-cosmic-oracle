@@ -44,7 +44,7 @@ function BirthChartPage() {
   return <AppShell><PageTransition>
     <BirthChartHero {...(data.ascendant?.signTh ? { ascendant: data.ascendant.signTh } : {})} isDemo={data.isDemo}/>
     <BirthChartTabs value={mode} onChange={setMode}/>
-    {data.isDemo && <div className="mt-3 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">โหมดตัวอย่าง · ข้อมูลนี้ไม่ถูกบันทึกและไม่แทนดวงจริงของคุณ</div>}
+    {data.isDemo && <div className="mt-3 rounded-xl border border-warning/30 bg-warning/8 px-4 py-3 text-center text-[11px] text-warning">{data.profile ? "ดวงชั่วคราว — ยังไม่ได้บันทึก" : "โหมดตัวอย่าง · ข้อมูลนี้ไม่ถูกบันทึกและไม่แทนดวงจริงของคุณ"}</div>}
     {data.isLoading && <BirthChartLoadingState/>}
     {data.error && <BirthChartErrorState message={(data.error as Error).message} onRetry={data.retry}/>} 
     {!data.isLoading && !data.error && data.planets.length === 0 && <BirthChartEmptyState demo={data.isDemo}/>} 
