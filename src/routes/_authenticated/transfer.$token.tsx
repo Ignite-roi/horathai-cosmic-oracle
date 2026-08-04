@@ -1,0 +1,18 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { CheckCircle2, Clock3, Gift, ShieldAlert } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { AppShell, PageTransition } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
+import { useLineAuth } from "@/context/LineAuthContext";
+import type { DayTransferPreview } from "@/lib/social.features";
+import { claimDayTransfer, getDayTransferPreview } from "@/lib/social.functions";
+
+export const Route = createFileRoute("/_authenticated/transfer/$token")({ head: () => ({ meta: [
+  { title: "รับวันจากเพื่อน | Horathai AI" }, { name: "description", content: "ตรวจสอบและยืนยันรับวันใช้งานผ่าน QR อายุ 60 นาที" },
+  { property: "og:title", content: "รับวันจากเพื่อน | Horathai AI" }, { property: "og:description", content: "รับวันใช้งาน Horathai จากเพื่อนอย่างปลอดภัย" },
+  { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
+] }), component: TransferClaimPage });
+function TransferClaimPage() { const { token } = Route.useParams(); const previewFn = useServerFn(getDayTransferPreview); const claimFn = useServerFn(claimDayTransfer); const { isSignedIn, login } = useLineAuth(); const queryClient = useQueryClient(); const [data, setData] = useState<DayTransferPreview | null>(null); const [confirm, setConfirm] = useState(false); const [done, setDone] = useState(false); const [error, setError] = useState<string | null>(null); useEffect(() => { void previewFn({ data: { token } }).then(setData).catch((e: unknown) => setError(e instanceof Error ? e.message : "เปิด QR ไม่สำเร็จ")); }, [previewFn, token]); const claim = async () => { try { await claimFn({ data: { token } }); await queryClient.invalidateQueries({ queryKey: ["wallet"] }); setDone(true); } catch (e) { setError(e instanceof Error ? e.message : "รับวันไม่สำเร็จ"); } }; return <AppShell><PageTransition><section className="surface-hero grain p-6 text-center">{done ? <><CheckCircle2 className="mx-auto h-12 w-12 text-success"/><h1 className="thai-heading mt-4 text-2xl text-gold">รับวันเรียบร้อยแล้ว</h1></> : <><Gift className="mx-auto h-10 w-10 text-primary"/><p className="mt-4 text-xs text-muted-foreground">{data?.senderName ?? "เพื่อน"} ส่งวันให้คุณ</p><h1 className="numeral mt-2 text-5xl text-gold">{data?.days ?? "—"} วัน</h1>{data && <p className="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground"><Clock3 className="h-3 w-3"/> หมดอายุ {new Intl.DateTimeFormat("th-TH", { timeStyle: "short" }).format(new Date(data.expiresAt))}</p>}<div className="mt-5 rounded-xl border border-warning/25 bg-warning/8 p-4 text-left text-[11px] leading-5 text-warning"><ShieldAlert className="mb-2 h-4 w-4"/> QR ใช้ได้ครั้งเดียว การโอนสำเร็จแล้วย้อนกลับไม่ได้</div>{!isSignedIn ? <Button className="btn-gold mt-5 h-12 w-full" onClick={() => void login()}>เชื่อม LINE เพื่อรับวัน</Button> : !confirm ? <Button className="mt-5 h-12 w-full" disabled={!data?.available} onClick={() => setConfirm(true)}>ตรวจสอบและไปขั้นยืนยัน</Button> : <><label className="mt-5 flex items-start gap-3 text-left text-xs"><input type="checkbox" className="mt-1" required/> <span>ฉันตรวจสอบจำนวนวันและเข้าใจว่าเมื่อยืนยันแล้วจะย้อนกลับไม่ได้</span></label><Button className="btn-gold mt-4 h-12 w-full" onClick={() => void claim()}>ยืนยันรับ {data?.days} วัน</Button></>}</>}</section>{error && <p className="mt-4 text-center text-xs text-destructive">{error}</p>}</PageTransition></AppShell>; }
