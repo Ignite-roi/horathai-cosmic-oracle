@@ -124,12 +124,14 @@ const edgeCases: AccuracyBenchmarkCase[] = [
   }),
 );
 
-const sensitivityCases: AccuracyBenchmarkCase[] = [
+const SENSITIVITY_SEEDS: ReadonlyArray<readonly [string, string, string]> = [
   ["asc-boundary-candidate-before", "1988-05-05", "00:00"],
   ["asc-boundary-candidate-after", "1988-05-05", "00:01"],
   ["zodiac-boundary-candidate-before", "2026-04-13", "23:59"],
   ["zodiac-boundary-candidate-after", "2026-04-14", "00:00"],
-].map(([id, localDate, localTime]) =>
+];
+
+const sensitivityCases: AccuracyBenchmarkCase[] = SENSITIVITY_SEEDS.map(([id, localDate, localTime]) =>
   unverified({
     id,
     kind: "natal",
