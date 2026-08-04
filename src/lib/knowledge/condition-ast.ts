@@ -40,16 +40,17 @@ function angularDistance(a: number, b: number): number {
 export function evaluateConditionAst(ast: ConditionAst, facts: CalculatedFact[]): boolean {
   const byKey = new Map(facts.map((fact) => [fact.key, fact.value]));
   const evaluate = (node: ConditionAst): boolean => {
-    if (node.op === "all") return node.conditions.every(evaluate);
-    if (node.op === "any") return node.conditions.some(evaluate);
-    if (node.op === "not") return !evaluate(node.condition);
+    if ("conditions" in node) {
+      return node.op === "all" ? node.conditions.every(evaluate) : node.conditions.some(evaluate);
+    }
+    if ("condition" in node) return !evaluate(node.condition);
     const actual = factValue(byKey, node.fact);
     if (node.op === "exists") return byKey.has(node.fact) && actual !== null;
     if (node.op === "eq") return actual === node.value;
     if (node.op === "in") return node.values.includes(actual as Scalar);
     if (node.op === "between") return typeof actual === "number" && actual >= node.min && actual <= node.max;
     if (node.op === "angularWithin") return typeof actual === "number" && angularDistance(actual, node.target) <= node.orb;
-    if (typeof actual !== "number" || typeof node.value !== "number") return false;
+    if (!("value" in node) || typeof actual !== "number" || typeof node.value !== "number") return false;
     if (node.op === "gt") return actual > node.value;
     if (node.op === "gte") return actual >= node.value;
     if (node.op === "lt") return actual < node.value;
