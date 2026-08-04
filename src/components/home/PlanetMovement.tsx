@@ -3,13 +3,13 @@ import { ArrowRight, Orbit } from "lucide-react";
 
 import { PlanetGlyph } from "@/components/thai/PlanetGlyph";
 import { houseFromAscendant } from "@/hooks/useHomeReading";
-import { HOUSES, toThaiDigits, type ChartResult } from "@/lib/astro";
+import { HOUSES, toThaiDigits, type ChartResult, type PlanetId } from "@/lib/astro";
 
 /** Slow-to-fast weighting so the meaningful movers surface first. */
 const WEIGHT = [7, 8, 9, 5, 3, 6, 4, 1, 2];
 
 export type Movement = {
-  num: number;
+  num: PlanetId;
   th: string;
   fromSign: string;
   toSign: string;
@@ -85,7 +85,7 @@ export function PlanetMovement({
             transition={{ delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="surface-inset grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 p-3"
           >
-            <PlanetGlyph num={m.num as never} size={34} active={m.changed} />
+            <PlanetGlyph num={m.num} size={34} active={m.changed} />
             <div className="min-w-0">
               <div className="flex min-w-0 items-center gap-2">
                 <span className="truncate text-[13px] font-medium text-foreground">ดาว{m.th}</span>
