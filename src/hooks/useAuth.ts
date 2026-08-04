@@ -14,7 +14,24 @@ import { getLiffConfig, signInWithLine } from "@/lib/line-auth.functions";
 import { getMyAccount, type AccountData } from "@/lib/profile.functions";
 import { useProfile } from "@/store/useProfile";
 
-type LineStatus = "idle" | "booting" | "ready" | "signing-in" | "unconfigured" | "error";
+/**
+ * booting        – LIFF SDK is initialising
+ * external       – opened outside the LINE app (login still possible)
+ * logged-out     – LIFF ready, user has not authorised yet
+ * verifying      – exchanging the LINE ID token with our backend
+ * ready          – verified session available
+ * unconfigured   – no LIFF id configured on the server
+ * error          – init / login / verification failed, retry available
+ */
+export type LineStatus =
+  | "idle"
+  | "booting"
+  | "external"
+  | "logged-out"
+  | "verifying"
+  | "ready"
+  | "unconfigured"
+  | "error";
 
 /** Session state driven by Cloud auth. */
 export function useSession() {
