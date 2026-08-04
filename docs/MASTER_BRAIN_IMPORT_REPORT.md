@@ -46,8 +46,9 @@ No existing live entity was duplicated or rewritten.
 - Dry-run importer with baseline, duplicate, collision, AST, and dangling-reference abort gates.
 - Production rule fail-closed checks for publication, immutable release membership, runtime eligibility, citations, rights, reviewer approval, tests, and blocking conflicts.
 - Deterministic Thai narrative output with sentence-level rule/citation lineage and output hash.
+- Deterministic Single Answer Resolver with one public answer per question/domain/period, supporting-rule merge, ranked conflict resolution, insufficient-evidence fallback, combined citation lineage, and server-only rejected-candidate trace.
 - Candidate release report with deterministic replay hash and explicit blockers.
-- Regression coverage for pack validation, mismatch/duplicate/dangling aborts, draft exclusion, profile isolation, unknown birth time, competitor observations, AST boundaries, narrative safety, candidate release blocking, and 100-repeat determinism with zero fetch calls.
+- Regression coverage for pack validation, mismatch/duplicate/dangling aborts, draft exclusion, profile isolation, unknown birth time, competitor observations, AST boundaries, narrative safety, candidate release blocking, Single Answer cardinality/ranking/conflicts/order invariance, and 100-repeat determinism with zero fetch calls.
 
 ## Verification
 
@@ -80,6 +81,7 @@ No existing live entity was duplicated or rewritten.
 - `src/lib/knowledge/rule-engine.server.ts`
 - `src/lib/knowledge/interpretation-context.server.ts`
 - `src/lib/knowledge/narrative.server.ts`
+- `src/lib/knowledge/single-answer-resolver.server.ts`
 - `src/lib/knowledge/types.ts`
 
 ### Tests
@@ -87,6 +89,7 @@ No existing live entity was duplicated or rewritten.
 - `src/lib/knowledge/master-brain-import.test.ts`
 - `src/lib/knowledge/master-brain.test.ts`
 - `src/lib/knowledge/knowledge-v1.test.ts`
+- `src/lib/knowledge/single-answer-resolver.test.ts`
 
 ## Remaining gaps before any production activation
 
@@ -99,3 +102,7 @@ No existing live entity was duplicated or rewritten.
 ## Rollback
 
 This change created no database state, migration, release, secret, or deployment. Rollback is therefore application-only: remove the added pack fixtures/report and knowledge modules, and revert the listed knowledge-file edits. Do not change the 49 concepts, five existing published editorial rules, P0.1 database grants/RPC revocations, auth, payments, LINE, or guest access. Because no production write occurred, no backend rollback is required.
+
+### Single Answer Resolver rollback
+
+Remove `single-answer-resolver.server.ts` and its test, restore the prior narrative renderer call sites, and revert the additive resolver fields in `knowledge/types.ts` plus this specification section. This resolver phase made no database, migration, secret, payment, auth, guest, or P0.1 change, so rollback requires no backend action. No publish was performed.

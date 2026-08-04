@@ -23,6 +23,31 @@ system_id, system_version, release_id
 
 Production fails closed. A rule is excluded unless it is `published`, cited, reviewer-approved, tested, present in the release, and an exact system/version match. Competitor observations alone can never support a published rule.
 
+## Deterministic Single Answer Resolver
+
+Every public question is identified by the exact tuple `question_id + domain_id + target_period`. Evaluation may retain many sources, citations, rule matches, and rejected candidates as server-only evidence, but the public contract is always `finalAnswers.length === 1`.
+
+Before ranking, the resolver fails closed unless candidates match the active calculation profile/version, interpretation profile, system/version, and immutable release. Rules must be production-eligible, included in that release, free of blocking conflicts, and have every declared required fact available.
+
+Candidate order is deterministic:
+
+1. evidence grade (`A > B > C > D`),
+2. condition specificity,
+3. reviewed confidence,
+4. priority,
+5. lexical `ruleCode` tie-break.
+
+Rules supporting the same `conclusionCode` merge into one conclusion with combined rule and citation lineage. A lower-ranked contradictory conclusion is retained only in the server trace with a rejection reason. If contradictory candidates remain substantively equal before the lexical identity fallback, or winning evidence coverage is below `0.5`, the only public result is `INSUFFICIENT_EVIDENCE` with limitations; users are never asked to choose between predictions.
+
+Public output is limited to:
+
+```text
+answerId, conclusionCode, text, confidence, evidenceCoverage,
+winningRuleIds, supportingCitationIds, limitations, resolutionTraceHash
+```
+
+`rejectedCandidates`, rank inputs, and rejection reasons are server/internal only. The deterministic Thai renderer accepts the branded `ResolvedConclusion` contract, never raw matches or unresolved rules. The resolver and renderer perform no AI or network call.
+
 ## Lifecycle
 
 `draft → review → approved → published → deprecated`
