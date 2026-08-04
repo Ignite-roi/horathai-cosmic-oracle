@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useSession } from "@/hooks/useAuth";
 import { readGuestBirthContext } from "@/lib/guest-birth";
-import { buddhistDate, guestContextToBirth } from "@/lib/insights.client";
+import { buddhistDate, guestContextToBirth } from "@/lib/insights-browser";
 import { getGuestCalendar, getMyCalendar } from "@/lib/insights.functions";
 import type { CalendarDay } from "@/lib/insights.types";
 
