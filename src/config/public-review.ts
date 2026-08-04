@@ -20,6 +20,9 @@ export const PUBLIC_REVIEW_ROUTES = [
   "/wallet",
   "/invite",
   "/settings",
+  "/daily",
+  "/calendar",
+  "/compat",
 ] as const;
 
 export function isPublicReviewRoute(pathname: string) {

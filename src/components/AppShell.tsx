@@ -1,6 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Bot, Home, Orbit, Sparkles, WalletCards } from "lucide-react";
+import {
+  Bot,
+  CalendarDays,
+  HeartHandshake,
+  Home,
+  Orbit,
+  Palette,
+  Sparkles,
+  WalletCards,
+} from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
@@ -13,6 +22,12 @@ const NAV = [
   { to: "/transits", label: "ดาวย้าย", icon: Sparkles },
   { to: "/ai-astrologer", label: "โหรAI", icon: Bot },
   { to: "/wallet", label: "กระเป๋า", icon: WalletCards },
+] as const;
+
+const INSIGHT_NAV = [
+  { to: "/daily", label: "สีวันนี้", icon: Palette },
+  { to: "/calendar", label: "ปฏิทิน", icon: CalendarDays },
+  { to: "/compat", label: "สมพงษ์", icon: HeartHandshake },
 ] as const;
 
 export function AppShell({
@@ -29,13 +44,28 @@ export function AppShell({
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      <LiveUniverse {...(moonPhase !== undefined ? { moonPhase } : {})} {...(element ? { element } : {})} />
+      <LiveUniverse
+        {...(moonPhase !== undefined ? { moonPhase } : {})}
+        {...(element ? { element } : {})}
+      />
 
       <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-4">
         <div className="mb-4 flex justify-end">
           <WalletPill onClick={() => setWalletOpen(true)} />
         </div>
         <ReviewModeBanner />
+        <nav aria-label="เครื่องมือประจำวัน" className="mb-4 flex gap-2 overflow-x-auto pb-1">
+          {INSIGHT_NAV.map(({ to, label, icon: Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              className={`press flex h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-[11px] ${pathname === to ? "border-primary/50 bg-primary/15 text-primary" : "border-border bg-card/50 text-muted-foreground"}`}
+            >
+              <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
+              {label}
+            </Link>
+          ))}
+        </nav>
         {children}
       </main>
 
@@ -91,11 +121,21 @@ export function PageTransition({ children }: { children: ReactNode }) {
   );
 }
 
-export function SectionTitle({ kicker, title, right }: { kicker?: string; title: string; right?: ReactNode }) {
+export function SectionTitle({
+  kicker,
+  title,
+  right,
+}: {
+  kicker?: string;
+  title: string;
+  right?: ReactNode;
+}) {
   return (
     <div className="mb-4 flex items-end justify-between gap-3">
       <div>
-        {kicker && <p className="text-[10px] uppercase tracking-[0.34em] text-primary/70">{kicker}</p>}
+        {kicker && (
+          <p className="text-[10px] uppercase tracking-[0.34em] text-primary/70">{kicker}</p>
+        )}
         <h2 className="display mt-1 text-xl font-semibold text-foreground">{title}</h2>
       </div>
       {right}
