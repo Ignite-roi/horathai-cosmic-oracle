@@ -89,7 +89,7 @@ export function useLineAuth() {
 
   const doSignIn = useCallback(async () => {
     setError(null);
-    setStatus("signing-in");
+    setStatus("verifying");
     try {
       const idToken = await getLiffIdToken();
       if (!idToken) throw new Error("ไม่ได้รับ ID token จาก LINE");
@@ -128,11 +128,18 @@ export function useLineAuth() {
         setError("เริ่มต้น LIFF ไม่สำเร็จ");
         return;
       }
-      if (!session && (await isLiffLoggedIn())) {
+      const inLine = await isInsideLine();
+      if (cancelled) return;
+      setInLine(inLine);
+      if (session) {
+        setStatus("ready");
+        return;
+      }
+      if (await isLiffLoggedIn()) {
         await doSignIn();
         return;
       }
-      if (!cancelled) setStatus("ready");
+      if (!cancelled) setStatus(inLine ? "logged-out" : "external");
     })();
     return () => {
       cancelled = true;
