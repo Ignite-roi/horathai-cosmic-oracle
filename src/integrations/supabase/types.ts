@@ -109,6 +109,8 @@ export type Database = {
           effective_version: string
           evidence_level: Database["public"]["Enums"]["rule_evidence_level"]
           id: string
+          institutional_reviewer: string | null
+          limitations: string[]
           outcome_json: Json
           priority: number
           reviewed_by: string | null
@@ -130,6 +132,8 @@ export type Database = {
           effective_version: string
           evidence_level: Database["public"]["Enums"]["rule_evidence_level"]
           id?: string
+          institutional_reviewer?: string | null
+          limitations?: string[]
           outcome_json: Json
           priority?: number
           reviewed_by?: string | null
@@ -151,6 +155,8 @@ export type Database = {
           effective_version?: string
           evidence_level?: Database["public"]["Enums"]["rule_evidence_level"]
           id?: string
+          institutional_reviewer?: string | null
+          limitations?: string[]
           outcome_json?: Json
           priority?: number
           reviewed_by?: string | null
@@ -601,6 +607,86 @@ export type Database = {
           utc_birth_datetime?: string | null
         }
         Relationships: []
+      }
+      compatibility_checks: {
+        Row: {
+          calculation_engine: string
+          calculation_version: string
+          citation_snapshot_json: Json
+          created_at: string
+          id: string
+          input_hash: string
+          overall_score: number
+          partner_birth_date: string
+          partner_birth_time: string | null
+          partner_birth_time_known: boolean
+          partner_country: string
+          partner_district: string | null
+          partner_latitude: number
+          partner_longitude: number
+          partner_province: string
+          partner_timezone: string
+          person_label: string
+          result_json: Json
+          rule_ids: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calculation_engine: string
+          calculation_version: string
+          citation_snapshot_json?: Json
+          created_at?: string
+          id?: string
+          input_hash: string
+          overall_score: number
+          partner_birth_date: string
+          partner_birth_time?: string | null
+          partner_birth_time_known?: boolean
+          partner_country?: string
+          partner_district?: string | null
+          partner_latitude: number
+          partner_longitude: number
+          partner_province: string
+          partner_timezone?: string
+          person_label: string
+          result_json: Json
+          rule_ids?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calculation_engine?: string
+          calculation_version?: string
+          citation_snapshot_json?: Json
+          created_at?: string
+          id?: string
+          input_hash?: string
+          overall_score?: number
+          partner_birth_date?: string
+          partner_birth_time?: string | null
+          partner_birth_time_known?: boolean
+          partner_country?: string
+          partner_district?: string | null
+          partner_latitude?: number
+          partner_longitude?: number
+          partner_province?: string
+          partner_timezone?: string
+          person_label?: string
+          result_json?: Json
+          rule_ids?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compatibility_checks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       concept_relationships: {
         Row: {

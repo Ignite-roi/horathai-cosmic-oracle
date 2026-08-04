@@ -18,6 +18,9 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
+import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
+import { Route as AuthenticatedCompatRouteImport } from './routes/_authenticated/compat'
+import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedInviteRouteImport } from './routes/_authenticated/invite'
 import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
@@ -74,6 +77,21 @@ const AuthenticatedAiAstrologerRoute =
 const AuthenticatedBirthChartRoute = AuthenticatedBirthChartRouteImport.update({
   id: '/birth-chart',
   path: '/birth-chart',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCompatRoute = AuthenticatedCompatRouteImport.update({
+  id: '/compat',
+  path: '/compat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDailyRoute = AuthenticatedDailyRouteImport.update({
+  id: '/daily',
+  path: '/daily',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -151,6 +169,9 @@ export interface FileRoutesByFullPath {
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/calendar': typeof AuthenticatedCalendarRoute
+  '/compat': typeof AuthenticatedCompatRoute
+  '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
@@ -173,6 +194,9 @@ export interface FileRoutesByTo {
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/calendar': typeof AuthenticatedCalendarRoute
+  '/compat': typeof AuthenticatedCompatRoute
+  '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invite': typeof AuthenticatedInviteRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -196,6 +220,9 @@ export interface FileRoutesById {
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
+  '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
+  '/_authenticated/compat': typeof AuthenticatedCompatRoute
+  '/_authenticated/daily': typeof AuthenticatedDailyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invite': typeof AuthenticatedInviteRoute
   '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
@@ -220,6 +247,9 @@ export interface FileRouteTypes {
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
+    | '/calendar'
+    | '/compat'
+    | '/daily'
     | '/dashboard'
     | '/invite'
     | '/knowledge-admin'
@@ -242,6 +272,9 @@ export interface FileRouteTypes {
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
+    | '/calendar'
+    | '/compat'
+    | '/daily'
     | '/dashboard'
     | '/invite'
     | '/onboarding'
@@ -264,6 +297,9 @@ export interface FileRouteTypes {
     | '/transit'
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
+    | '/_authenticated/calendar'
+    | '/_authenticated/compat'
+    | '/_authenticated/daily'
     | '/_authenticated/dashboard'
     | '/_authenticated/invite'
     | '/_authenticated/knowledge-admin'
@@ -351,6 +387,27 @@ declare module '@tanstack/react-router' {
       path: '/birth-chart'
       fullPath: '/birth-chart'
       preLoaderRoute: typeof AuthenticatedBirthChartRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/calendar': {
+      id: '/_authenticated/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AuthenticatedCalendarRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/compat': {
+      id: '/_authenticated/compat'
+      path: '/compat'
+      fullPath: '/compat'
+      preLoaderRoute: typeof AuthenticatedCompatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/daily': {
+      id: '/_authenticated/daily'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof AuthenticatedDailyRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -464,6 +521,9 @@ const AuthenticatedKnowledgeAdminRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
   AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
+  AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
+  AuthenticatedCompatRoute: typeof AuthenticatedCompatRoute
+  AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInviteRoute: typeof AuthenticatedInviteRoute
   AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
@@ -478,6 +538,9 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
   AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
+  AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
+  AuthenticatedCompatRoute: AuthenticatedCompatRoute,
+  AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInviteRoute: AuthenticatedInviteRoute,
   AuthenticatedKnowledgeAdminRoute:
@@ -506,13 +569,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
