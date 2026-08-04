@@ -199,6 +199,21 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       CALCULATION_VERSION,
     ]);
 
+    const cached = await supabase
+      .from("natal_charts")
+      .select(CHART_COLUMNS)
+      .eq("birth_profile_id", b.id)
+      .eq("input_hash", inputHash)
+      .maybeSingle();
+    if (cached.data) {
+      await supabase
+        .from("profiles")
+        .update({ onboarding_completed: true, onboarded: true })
+        .eq("id", userId);
+      const row = cached.data as NatalChartRow;
+      return { chart: row, reused: true, ascendantKnown: row.ascendant_known } as const;
+    }
+
     let payload;
     try {
       payload = await calculateNatal({
@@ -269,7 +284,11 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       .update({ onboarding_completed: true, onboarded: true })
       .eq("id", userId);
 
-    return saved as NatalChartRow;
+    return {
+      chart: saved as NatalChartRow,
+      reused: false,
+      ascendantKnown: payload.ascendantKnown,
+    } as const;
   });
 
 /** Transit reading for the signed-in user's saved birth data. */
