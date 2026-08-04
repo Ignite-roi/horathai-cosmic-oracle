@@ -81,7 +81,13 @@ export const signInWithLine = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin
       .from("profiles")
-      .update({ line_user_id: verified.sub, display_name: displayName, avatar_url: avatarUrl })
+      .update({
+        line_user_id: verified.sub,
+        display_name: displayName,
+        avatar_url: avatarUrl,
+        picture_url: avatarUrl,
+        last_login_at: new Date().toISOString(),
+      })
       .eq("id", signIn.data.user!.id);
 
     return {
