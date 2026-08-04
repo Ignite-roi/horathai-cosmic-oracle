@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/privacy" as never)({
+export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "นโยบายความเป็นส่วนตัว | Horathai AI" },

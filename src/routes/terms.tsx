@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/terms" as never)({
+export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: "ข้อกำหนดการใช้งาน | Horathai AI" },
