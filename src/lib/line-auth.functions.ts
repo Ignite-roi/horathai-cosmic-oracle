@@ -40,7 +40,6 @@ const MAX_ATTEMPTS_PER_WINDOW = 10;
 const WINDOW_MINUTES = 5;
 
 function sha256(value: string) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return import("node:crypto").then(({ createHash }) =>
     createHash("sha256").update(value).digest("hex"),
   );

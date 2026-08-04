@@ -49,7 +49,10 @@ function Orb({ label }: { label: string }) {
     <>
       <div className="relative mx-auto h-24 w-24">
         <div className="absolute inset-0 animate-orbit-spin rounded-full border border-dashed border-primary/40" />
-        <div className="absolute inset-3 animate-orbit-spin rounded-full border border-primary/20" style={{ animationDirection: "reverse" }} />
+        <div
+          className="absolute inset-3 animate-orbit-spin rounded-full border border-primary/20"
+          style={{ animationDirection: "reverse" }}
+        />
         <div className="absolute inset-0 m-auto h-8 w-8 animate-pulse-glow rounded-full bg-[radial-gradient(circle,var(--gold),transparent_70%)]" />
       </div>
       <p className="mt-6 text-[12px] tracking-[0.24em] text-muted-foreground">{label}</p>
@@ -122,12 +125,31 @@ function Entry() {
     void navigate({ to: done ? "/dashboard" : "/onboarding", replace: true });
   }, [isSignedIn, account, navigate]);
 
-  if (isSignedIn) return <Shell><Orb label="กำลังเข้าสู่แอป…" /></Shell>;
+  if (isSignedIn)
+    return (
+      <Shell>
+        <Orb label="กำลังเข้าสู่แอป…" />
+      </Shell>
+    );
 
   if (status === "idle" || status === "loading_config")
-    return <Shell><Orb label="กำลังเริ่มระบบ…" /></Shell>;
-  if (status === "initializing") return <Shell><Orb label="กำลังเชื่อมต่อ LINE…" /></Shell>;
-  if (status === "signing_in") return <Shell><Orb label="กำลังยืนยันตัวตนกับ LINE…" /></Shell>;
+    return (
+      <Shell>
+        <Orb label="กำลังเริ่มระบบ…" />
+      </Shell>
+    );
+  if (status === "initializing")
+    return (
+      <Shell>
+        <Orb label="กำลังเชื่อมต่อ LINE…" />
+      </Shell>
+    );
+  if (status === "signing_in")
+    return (
+      <Shell>
+        <Orb label="กำลังยืนยันตัวตนกับ LINE…" />
+      </Shell>
+    );
 
   const isConfigError = status === "configuration_error";
 

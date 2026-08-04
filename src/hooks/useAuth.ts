@@ -148,7 +148,9 @@ export function useLineAuthMachine() {
       if (!result.ok) {
         setInitialized(false);
         setLiffError(result.error);
-        setStatus(result.error.isConfigurationError ? "configuration_error" : "initialization_error");
+        setStatus(
+          result.error.isConfigurationError ? "configuration_error" : "initialization_error",
+        );
         return false;
       }
       setInitialized(true);
