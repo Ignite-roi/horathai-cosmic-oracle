@@ -10,6 +10,29 @@ export const GOLDEN_CHAIYAPHUM_24H = {
   activatedRuleIds: [] as string[],
 } as const;
 
+/**
+ * Independently recorded Swiss Ephemeris 2.10.03 (Lahiri, whole-sign) fixture.
+ * This is the literal 1988-05-05 00:00 local case, not the separate 24:00 case.
+ */
+export const GOLDEN_CHAIYAPHUM_MIDNIGHT = {
+  benchmarkKey: "golden-chaiyaphum-1988-05-05-0000",
+  input: {
+    birthDate: "1988-05-05",
+    birthTime: "00:00",
+    birthTimeKnown: true,
+    latitude: 15.8068,
+    longitude: 102.0315,
+    timezone: "Asia/Bangkok",
+  },
+  expectedUtc: "1988-05-04T17:00:00.000Z",
+  expectedSiderealAscendant: 278.047959,
+  expectedSign: "มังกร",
+  expectedDegree: 8,
+  expectedMinute: 2,
+  provenance: "Swiss Ephemeris 2.10.03; SIDM_LAHIRI; houses_ex whole-sign; recorded 2026-08-04",
+  toleranceDegrees: 0.25,
+} as const;
+
 /** Normalizes the civil convention 24:00 to 00:00 on the following day. */
 export function normalizeCivil24Hour(date: string, time: string): { date: string; time: string } {
   if (time !== "24:00") return { date, time };

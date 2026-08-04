@@ -48,7 +48,12 @@ export function layoutRingPlanets(
   const lastPlanet = unwrapped.at(-1);
   if (lastSlot === undefined || !lastPlanet) return [];
   const overflow = lastSlot - lastPlanet.longitude;
-  if (overflow > 0) for (let index = 0; index < slots.length; index += 1) slots[index] -= overflow / 2;
+  if (overflow > 0) {
+    for (let index = 0; index < slots.length; index += 1) {
+      const slot = slots[index];
+      if (slot !== undefined) slots[index] = slot - overflow / 2;
+    }
+  }
 
   return unwrapped.map(({ planet }, index) => {
     const point = polarPoint(planet.longitude, markerRadius);
