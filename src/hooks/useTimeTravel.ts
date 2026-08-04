@@ -138,9 +138,17 @@ export function useTimeTravel(offsetDays: number) {
 
   const results = useQueries({
     queries: offsets.map((offset) => ({
-      queryKey: ["transit-reading", input.birthDate, input.birthTime, input.province, offset, isoAt(offset)],
+      queryKey: [
+        "transit-reading",
+        input.birthDate,
+        input.birthTime,
+        input.province,
+        offset,
+        isoAt(offset),
+      ],
       staleTime: 1000 * 60 * 30,
-      queryFn: () => fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>,
+      queryFn: () =>
+        fetchReading({ data: { ...input, at: isoAt(offset) } }) as Promise<ReadingResult>,
     })),
   });
 

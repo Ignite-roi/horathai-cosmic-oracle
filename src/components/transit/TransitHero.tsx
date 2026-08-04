@@ -48,7 +48,8 @@ export function TransitHero({
           ดาวจร ณ เวลาที่คุณเลือก
         </h1>
         <p className="numeral mt-1.5 text-[12px] text-muted-foreground">
-          {thaiDate(date)} · {thaiTime(date)} น. · ลัคนาราศี{ascendantSign} · {moonPhaseLabel(moonPhase)}
+          {thaiDate(date)} · {thaiTime(date)} น. · ลัคนาราศี{ascendantSign} ·{" "}
+          {moonPhaseLabel(moonPhase)}
         </p>
 
         {children && <div className="mt-4">{children}</div>}
@@ -79,14 +80,16 @@ export function TransitHero({
             </div>
 
             <p className="mt-2.5 text-[12px] leading-relaxed text-muted-foreground">
-              ดาว{focus.th}ให้ผลด้าน{focus.to.influence} ตกในภพที่ดูแลเรื่อง{house?.about ?? "ชีวิตประจำวัน"} ของดวงกำเนิดคุณ
+              ดาว{focus.th}ให้ผลด้าน{focus.to.influence} ตกในภพที่ดูแลเรื่อง
+              {house?.about ?? "ชีวิตประจำวัน"} ของดวงกำเนิดคุณ
             </p>
           </motion.div>
         )}
 
         <p className="mt-4 text-[10.5px] leading-relaxed text-muted-foreground">
-          เครื่องคำนวณที่ใช้ขณะนี้: <span className="numeral text-[var(--gold)]">{ENGINE_LABEL}</span>{" "}
-          — ตำแหน่งดาวคำนวณแบบนิรายนะ (Lahiri) และเป็นค่าที่สุ่มวัดตามเวลาที่เลือก
+          เครื่องคำนวณที่ใช้ขณะนี้:{" "}
+          <span className="numeral text-[var(--gold)]">{ENGINE_LABEL}</span> —
+          ตำแหน่งดาวคำนวณแบบนิรายนะ (Lahiri) และเป็นค่าที่สุ่มวัดตามเวลาที่เลือก
         </p>
       </div>
     </section>

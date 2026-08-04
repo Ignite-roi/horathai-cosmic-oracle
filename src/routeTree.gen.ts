@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
-import { Route as DevTransitPreviewRouteImport } from './routes/dev-transit-preview'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
@@ -40,11 +39,6 @@ const AiRoute = AiRouteImport.update({
 const ChartRoute = ChartRouteImport.update({
   id: '/chart',
   path: '/chart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DevTransitPreviewRoute = DevTransitPreviewRouteImport.update({
-  id: '/dev-transit-preview',
-  path: '/dev-transit-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TransitRoute = TransitRouteImport.update({
@@ -93,7 +87,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/dev-transit-preview': typeof DevTransitPreviewRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -107,7 +100,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/dev-transit-preview': typeof DevTransitPreviewRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -123,7 +115,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/chart': typeof ChartRoute
-  '/dev-transit-preview': typeof DevTransitPreviewRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
@@ -139,7 +130,6 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/chart'
-    | '/dev-transit-preview'
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
@@ -153,7 +143,6 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/chart'
-    | '/dev-transit-preview'
     | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
@@ -168,7 +157,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/ai'
     | '/chart'
-    | '/dev-transit-preview'
     | '/transit'
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
@@ -184,7 +172,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AiRoute: typeof AiRoute
   ChartRoute: typeof ChartRoute
-  DevTransitPreviewRoute: typeof DevTransitPreviewRoute
   TransitRoute: typeof TransitRoute
 }
 
@@ -216,13 +203,6 @@ declare module '@tanstack/react-router' {
       path: '/chart'
       fullPath: '/chart'
       preLoaderRoute: typeof ChartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev-transit-preview': {
-      id: '/dev-transit-preview'
-      path: '/dev-transit-preview'
-      fullPath: '/dev-transit-preview'
-      preLoaderRoute: typeof DevTransitPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/transit': {
@@ -312,9 +292,18 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AiRoute: AiRoute,
   ChartRoute: ChartRoute,
-  DevTransitPreviewRoute: DevTransitPreviewRoute,
   TransitRoute: TransitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

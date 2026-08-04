@@ -22,4 +22,3 @@ export const Route = createFileRoute("/_authenticated/transits")({
   }),
   component: TransitExperience,
 });
-

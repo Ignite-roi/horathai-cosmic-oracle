@@ -30,12 +30,16 @@ export function TransitComparison({
   return (
     <section className="surface-card p-5">
       <p className="eyebrow">Before / after</p>
-      <h2 className="thai-heading mt-1 text-[17px] text-foreground">เปรียบเทียบตำแหน่งดาวตามวันที่เลือก</h2>
+      <h2 className="thai-heading mt-1 text-[17px] text-foreground">
+        เปรียบเทียบตำแหน่งดาวตามวันที่เลือก
+      </h2>
 
       <div className="surface-inset mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 p-3">
         <div className="min-w-0">
           <p className="text-[10px] text-muted-foreground">วันที่อ้างอิง</p>
-          <p className="numeral mt-0.5 truncate text-[12.5px] text-foreground">{thaiDate(fromDate)}</p>
+          <p className="numeral mt-0.5 truncate text-[12.5px] text-foreground">
+            {thaiDate(fromDate)}
+          </p>
         </div>
         <ArrowRight className="h-4 w-4 shrink-0 text-[var(--gold)]" />
         <div className="min-w-0 text-right">
@@ -69,7 +73,9 @@ export function TransitComparison({
               <PlanetGlyph num={s.num} size={34} active />
               <div className="min-w-0">
                 <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-                  <span className="truncate text-[13px] font-medium text-foreground">ดาว{s.th}</span>
+                  <span className="truncate text-[13px] font-medium text-foreground">
+                    ดาว{s.th}
+                  </span>
                   {s.signChanged && (
                     <span className="gold-hairline shrink-0 rounded-full px-1.5 py-0.5 text-[9px] text-[var(--gold)]">
                       เปลี่ยนราศี
@@ -89,12 +95,14 @@ export function TransitComparison({
 
                 {s.signChanged && (
                   <p className="mt-1 text-[11.5px] text-muted-foreground">
-                    ราศี{s.from.signTh} <span className="text-[var(--gold)]">→</span> ราศี{s.to.signTh}
+                    ราศี{s.from.signTh} <span className="text-[var(--gold)]">→</span> ราศี
+                    {s.to.signTh}
                   </p>
                 )}
                 {s.houseChanged && (
                   <p className="mt-0.5 text-[11.5px] text-muted-foreground">
-                    {houseTh(s.fromHouse)} <span className="text-[var(--gold)]">→</span> {houseTh(s.toHouse)}
+                    {houseTh(s.fromHouse)} <span className="text-[var(--gold)]">→</span>{" "}
+                    {houseTh(s.toHouse)}
                   </p>
                 )}
                 <p className="numeral mt-0.5 text-[10.5px] text-muted-foreground">

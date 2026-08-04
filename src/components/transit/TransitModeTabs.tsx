@@ -41,7 +41,9 @@ export function TransitModeTabs({
                 className="absolute inset-0 rounded-[14px] border border-primary/30 bg-primary/12"
               />
             )}
-            <span className={`relative block truncate ${active ? "text-gold" : "text-muted-foreground"}`}>
+            <span
+              className={`relative block truncate ${active ? "text-gold" : "text-muted-foreground"}`}
+            >
               {m.th}
             </span>
           </button>

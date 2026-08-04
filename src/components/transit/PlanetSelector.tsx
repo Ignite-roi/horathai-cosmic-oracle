@@ -83,7 +83,9 @@ export function PlanetSelector({
             </div>
             <div className="surface-inset p-3">
               <dt className="text-muted-foreground">สภาพการโคจร</dt>
-              <dd className={`mt-1 text-[12.5px] ${active.to.retrograde ? "text-[oklch(0.72_0.17_30)]" : "text-foreground"}`}>
+              <dd
+                className={`mt-1 text-[12.5px] ${active.to.retrograde ? "text-[oklch(0.72_0.17_30)]" : "text-foreground"}`}
+              >
                 {active.to.retrograde ? "พักร์ (ถอยหลัง)" : "เดินหน้า (มารค)"}
               </dd>
             </div>
