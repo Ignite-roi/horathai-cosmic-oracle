@@ -138,6 +138,11 @@ export type ChartResult = {
   ayanamsa: number;
   julianDay: number;
   isoDate: string;
+  engine: string;
+  calculationVersion: string;
+  ephemerisSource: string;
+  ayanamsaName: string;
+  houseSystem: string;
 };
 
 export type ReadingResult = {
@@ -146,6 +151,15 @@ export type ReadingResult = {
   scores: AreaScore[];
   overall: number;
   highlights: { title: string; body: string; tone: "good" | "watch" | "neutral" }[];
+  provenance: {
+    engine: string;
+    calculationVersion: string;
+    ephemerisSource: string;
+    ayanamsaName: string;
+    houseSystem: string;
+    natalInstant: string;
+    transitInstant: string;
+  };
 };
 
 /* ---------- formatters ---------- */
