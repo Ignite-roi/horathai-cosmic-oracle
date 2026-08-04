@@ -25,6 +25,7 @@ const input: RuleEngineInput = {
       provenance: "sidereal_lahiri@3.0.0",
     },
   ],
+  releaseRuleIds: ["r1"],
 };
 const citedRule: KnowledgeRule = {
   id: "r1",
@@ -47,6 +48,13 @@ const citedRule: KnowledgeRule = {
       supportType: "paraphrase",
     },
   ],
+  runtimeEligible: true,
+  inImmutableRelease: true,
+  citationsReviewed: true,
+  rightsCleared: true,
+  reviewerApproved: true,
+  testsPassed: true,
+  openBlockingConflict: false,
 };
 
 describe("knowledge V1 contracts", () => {

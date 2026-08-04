@@ -34,6 +34,7 @@ const input: RuleEngineInput = {
       provenance: "sidereal_lahiri@3.0.0",
     },
   ],
+  releaseRuleIds: ["rule-1"],
 };
 
 const rule: KnowledgeRule = {
@@ -58,6 +59,13 @@ const rule: KnowledgeRule = {
       supportType: "paraphrase",
     },
   ],
+  runtimeEligible: true,
+  inImmutableRelease: true,
+  citationsReviewed: true,
+  rightsCleared: true,
+  reviewerApproved: true,
+  testsPassed: true,
+  openBlockingConflict: false,
 };
 
 describe("Master Astrology Brain foundation", () => {

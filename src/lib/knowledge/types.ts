@@ -44,6 +44,13 @@ export type KnowledgeRule = {
   priority: number;
   citations: KnowledgeCitation[];
   limitations: string[];
+  runtimeEligible?: boolean;
+  inImmutableRelease?: boolean;
+  citationsReviewed?: boolean;
+  rightsCleared?: boolean;
+  reviewerApproved?: boolean;
+  testsPassed?: boolean;
+  openBlockingConflict?: boolean;
 };
 
 export type RuleEngineInput = {

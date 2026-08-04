@@ -1,4 +1,5 @@
 import { citationSnapshot } from "./citation.server";
+import { productionRuleIsValid } from "./rule-engine.server";
 import type { InterpretationContext, KnowledgeRule, RuleEngineInput } from "./types";
 
 export function buildInterpretationContext(
@@ -7,7 +8,7 @@ export function buildInterpretationContext(
 ): InterpretationContext {
   const approved = matchedRules.filter(
     (rule) =>
-      rule.status === "published" && rule.systemId === input.system.id && rule.citations.length > 0,
+      productionRuleIsValid(rule) && rule.systemId === input.system.id && rule.systemVersion === input.system.version && Boolean(input.releaseRuleIds?.includes(rule.id)),
   );
   return {
     system: input.system,

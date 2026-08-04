@@ -41,7 +41,7 @@ Every fact, rule, event, outcome, trace, and release carries `system_id` and ver
 
 ## Unknown birth time
 
-When time is unknown, no ascendant, houses, house placements, angular contacts, or house-entry events may be emitted. Date-stable planetary facts may remain, tagged `birth_time_known=false`; rules requiring omitted facts cannot match. Confidence and limitations must state the reduced basis.
+When time is unknown, no ascendant, houses, house placements, angular contacts, or house-entry events may be emitted. Date-stable planetary facts may remain, tagged `birth.time_known=false`; rules requiring omitted facts cannot match. Confidence and limitations must state the reduced basis.
 
 ## Rights and disagreement
 

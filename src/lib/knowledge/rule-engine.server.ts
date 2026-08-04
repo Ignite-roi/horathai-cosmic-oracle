@@ -1,4 +1,5 @@
 import type { KnowledgeRule, RuleEngineInput, RuleEngineOutput } from "./types";
+import { conditionAstSchema, evaluateConditionAst } from "./condition-ast";
 
 function profilesMatch(input: RuleEngineInput): boolean {
   return (
@@ -12,7 +13,10 @@ function profilesMatch(input: RuleEngineInput): boolean {
 }
 
 function matchesConditions(rule: KnowledgeRule, input: RuleEngineInput): boolean {
-  const facts = new Map(input.chartFacts.map((fact) => [fact.key, fact.value]));
+  const allFacts = input.transitEvent ? [...input.chartFacts, ...input.transitEvent.facts] : input.chartFacts;
+  const parsedAst = conditionAstSchema.safeParse(rule.condition);
+  if (parsedAst.success) return evaluateConditionAst(parsedAst.data, allFacts);
+  const facts = new Map(allFacts.map((fact) => [fact.key, fact.value]));
   for (const [key, expected] of Object.entries(rule.condition)) {
     if (facts.get(key) !== expected) return false;
   }
@@ -29,9 +33,8 @@ export function matchKnowledgeRules(
     (rule) =>
       rule.systemId === input.system.id &&
       rule.systemVersion === input.system.version &&
-      rule.status === "published" &&
-      rule.citations.length > 0 &&
-      (!input.releaseRuleIds || input.releaseRuleIds.includes(rule.id)),
+      productionRuleIsValid(rule) &&
+      Boolean(input.releaseRuleIds?.includes(rule.id)),
   );
   return {
     system: input.system,
@@ -56,5 +59,5 @@ export function matchKnowledgeRules(
 }
 
 export function productionRuleIsValid(rule: KnowledgeRule): boolean {
-  return rule.status === "published" && rule.citations.length > 0;
+  return rule.status === "published" && rule.citations.length > 0 && rule.runtimeEligible === true && rule.inImmutableRelease === true && rule.citationsReviewed === true && rule.rightsCleared === true && rule.reviewerApproved === true && rule.testsPassed === true && rule.openBlockingConflict !== true;
 }

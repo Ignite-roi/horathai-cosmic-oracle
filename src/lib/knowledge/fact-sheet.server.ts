@@ -1,7 +1,7 @@
-import { createHash } from "node:crypto";
-
 import { CALCULATION_PROFILES, type CalculationProfile } from "../astrology-profiles";
 import { calculateNatal, type BirthInput } from "../astrology-engine.server";
+import { deterministicHash } from "./canonical-json.server";
+import { assertCanonicalFactKey } from "./fact-registry";
 import type { CalculatedFact } from "./types";
 
 export type DeterministicFactSheet = {
@@ -34,7 +34,7 @@ export async function buildNatalFactSheet(
   const provenance = `${profile.id}@${profile.version}`;
   const facts: CalculatedFact[] = [
     {
-      key: "birth_time_known",
+      key: "birth.time_known",
       value: input.birthTimeKnown,
       authority: "calculation_engine",
       provenance,
@@ -86,6 +86,8 @@ export async function buildNatalFactSheet(
     }
   }
 
+  facts.forEach((fact) => assertCanonicalFactKey(fact.key));
+
   return {
     calculationProfile: { id: profile.id, version: profile.version },
     facts,
@@ -101,7 +103,7 @@ export async function buildNatalFactSheet(
       calculationVersion: chart.calculationVersion,
       ephemerisSource: chart.ephemerisSource,
       houseSystem: chart.houseSystem,
-      inputHash: createHash("sha256").update(JSON.stringify(input)).digest("hex"),
+      inputHash: deterministicHash(input),
     },
   };
 }
