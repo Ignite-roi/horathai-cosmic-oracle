@@ -21,6 +21,8 @@ const MSG_APP_NOT_FOUND =
 const MSG_ENDPOINT_MISMATCH =
   "URL ของเว็บไม่ตรงกับ Endpoint URL ที่ตั้งค่าไว้ใน LIFF กรุณาเปิดผ่านลิงก์ LIFF อย่างเป็นทางการ";
 const MSG_GENERIC = "เริ่มต้น LIFF ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+const MSG_ID_TOKEN_MISSING =
+  "LINE ยังไม่ได้ให้สิทธิ์ข้อมูลโปรไฟล์ (openid) กับแอปนี้ กรุณากด “อนุญาต LINE ใหม่” เพื่อยืนยันสิทธิ์อีกครั้ง";
 
 function makeError(
   code: string,
@@ -54,6 +56,11 @@ function classify(err: unknown): LiffError {
 
 export function missingLiffIdError(): LiffError {
   return makeError("LIFF_ID_MISSING", MSG_MISSING_ID, { configuration: true });
+}
+
+/** LIFF is logged in but LINE did not issue an ID token (missing openid consent). */
+export function missingIdTokenError(): LiffError {
+  return makeError("LINE_ID_TOKEN_MISSING", MSG_ID_TOKEN_MISSING, { configuration: true });
 }
 
 let initPromise: Promise<{ ok: true } | { ok: false; error: LiffError }> | null = null;
@@ -194,4 +201,75 @@ export async function getLiffProfile(): Promise<LineProfile | null> {
   } catch {
     return null;
   }
+}
+
+/** True when LINE returned a decodable ID token payload. Never returns claims. */
+export async function hasDecodedIdToken(): Promise<boolean> {
+  try {
+    const liff = await liffModule();
+    if (!liff.isLoggedIn()) return false;
+    return Boolean(liff.getDecodedIDToken());
+  } catch {
+    return false;
+  }
+}
+
+/** Safe context type label ("utou" | "external" | "none" ...). Never ids. */
+export async function getLiffContextType(): Promise<string> {
+  try {
+    const liff = await liffModule();
+    const ctx = liff.getContext();
+    return ctx?.type ?? "none";
+  } catch {
+    return "unknown";
+  }
+}
+
+const REAUTH_KEY = "horathai:line-reauth";
+const REAUTH_COOLDOWN_MS = 60_000;
+
+/** Blocks a reauthorization loop: at most one attempt per cooldown window. */
+export function canAttemptReauthorization(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = window.sessionStorage.getItem(REAUTH_KEY);
+    if (!raw) return true;
+    const ts = Number(JSON.parse(raw)?.at ?? 0);
+    return !Number.isFinite(ts) || Date.now() - ts > REAUTH_COOLDOWN_MS;
+  } catch {
+    return true;
+  }
+}
+
+function markReauthorization() {
+  try {
+    window.sessionStorage.setItem(REAUTH_KEY, JSON.stringify({ at: Date.now() }));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearReauthorizationGuard() {
+  try {
+    window.sessionStorage.removeItem(REAUTH_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * One-time re-consent flow: drops the stale LINE login (which may have been
+ * granted before `openid` was enabled) and sends the user back through the
+ * consent screen with a sanitized same-origin redirect URI.
+ */
+export async function liffReauthorize(): Promise<{ ok: boolean; reason?: string }> {
+  if (!canAttemptReauthorization()) {
+    return { ok: false, reason: "cooldown" };
+  }
+  markReauthorization();
+  const target = sanitizeRedirectUrl(window.location.href);
+  await liffLogout();
+  const liff = await liffModule();
+  liff.login({ redirectUri: target });
+  return { ok: true };
 }
