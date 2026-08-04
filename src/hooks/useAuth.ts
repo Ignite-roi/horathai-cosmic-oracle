@@ -193,11 +193,33 @@ export function useLineAuth() {
     useProfile.getState().reset();
   }, [queryClient]);
 
+  /** Re-run the whole boot sequence after a failure. */
+  const retry = useCallback(async () => {
+    setError(null);
+    setStatus("booting");
+    if (!config?.liffId) {
+      setStatus("unconfigured");
+      return false;
+    }
+    const ok = await initLiff(config.liffId);
+    if (!ok) {
+      setError("เริ่มต้น LIFF ไม่สำเร็จ");
+      setStatus("error");
+      return false;
+    }
+    if (await isLiffLoggedIn()) return doSignIn();
+    setStatus((await isInsideLine()) ? "logged-out" : "external");
+    return false;
+  }, [config, doSignIn]);
+
   return {
     session,
     isSignedIn: Boolean(session),
     status,
     error,
+    inLine,
+    booting: status === "idle" || status === "booting" || status === "verifying",
+    retry,
     configured: Boolean(config?.liffId),
     account,
     login,
