@@ -7,8 +7,8 @@ import {
   type InterpretationProfile,
 } from "../astrology-profiles";
 import { buildNatalFactSheet } from "./fact-sheet.server";
-import { renderThaiNarrative } from "./narrative.server";
 import { matchKnowledgeRules } from "./rule-engine.server";
+import { resolveSingleAnswer } from "./single-answer-resolver.server";
 import type { KnowledgeRule, RuleEngineInput } from "./types";
 
 const interpretation: InterpretationProfile = {
@@ -131,12 +131,17 @@ describe("Master Astrology Brain foundation", () => {
     });
   });
 
-  it("renders original deterministic Thai templates from traces", () => {
+  it("renders one resolved deterministic Thai answer", () => {
     const matches = matchKnowledgeRules(input, [rule]).matches;
-    const narrative = renderThaiNarrative(matches, [rule]);
-    expect(narrative.renderer).toBe("horathai_template_th_v1");
-    expect(narrative.summary).toContain("วางแผนอย่างเป็นขั้นตอน");
-    expect(narrative.trace[0]?.citations).toHaveLength(1);
+    const result = resolveSingleAnswer(
+      { questionId: "overview", domainId: "natal", targetPeriod: "natal" },
+      input,
+      matches,
+      [rule],
+    );
+    expect(result.finalAnswers).toHaveLength(1);
+    expect(result.finalAnswers[0]?.text).toContain("วางแผนอย่างเป็นขั้นตอน");
+    expect(result.finalAnswers[0]?.supportingCitationIds).toEqual(["citation-1"]);
   });
 
   it("keeps the competitor fixture observational and proves no input special-case", async () => {

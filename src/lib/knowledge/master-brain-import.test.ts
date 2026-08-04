@@ -5,9 +5,10 @@ import { evaluateConditionAst, type ConditionAst } from "./condition-ast";
 import { buildNatalFactSheet } from "./fact-sheet.server";
 import { dryRunMasterBrainImport, type KnowledgeBaselineSnapshot } from "./master-brain-import.server";
 import { masterBrainPackSchema } from "./master-brain-pack.schema";
-import { assertNarrativeSafety, renderThaiNarrative } from "./narrative.server";
+import { assertNarrativeSafety } from "./narrative.server";
 import { buildCandidateReleaseReport } from "./release-report.server";
 import { matchKnowledgeRules } from "./rule-engine.server";
+import { resolveSingleAnswer } from "./single-answer-resolver.server";
 import type { CalculatedFact, KnowledgeRule, RuleEngineInput } from "./types";
 
 const fixtureUrl = new URL("../../../docs/fixtures/master-brain-pack-v0.1.0-draft.json", import.meta.url);
@@ -89,13 +90,16 @@ describe("deterministic offline pipeline", () => {
     const sheet = await buildNatalFactSheet(birth);
     const input: RuleEngineInput = { system: { id: "sidereal_lahiri", code: "sidereal_lahiri", version: "3.0.0" }, calculationProfile: { id: "sidereal_lahiri", version: "3.0.0" }, interpretationProfile: { id: "test", version: "0.1.0", calculationProfileId: "sidereal_lahiri", calculationProfileVersion: "3.0.0", systemId: "sidereal_lahiri", systemVersion: "3.0.0", releaseId: "immutable-test" }, chartFacts: sheet.facts, releaseRuleIds: ["known-time"] };
     const rule: KnowledgeRule = { id: "known-time", ruleCode: "TEST-KNOWN-TIME", systemId: "sidereal_lahiri", systemVersion: "3.0.0", ruleType: "natal", status: "published", condition: { op: "eq", fact: "birth.time_known", value: true }, outcome: { summaryTh: "ข้อมูลเวลาเกิดรองรับการคำนวณลัคนาในโปรไฟล์นี้" }, outcomeId: "known", confidence: 1, priority: 1, citations: [{ id: "c1", sourceCode: "TEST", sourceTitle: "Test", locator: "section 1", supportType: "paraphrase" }], limitations: [], runtimeEligible: true, inImmutableRelease: true, citationsReviewed: true, rightsCleared: true, reviewerApproved: true, testsPassed: true, openBlockingConflict: false };
-    const expected = renderThaiNarrative(matchKnowledgeRules(input, [rule]).matches, [rule], sheet.limitations);
+    const question = { questionId: "birth-time", domainId: "natal", targetPeriod: "natal" };
+    const expected = resolveSingleAnswer(question, input, matchKnowledgeRules(input, [rule]).matches, [rule], sheet.limitations);
     for (let index = 0; index < 100; index += 1) {
       const repeatSheet = await buildNatalFactSheet(birth);
-      const repeat = renderThaiNarrative(matchKnowledgeRules({ ...input, chartFacts: repeatSheet.facts }, [rule]).matches, [rule], repeatSheet.limitations);
+      const repeatInput = { ...input, chartFacts: repeatSheet.facts };
+      const repeat = resolveSingleAnswer(question, repeatInput, matchKnowledgeRules(repeatInput, [rule]).matches, [rule], repeatSheet.limitations);
       expect({ facts: repeatSheet.facts, inputHash: repeatSheet.provenance.inputHash, repeat }).toEqual({ facts: sheet.facts, inputHash: sheet.provenance.inputHash, repeat: expected });
     }
-    expect(expected.sentenceLineage[0]).toMatchObject({ outcomeId: "known", ruleId: "known-time", citationIds: ["c1"] });
+    expect(expected.finalAnswers).toHaveLength(1);
+    expect(expected.finalAnswers[0]).toMatchObject({ conclusionCode: "known", winningRuleIds: ["known-time"], supportingCitationIds: ["c1"] });
     expect(fetchSpy).not.toHaveBeenCalled();
     fetchSpy.mockRestore();
   });
