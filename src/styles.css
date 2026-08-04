@@ -209,25 +209,124 @@
 
 @utility glass {
   background: linear-gradient(
-    150deg,
-    color-mix(in oklab, var(--card) 74%, transparent),
-    color-mix(in oklab, var(--void) 62%, transparent)
+    155deg,
+    color-mix(in oklab, var(--card) 82%, transparent),
+    color-mix(in oklab, var(--void) 88%, transparent)
   );
-  backdrop-filter: blur(22px) saturate(150%);
-  border: 1px solid color-mix(in oklab, var(--gold) 16%, transparent);
-  box-shadow: var(--shadow-e2), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 14%, transparent);
+  backdrop-filter: blur(20px) saturate(135%);
+  border: 1px solid color-mix(in oklab, var(--gold) 13%, transparent);
+  box-shadow: var(--shadow-e2), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 11%, transparent);
 }
 
 /* deeper, more physical surface for hero cards */
 @utility glass-deep {
   background: linear-gradient(
-    155deg,
-    color-mix(in oklab, var(--card) 88%, transparent),
-    color-mix(in oklab, var(--void) 84%, transparent)
+    158deg,
+    color-mix(in oklab, var(--card) 92%, transparent),
+    color-mix(in oklab, var(--void) 94%, transparent)
   );
-  backdrop-filter: blur(30px) saturate(160%);
-  border: 1px solid color-mix(in oklab, var(--gold) 22%, transparent);
-  box-shadow: var(--shadow-e3), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 20%, transparent);
+  backdrop-filter: blur(26px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--gold) 18%, transparent);
+  box-shadow: var(--shadow-e3), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 16%, transparent);
+}
+
+/* ——— three-tier surface hierarchy ——— */
+
+/* level 3 — hero: deepest, lit from the top-right, gold hairline, large radius */
+@utility surface-hero {
+  position: relative;
+  border-radius: 30px;
+  background:
+    radial-gradient(120% 85% at 84% -12%, color-mix(in oklab, var(--ember) 12%, transparent), transparent 58%),
+    linear-gradient(160deg, color-mix(in oklab, var(--indigo-deep) 96%, transparent) 0%, color-mix(in oklab, var(--void) 97%, transparent) 72%);
+  border: 1px solid color-mix(in oklab, var(--gold) 20%, transparent);
+  box-shadow:
+    var(--shadow-e3),
+    inset 0 1px 0 color-mix(in oklab, var(--gold-hot) 16%, transparent),
+    inset 0 -60px 90px -70px oklch(0 0 0 / 90%);
+}
+
+/* level 2 — standard card: mid depth, cooler, medium radius */
+@utility surface-card {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(
+    162deg,
+    color-mix(in oklab, var(--card) 88%, transparent) 0%,
+    color-mix(in oklab, var(--void) 92%, transparent) 100%
+  );
+  border: 1px solid color-mix(in oklab, var(--gold) 10%, transparent);
+  box-shadow: var(--shadow-e2), inset 0 1px 0 color-mix(in oklab, var(--gold-soft) 8%, transparent);
+}
+
+/* level 1 — inset: recessed below the page, tight radius, no outer shadow */
+@utility surface-inset {
+  position: relative;
+  border-radius: 14px;
+  background: linear-gradient(180deg, oklch(0.035 0.012 285 / 78%), oklch(0.055 0.016 285 / 62%));
+  border: 1px solid oklch(1 0 0 / 5%);
+  box-shadow:
+    inset 0 2px 6px oklch(0 0 0 / 62%),
+    inset 0 -1px 0 color-mix(in oklab, var(--gold-soft) 6%, transparent);
+}
+
+/* premium physical gold: bronze edge, hot specular band, inner light, warm glow */
+@utility gold-metal {
+  position: relative;
+  background: var(--gradient-gold);
+  color: var(--primary-foreground);
+  border: 1px solid color-mix(in oklab, var(--gold-bronze) 88%, black);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--gold-hot) 88%, transparent),
+    inset 0 -2px 3px color-mix(in oklab, var(--gold-bronze) 70%, transparent),
+    0 10px 28px -14px color-mix(in oklab, var(--gold) 55%, transparent),
+    0 0 0 1px oklch(0 0 0 / 22%);
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 32%,
+      color-mix(in oklab, var(--gold-hot) 55%, transparent) 46%,
+      transparent 60%
+    );
+    transform: translateX(-40%);
+    animation: gold-sweep 7s var(--spring-soft) infinite;
+    pointer-events: none;
+  }
+}
+
+@utility gold-hairline {
+  border: 1px solid color-mix(in oklab, var(--gold) 26%, transparent);
+  box-shadow: inset 0 0 0 1px oklch(0 0 0 / 35%);
+}
+
+@utility thai-heading {
+  font-family: var(--font-serif-thai);
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.35;
+}
+
+@utility eyebrow {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--gold) 82%, transparent);
+}
+
+@utility numeral {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+@keyframes gold-sweep {
+  0% { transform: translateX(-60%); }
+  55%, 100% { transform: translateX(160%); }
 }
 
 /* subtle grain so large gradients never band */
