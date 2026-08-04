@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AiRouteImport } from './routes/ai'
+import { Route as ChartRouteImport } from './routes/chart'
+import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -26,6 +29,21 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiRoute = AiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartRoute = ChartRouteImport.update({
+  id: '/chart',
+  path: '/chart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransitRoute = TransitRouteImport.update({
+  id: '/transit',
+  path: '/transit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAiAstrologerRoute =
@@ -67,6 +85,9 @@ const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai': typeof AiRoute
+  '/chart': typeof ChartRoute
+  '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -77,6 +98,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai': typeof AiRoute
+  '/chart': typeof ChartRoute
+  '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -89,6 +113,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/ai': typeof AiRoute
+  '/chart': typeof ChartRoute
+  '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -101,6 +128,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai'
+    | '/chart'
+    | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
@@ -111,6 +141,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai'
+    | '/chart'
+    | '/transit'
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
@@ -122,6 +155,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/ai'
+    | '/chart'
+    | '/transit'
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
     | '/_authenticated/dashboard'
@@ -134,6 +170,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AiRoute: typeof AiRoute
+  ChartRoute: typeof ChartRoute
+  TransitRoute: typeof TransitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -150,6 +189,27 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chart': {
+      id: '/chart'
+      path: '/chart'
+      fullPath: '/chart'
+      preLoaderRoute: typeof ChartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transit': {
+      id: '/transit'
+      path: '/transit'
+      fullPath: '/transit'
+      preLoaderRoute: typeof TransitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/ai-astrologer': {
@@ -230,6 +290,9 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AiRoute: AiRoute,
+  ChartRoute: ChartRoute,
+  TransitRoute: TransitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
