@@ -6,7 +6,7 @@ import { zonedWallClockToUtc } from "@/lib/timezone";
 
 export async function calculatePublicReviewChart() {
   const place = findProvince(OWNER_REVIEW_BIRTH.province);
-  return calculateNatal({
+  const result = await calculateNatal({
     birthDate: OWNER_REVIEW_BIRTH.birthDate,
     birthTime: OWNER_REVIEW_BIRTH.birthTime,
     birthTimeKnown: OWNER_REVIEW_BIRTH.birthTimeKnown,
@@ -14,6 +14,16 @@ export async function calculatePublicReviewChart() {
     longitude: place.lon,
     timezone: OWNER_REVIEW_BIRTH.timezone,
   });
+  return {
+    ascendant: result.ascendant,
+    planets: result.planets,
+    houses: result.houses,
+    standards: result.standards,
+    calculationVersion: result.calculationVersion,
+    engine: result.engine,
+    houseSystem: result.houseSystem,
+    ayanamsaName: result.ayanamsaName,
+  };
 }
 
 export function calculatePublicReviewReading(at?: string) {
