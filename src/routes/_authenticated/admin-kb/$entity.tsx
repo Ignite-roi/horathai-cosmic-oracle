@@ -7,7 +7,7 @@ import { KB_NAV, KbPageHeader, type KbEntity } from "@/components/kb/AdminKnowle
 import { KnowledgeTable, type KnowledgeRow } from "@/components/kb/KnowledgeTable";
 import { listKbEntities } from "@/lib/kb.functions";
 
-export const Route = createFileRoute("/_authenticated/admin-kb/$entity" as never)({ component: EntityPage });
+export const Route = createFileRoute("/_authenticated/admin-kb/$entity")({ component: EntityPage });
 
 function EntityPage() {
   const { entity: rawEntity } = Route.useParams() as { entity: string };

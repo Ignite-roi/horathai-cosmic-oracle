@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { getKbSourceDetail } from "@/lib/kb.functions";
 import type { KbWorkflowStatus } from "@/lib/kb-governance";
 
-export const Route = createFileRoute("/_authenticated/admin-kb/sources/$sourceId" as never)({ component: SourceDetailPage });
+export const Route = createFileRoute("/_authenticated/admin-kb/sources/$sourceId")({ component: SourceDetailPage });
 
 function SourceDetailPage() {
   const { sourceId } = Route.useParams() as { sourceId: string };

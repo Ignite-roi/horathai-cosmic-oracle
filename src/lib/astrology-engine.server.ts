@@ -212,12 +212,9 @@ export async function calculateNatal(input: BirthInput): Promise<NatalChartPaylo
     ascendant,
     ascendantKnown: Boolean(ascendant),
     planets,
-    // Whole-sign houses counted from the ascendant sign; when the time is
-    // unknown they are counted from the Moon sign and labelled as such in UI.
-    houses: buildHouses(
-      ascendant?.signId ?? planets.find((p) => p.num === 2)?.signId ?? 1,
-      planets,
-    ),
+    // Houses depend on the ascendant. Unknown birth time must never fabricate
+    // houses by silently substituting the Moon or another reference point.
+    houses: ascendant ? buildHouses(ascendant.signId, planets) : [],
     standards: buildStandards(planets),
     calculationVersion: CALCULATION_VERSION,
     engine: ENGINE_LABEL,
