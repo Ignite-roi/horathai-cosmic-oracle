@@ -19,6 +19,20 @@ export type DeterministicNarrative = {
   outputHash: string;
 };
 
+export const THAI_NARRATIVE_TEMPLATES = {
+  noMatch: "ระบบยังแสดงข้อเท็จจริงจากการคำนวณได้ แต่จะไม่สร้างคำพยากรณ์แทนกฎที่ยังไม่ผ่านการตรวจทาน",
+  unknownBirthTime: "ไม่ทราบเวลาเกิด จึงไม่ใช้ลัคนา เรือนชะตา หรือมุมที่พึ่งเวลาเกิดในการสรุปผล",
+  sensitiveHealth: "ข้อมูลนี้ไม่ใช่การวินิจฉัย หากมีอาการหรือความกังวลควรปรึกษาผู้เชี่ยวชาญด้านสุขภาพ",
+  sensitiveLegalFinance: "ข้อมูลนี้ไม่ใช่คำแนะนำทางกฎหมายหรือการเงิน ควรตรวจสอบกับผู้เชี่ยวชาญก่อนตัดสินใจ",
+} as const;
+
+export const PROHIBITED_NARRATIVE_PHRASES = ["รับประกัน", "เกิดแน่นอน", "หายแน่นอน", "ลงทุนแล้วได้กำไรแน่นอน"] as const;
+
+export function assertNarrativeSafety(text: string): void {
+  const phrase = PROHIBITED_NARRATIVE_PHRASES.find((item) => text.includes(item));
+  if (phrase) throw new Error(`PROHIBITED_NARRATIVE_PHRASE:${phrase}`);
+}
+
 function outcomeText(rule: KnowledgeRule): string {
   const summary = rule.outcome["summaryTh"];
   if (typeof summary === "string" && summary.trim()) return summary.trim();
@@ -51,12 +65,13 @@ export function renderThaiNarrative(
       : "ยังไม่พบกฎที่ตรงกับข้อมูลชุดนี้",
     summary: lines.length
       ? lines.join(" ")
-      : "ข้อมูลคำนวณยังคงแสดงได้ แต่ยังไม่มีกฎที่เผยแพร่พร้อมแหล่งอ้างอิงสำหรับสรุปความหมาย",
+      : THAI_NARRATIVE_TEMPLATES.noMatch,
     trace: matches,
     limitations,
     renderer: "horathai_template_th_v1",
     rendererVersion: "1.1.0-draft",
     sentenceLineage,
   } as const;
+  assertNarrativeSafety(`${narrative.headline} ${narrative.summary}`);
   return { ...narrative, outputHash: deterministicHash(narrative) };
 }

@@ -1,0 +1,20 @@
+{
+  "commit": "cd7b33ab857d57baf0f0d6e048bdd0d399975902",
+  "capturedAt": "2026-08-04T15:41:00Z",
+  "conceptCount": 49,
+  "publishedEditorialRuleCount": 5,
+  "knowledgeReleaseCount": 0,
+  "conceptHash": "md5:c51c0d49e6fd8e5fede9c97529c14b66",
+  "ruleHash": "md5:1fd90d30045edb0effe7f6e98de3cffc",
+  "releaseHash": "md5:d751713988987e9331980363e24189ce",
+  "concepts": [
+    ["event_direct_start","223290ed-5569-40c7-ae6c-ec1c17b8d500"],["event_eclipse","d8f31231-0151-48ad-853b-7b3fab91e734"],["event_exact_aspect","34d5d480-4f40-427a-90ba-c43b53af14a0"],["event_house_ingress","cc0060d4-d18c-4306-8c6b-3692eddb7ac5"],["event_lunation","5e32d433-871e-4544-8185-bbad05ceaa3c"],["event_natal_contact","c7af8992-e0ed-41f6-9f86-b7e82dd1d439"],["event_retrograde_start","19adb7b7-0824-4d35-a1a2-e40a03991d73"],["event_sign_ingress","3ed6acfa-e599-4353-a0ea-d9727e6b6fc2"],
+    ["house_1","65cfb78a-1ae1-437a-b3e7-3288e70361b9"],["house_10","8626de6c-c1cf-40d4-aa61-0c058dd583ce"],["house_11","79afe496-57d2-4430-b9fc-b200d869a745"],["house_12","ecc20368-a5be-4c8c-a13a-cfe8e024b447"],["house_2","a5185ada-5143-4982-8f8e-b77197695340"],["house_3","f9f020c9-41cb-437b-a233-92897a303f53"],["house_4","29dd40b6-ad50-402e-862c-cb5324445698"],["house_5","eba1b339-570e-4334-9707-5f8f65adee78"],["house_6","f3c75ef3-8ec8-4425-88f5-f8e88048af25"],["house_7","c05c5eda-5516-4cce-ad4f-f1b960b32531"],["house_8","abfd166e-ea2c-4464-993f-bdca1b2e87bc"],["house_9","b4f81574-9f89-4da3-b2d4-e36af9ac477a"],
+    ["life_career","7e989312-f632-46af-8138-51c1c367841a"],["life_family","598062c4-1fbe-466b-b163-3832621985cb"],["life_finance","d9e800b3-5083-4069-8ca1-3bee3550ce04"],["life_health","24994d22-59e8-4fea-aae0-776756963aee"],["life_learning","c358d27f-2d16-4b06-a45a-fa8198b93ba7"],["life_love","fa53cbbb-f2b9-4002-b93b-bf7706c78e52"],["life_self","a61f048b-1b7d-4a1c-b1f2-4909ef3f1996"],["life_spirituality","d69a9397-1b02-49f8-a818-a853bd30bf72"],
+    ["planet_jupiter","988d71dc-1e46-45cd-b337-75d0af830cac"],["planet_ketu","fe4fa971-a577-42db-b432-d3c0eaf11b6b"],["planet_mars","a9fdb9e7-6d7d-4197-aa83-ab2dcd92664b"],["planet_mercury","2f65aedf-c65d-4004-b48f-6ff6f184eed8"],["planet_moon","497badf6-dd0a-41f6-8d9e-5654c77dbc9b"],["planet_rahu","2afcdd73-34a7-40db-b9eb-0190305abc94"],["planet_saturn","55b43fd0-9531-4f3a-89ac-206cc387aba9"],["planet_sun","e9d189ff-4610-4913-b5a3-9b3cafee0c9b"],["planet_venus","9bd4271a-a840-488d-b414-e6b892fb175b"],
+    ["sign_aquarius","0ab63f14-415d-42ce-9f31-705ced9271d4"],["sign_aries","9ea1a34a-37d1-4d4e-be3e-3bfc20f5a52c"],["sign_cancer","a8ad9764-d4c4-4653-a169-4d36070702d4"],["sign_capricorn","c0b51a7b-46d2-4216-8426-91c9402df92f"],["sign_gemini","44dde87c-ff1b-4827-a9fd-131773c81729"],["sign_leo","0ec65c0b-4ae2-43b9-af1d-edc590343668"],["sign_libra","1c7211ae-bdff-43a5-a021-f8b88df95484"],["sign_pisces","d7237c36-23eb-4f42-8208-61bc66b9085a"],["sign_sagittarius","d0f5a3fb-73a9-461e-91d5-20835c9d7177"],["sign_scorpio","55286ef3-1e05-48cc-af7d-a8ae236650cd"],["sign_taurus","75d6d934-1887-4867-bcf6-5efc7085d5fc"],["sign_virgo","694d0fbe-f8f9-4ee6-accf-87d1c4f25000"]
+  ],
+  "publishedEditorialRules": [
+    ["HT-CALENDAR-V1","131d2ed5-06a2-4815-9fcb-dfd7fda39e51","1.1.0"],["HT-CARD-LUCKY-3-V1","cd3dbe58-3bde-4936-99d5-f355822220f6","1.0.0"],["HT-CARD-YESNO-V1","a20a241d-fa4d-49f5-baea-7a1ac123af4c","1.0.0"],["HT-COMPAT-V1","b9dbdc56-d53c-475b-a6c3-41b86e3409c8","1.1.0"],["HT-DAILY-COLOR-V1","3901ccf8-c3cc-4f41-b28b-794b9265f27e","1.1.1"]
+  ]
+}
