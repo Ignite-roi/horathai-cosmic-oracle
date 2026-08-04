@@ -29,7 +29,9 @@ export function renderThaiNarrative(
   );
 
   return {
-    headline: matches.length ? `พบประเด็นสำคัญ ${matches.length} ข้อ` : "ยังไม่พบกฎที่ตรงกับข้อมูลชุดนี้",
+    headline: matches.length
+      ? `พบประเด็นสำคัญ ${matches.length} ข้อ`
+      : "ยังไม่พบกฎที่ตรงกับข้อมูลชุดนี้",
     summary: lines.length
       ? lines.join(" ")
       : "ข้อมูลคำนวณยังคงแสดงได้ แต่ยังไม่มีกฎที่เผยแพร่พร้อมแหล่งอ้างอิงสำหรับสรุปความหมาย",

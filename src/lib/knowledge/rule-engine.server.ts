@@ -23,7 +23,8 @@ export function matchKnowledgeRules(
   input: RuleEngineInput,
   rules: KnowledgeRule[],
 ): RuleEngineOutput {
-  if (!profilesMatch(input)) throw new Error("Calculation, interpretation, and rule profiles do not match");
+  if (!profilesMatch(input))
+    throw new Error("Calculation, interpretation, and rule profiles do not match");
   const eligible = rules.filter(
     (rule) =>
       rule.systemId === input.system.id &&

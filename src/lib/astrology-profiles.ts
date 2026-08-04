@@ -47,7 +47,10 @@ export const CALCULATION_PROFILES = {
     nodeType: "unimplemented",
     houseSystem: "unimplemented",
     implementation: "competitor_research",
-    limitations: ["Observed outputs are not proof of method or correctness", "Calculation is not implemented"],
+    limitations: [
+      "Observed outputs are not proof of method or correctness",
+      "Calculation is not implemented",
+    ],
   },
   thaiSuriyayatraPlanned: {
     id: "thai_suriyayatra",
