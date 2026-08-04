@@ -15,6 +15,7 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
+import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
@@ -51,6 +52,11 @@ const AuthenticatedAiAstrologerRoute =
     path: '/ai-astrologer',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBirthChartRoute = AuthenticatedBirthChartRouteImport.update({
+  id: '/birth-chart',
+  path: '/birth-chart',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/chart': typeof ChartRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
+  '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/transit'
     | '/ai-astrologer'
+    | '/birth-chart'
     | '/dashboard'
     | '/onboarding'
     | '/premium'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/transit'
     | '/ai-astrologer'
+    | '/birth-chart'
     | '/dashboard'
     | '/onboarding'
     | '/premium'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/transit'
     | '/_authenticated/ai-astrologer'
+    | '/_authenticated/birth-chart'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiAstrologerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/birth-chart': {
+      id: '/_authenticated/birth-chart'
+      path: '/birth-chart'
+      fullPath: '/birth-chart'
+      preLoaderRoute: typeof AuthenticatedBirthChartRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -247,6 +266,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
+  AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
@@ -256,6 +276,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
+  AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
