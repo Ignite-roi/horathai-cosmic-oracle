@@ -20,7 +20,7 @@ describe("golden Chaiyaphum civil time", () => {
     expect(GOLDEN_CHAIYAPHUM_24H.calculationStatus).toBe("calculation_pending");
     expect(GOLDEN_CHAIYAPHUM_24H.activatedRuleIds).toEqual([]);
   });
-  it("matches the independent Lahiri ascendant fixture", async () => {
+  it("matches the owner-approved Lahiri ascendant regression fixture", async () => {
     const result = await calculateNatal(GOLDEN_CHAIYAPHUM_MIDNIGHT.input);
     expect(result.utcBirthDatetime).toBe(GOLDEN_CHAIYAPHUM_MIDNIGHT.expectedUtc);
     expect(result.ascendant?.signTh).toBe(GOLDEN_CHAIYAPHUM_MIDNIGHT.expectedSign);

@@ -11,8 +11,9 @@ export const GOLDEN_CHAIYAPHUM_24H = {
 } as const;
 
 /**
- * Independently recorded Swiss Ephemeris 2.10.03 (Lahiri, whole-sign) fixture.
- * This is the literal 1988-05-05 00:00 local case, not the separate 24:00 case.
+ * Owner-approved regression fixture from the earlier accepted binding-flow
+ * case, cross-checked against the documented analytic ascendant pipeline.
+ * This is literal 1988-05-05 00:00 local, not the separate 24:00 case.
  */
 export const GOLDEN_CHAIYAPHUM_MIDNIGHT = {
   benchmarkKey: "golden-chaiyaphum-1988-05-05-0000",
@@ -29,7 +30,8 @@ export const GOLDEN_CHAIYAPHUM_MIDNIGHT = {
   expectedSign: "มังกร",
   expectedDegree: 8,
   expectedMinute: 2,
-  provenance: "Swiss Ephemeris 2.10.03; SIDM_LAHIRI; houses_ex whole-sign; recorded 2026-08-04",
+  provenance:
+    "Prior owner-approved Horathai acceptance case; Lahiri whole-sign analytic cross-check; independent external reproduction pending",
   toleranceDegrees: 0.25,
 } as const;
 
