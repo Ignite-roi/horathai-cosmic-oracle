@@ -43,7 +43,20 @@ export function assertMockCheckoutAllowed(): MockCheckoutMode {
   return access.mode;
 }
 
-export async function withMockCheckoutAccess<T>(operation: () => Promise<T>): Promise<T> {
-  assertMockCheckoutAllowed();
+export async function executeIfMockCheckoutAllowed<T>(
+  environment: MockCheckoutEnvironment,
+  requestHost: string,
+  operation: () => Promise<T>,
+): Promise<T> {
+  const access = evaluateMockCheckoutAccess(environment, requestHost);
+  if (!access.allowed) {
+    const error = new Error("ระบบชำระเงินจำลองไม่เปิดใช้งานในสภาพแวดล้อมนี้");
+    Object.assign(error, { statusCode: 403 });
+    throw error;
+  }
   return operation();
+}
+
+export async function withMockCheckoutAccess<T>(operation: () => Promise<T>): Promise<T> {
+  return executeIfMockCheckoutAllowed(process.env, getRequestHost(), operation);
 }
