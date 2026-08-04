@@ -1,17 +1,18 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Bot, Crown, Home, Orbit, Sparkles } from "lucide-react";
-import type { ReactNode } from "react";
+import { Bot, Home, Orbit, Sparkles, WalletCards } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
 import { ReviewModeBanner } from "@/components/ReviewModeBanner";
+import { WalletPill, WalletSheet } from "@/components/wallet/WalletSheet";
 
 const NAV = [
   { to: "/dashboard", label: "หน้าแรก", icon: Home },
   { to: "/birth-chart", label: "ผังดวง", icon: Orbit },
   { to: "/transits", label: "ดาวย้าย", icon: Sparkles },
   { to: "/ai-astrologer", label: "โหรAI", icon: Bot },
-  { to: "/premium", label: "พรีเมียม", icon: Crown },
+  { to: "/wallet", label: "กระเป๋า", icon: WalletCards },
 ] as const;
 
 export function AppShell({
@@ -24,15 +25,21 @@ export function AppShell({
   element?: "ไฟ" | "ดิน" | "ลม" | "น้ำ";
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [walletOpen, setWalletOpen] = useState(false);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <LiveUniverse {...(moonPhase !== undefined ? { moonPhase } : {})} {...(element ? { element } : {})} />
 
-      <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-6">
+      <main className="relative z-10 mx-auto w-full max-w-lg px-5 pb-32 pt-4">
+        <div className="mb-4 flex justify-end">
+          <WalletPill onClick={() => setWalletOpen(true)} />
+        </div>
         <ReviewModeBanner />
         {children}
       </main>
+
+      <WalletSheet open={walletOpen} onOpenChange={setWalletOpen} />
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-center pb-[max(env(safe-area-inset-bottom),12px)]">
         <div className="glass-deep grain mx-4 flex w-full max-w-md items-center justify-between rounded-[28px] px-2 py-2">

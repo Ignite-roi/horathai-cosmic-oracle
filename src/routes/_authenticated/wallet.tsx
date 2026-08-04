@@ -116,7 +116,7 @@ function WalletPage() {
           <div className="mb-6 grid grid-cols-4 gap-1">{STEPS.map((label, index) => <div key={label} className="text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full border text-[10px] ${step >= index + 1 ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}>{step > index + 1 ? <Check className="h-3.5 w-3.5" /> : index + 1}</div><p className="mt-1 text-[9px] text-muted-foreground">{label}</p></div>)}</div>
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              {step === 1 && <PackageStep items={data.packages} selected={selected} bestCode={bestCode} onSelect={setSelected} />}
+              {step === 1 && <PackageStep items={data.packages} selected={selected} {...(bestCode ? { bestCode } : {})} onSelect={setSelected} />}
               {step === 2 && <PointsStep balance={data.points} value={points} max={maxPoints} discount={discount} onChange={setPoints} />}
               {step === 3 && <PaymentStep />}
               {step === 4 && selected && <ReviewStep item={selected} points={points} discount={discount} payable={payable} />}

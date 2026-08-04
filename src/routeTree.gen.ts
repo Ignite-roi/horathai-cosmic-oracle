@@ -19,11 +19,13 @@ import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
 import { Route as AuthenticatedBirthChartRouteImport } from './routes/_authenticated/birth-chart'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedInviteRouteImport } from './routes/_authenticated/invite'
 import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authenticated/knowledge-admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
@@ -79,6 +81,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedInviteRoute = AuthenticatedInviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedKnowledgeAdminRoute =
   AuthenticatedKnowledgeAdminRouteImport.update({
     id: '/knowledge-admin',
@@ -103,6 +110,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
 const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   id: '/transits',
   path: '/transits',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminKnowledgeRoute =
@@ -140,11 +152,13 @@ export interface FileRoutesByFullPath {
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invite': typeof AuthenticatedInviteRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -160,10 +174,12 @@ export interface FileRoutesByTo {
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/birth-chart': typeof AuthenticatedBirthChartRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invite': typeof AuthenticatedInviteRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/transits': typeof AuthenticatedTransitsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -181,11 +197,13 @@ export interface FileRoutesById {
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
   '/_authenticated/birth-chart': typeof AuthenticatedBirthChartRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/invite': typeof AuthenticatedInviteRoute
   '/_authenticated/knowledge-admin': typeof AuthenticatedKnowledgeAdminRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
@@ -203,11 +221,13 @@ export interface FileRouteTypes {
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
+    | '/invite'
     | '/knowledge-admin'
     | '/onboarding'
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/wallet'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin/'
@@ -223,10 +243,12 @@ export interface FileRouteTypes {
     | '/ai-astrologer'
     | '/birth-chart'
     | '/dashboard'
+    | '/invite'
     | '/onboarding'
     | '/premium'
     | '/settings'
     | '/transits'
+    | '/wallet'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/knowledge-admin'
@@ -243,11 +265,13 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-astrologer'
     | '/_authenticated/birth-chart'
     | '/_authenticated/dashboard'
+    | '/_authenticated/invite'
     | '/_authenticated/knowledge-admin'
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
     | '/_authenticated/settings'
     | '/_authenticated/transits'
+    | '/_authenticated/wallet'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
     | '/_authenticated/knowledge-admin/'
@@ -336,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/invite': {
+      id: '/_authenticated/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof AuthenticatedInviteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/knowledge-admin': {
       id: '/_authenticated/knowledge-admin'
       path: '/knowledge-admin'
@@ -369,6 +400,13 @@ declare module '@tanstack/react-router' {
       path: '/transits'
       fullPath: '/transits'
       preLoaderRoute: typeof AuthenticatedTransitsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin/knowledge': {
@@ -427,11 +465,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAiAstrologerRoute: typeof AuthenticatedAiAstrologerRoute
   AuthenticatedBirthChartRoute: typeof AuthenticatedBirthChartRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInviteRoute: typeof AuthenticatedInviteRoute
   AuthenticatedKnowledgeAdminRoute: typeof AuthenticatedKnowledgeAdminRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedAdminKnowledgeRoute: typeof AuthenticatedAdminKnowledgeRoute
 }
 
@@ -439,12 +479,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiAstrologerRoute: AuthenticatedAiAstrologerRoute,
   AuthenticatedBirthChartRoute: AuthenticatedBirthChartRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInviteRoute: AuthenticatedInviteRoute,
   AuthenticatedKnowledgeAdminRoute:
     AuthenticatedKnowledgeAdminRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedAdminKnowledgeRoute: AuthenticatedAdminKnowledgeRoute,
 }
 
