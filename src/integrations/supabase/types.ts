@@ -49,6 +49,285 @@ export type Database = {
           },
         ]
       }
+      astrology_concepts: {
+        Row: {
+          aliases: string[]
+          concept_code: string
+          concept_type: string
+          created_at: string
+          description: string
+          id: string
+          metadata: Json
+          name_en: string
+          name_th: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliases?: string[]
+          concept_code: string
+          concept_type: string
+          created_at?: string
+          description?: string
+          id?: string
+          metadata?: Json
+          name_en: string
+          name_th: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliases?: string[]
+          concept_code?: string
+          concept_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          metadata?: Json
+          name_en?: string
+          name_th?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "astrology_concepts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      astrology_rules: {
+        Row: {
+          approved_at: string | null
+          condition_json: Json
+          confidence: number
+          created_at: string
+          created_by: string | null
+          effective_version: string
+          evidence_level: Database["public"]["Enums"]["rule_evidence_level"]
+          id: string
+          outcome_json: Json
+          priority: number
+          reviewed_by: string | null
+          rule_code: string
+          rule_type: Database["public"]["Enums"]["astrology_rule_type"]
+          status: Database["public"]["Enums"]["astrology_rule_status"]
+          summary_th: string
+          supersedes_rule_id: string | null
+          system_id: string
+          title_th: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          condition_json: Json
+          confidence: number
+          created_at?: string
+          created_by?: string | null
+          effective_version: string
+          evidence_level: Database["public"]["Enums"]["rule_evidence_level"]
+          id?: string
+          outcome_json: Json
+          priority?: number
+          reviewed_by?: string | null
+          rule_code: string
+          rule_type: Database["public"]["Enums"]["astrology_rule_type"]
+          status?: Database["public"]["Enums"]["astrology_rule_status"]
+          summary_th: string
+          supersedes_rule_id?: string | null
+          system_id: string
+          title_th: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          condition_json?: Json
+          confidence?: number
+          created_at?: string
+          created_by?: string | null
+          effective_version?: string
+          evidence_level?: Database["public"]["Enums"]["rule_evidence_level"]
+          id?: string
+          outcome_json?: Json
+          priority?: number
+          reviewed_by?: string | null
+          rule_code?: string
+          rule_type?: Database["public"]["Enums"]["astrology_rule_type"]
+          status?: Database["public"]["Enums"]["astrology_rule_status"]
+          summary_th?: string
+          supersedes_rule_id?: string | null
+          system_id?: string
+          title_th?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "astrology_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "astrology_rules_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "astrology_rules_supersedes_rule_id_fkey"
+            columns: ["supersedes_rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "astrology_rules_system_id_fkey"
+            columns: ["system_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      astrology_sources: {
+        Row: {
+          alternative_titles: string[]
+          astrology_system_id: string | null
+          author: string | null
+          checksum: string | null
+          created_at: string
+          edition: string | null
+          editor_translator: string | null
+          file_reference: string | null
+          id: string
+          ingestion_status: Database["public"]["Enums"]["source_ingestion_status"]
+          language: string
+          license_notes: string
+          page_count: number | null
+          provenance: string
+          publication_year: number | null
+          publisher: string | null
+          rights_status: Database["public"]["Enums"]["source_rights_status"]
+          source_code: string
+          source_quality: number | null
+          source_type: Database["public"]["Enums"]["astrology_source_type"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alternative_titles?: string[]
+          astrology_system_id?: string | null
+          author?: string | null
+          checksum?: string | null
+          created_at?: string
+          edition?: string | null
+          editor_translator?: string | null
+          file_reference?: string | null
+          id?: string
+          ingestion_status?: Database["public"]["Enums"]["source_ingestion_status"]
+          language?: string
+          license_notes?: string
+          page_count?: number | null
+          provenance: string
+          publication_year?: number | null
+          publisher?: string | null
+          rights_status?: Database["public"]["Enums"]["source_rights_status"]
+          source_code: string
+          source_quality?: number | null
+          source_type: Database["public"]["Enums"]["astrology_source_type"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alternative_titles?: string[]
+          astrology_system_id?: string | null
+          author?: string | null
+          checksum?: string | null
+          created_at?: string
+          edition?: string | null
+          editor_translator?: string | null
+          file_reference?: string | null
+          id?: string
+          ingestion_status?: Database["public"]["Enums"]["source_ingestion_status"]
+          language?: string
+          license_notes?: string
+          page_count?: number | null
+          provenance?: string
+          publication_year?: number | null
+          publisher?: string | null
+          rights_status?: Database["public"]["Enums"]["source_rights_status"]
+          source_code?: string
+          source_quality?: number | null
+          source_type?: Database["public"]["Enums"]["astrology_source_type"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "astrology_sources_astrology_system_id_fkey"
+            columns: ["astrology_system_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      astrology_systems: {
+        Row: {
+          aspect_model: string | null
+          ayanamsa: string | null
+          created_at: string
+          description: string
+          house_system: string | null
+          id: string
+          name_en: string
+          name_th: string
+          node_type: string | null
+          status: string
+          system_code: string
+          updated_at: string
+          version: string
+          zodiac_type: string
+        }
+        Insert: {
+          aspect_model?: string | null
+          ayanamsa?: string | null
+          created_at?: string
+          description?: string
+          house_system?: string | null
+          id?: string
+          name_en: string
+          name_th: string
+          node_type?: string | null
+          status?: string
+          system_code: string
+          updated_at?: string
+          version: string
+          zodiac_type: string
+        }
+        Update: {
+          aspect_model?: string | null
+          ayanamsa?: string | null
+          created_at?: string
+          description?: string
+          house_system?: string | null
+          id?: string
+          name_en?: string
+          name_th?: string
+          node_type?: string | null
+          status?: string
+          system_code?: string
+          updated_at?: string
+          version?: string
+          zodiac_type?: string
+        }
+        Relationships: []
+      }
       astronomical_event_groups: {
         Row: {
           astronomy_profile_id: string
@@ -323,6 +602,68 @@ export type Database = {
         }
         Relationships: []
       }
+      concept_relationships: {
+        Row: {
+          confidence: number
+          created_at: string
+          id: string
+          object_concept_id: string
+          predicate: string
+          source_rule_id: string | null
+          subject_concept_id: string
+          system_id: string
+        }
+        Insert: {
+          confidence: number
+          created_at?: string
+          id?: string
+          object_concept_id: string
+          predicate: string
+          source_rule_id?: string | null
+          subject_concept_id: string
+          system_id: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          id?: string
+          object_concept_id?: string
+          predicate?: string
+          source_rule_id?: string | null
+          subject_concept_id?: string
+          system_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concept_relationships_object_concept_id_fkey"
+            columns: ["object_concept_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concept_relationships_source_rule_id_fkey"
+            columns: ["source_rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concept_relationships_subject_concept_id_fkey"
+            columns: ["subject_concept_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concept_relationships_system_id_fkey"
+            columns: ["system_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entitlements: {
         Row: {
           created_at: string
@@ -407,16 +748,132 @@ export type Database = {
         }
         Relationships: []
       }
+      ingestion_issues: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          issue_type: string
+          reviewer_notes: string | null
+          section_id: string | null
+          severity: Database["public"]["Enums"]["knowledge_issue_severity"]
+          source_id: string
+          status: Database["public"]["Enums"]["knowledge_issue_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          issue_type: string
+          reviewer_notes?: string | null
+          section_id?: string | null
+          severity: Database["public"]["Enums"]["knowledge_issue_severity"]
+          source_id: string
+          status?: Database["public"]["Enums"]["knowledge_issue_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          issue_type?: string
+          reviewer_notes?: string | null
+          section_id?: string | null
+          severity?: Database["public"]["Enums"]["knowledge_issue_severity"]
+          source_id?: string
+          status?: Database["public"]["Enums"]["knowledge_issue_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_issues_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "source_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingestion_issues_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingestion_jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_summary: string | null
+          finished_at: string | null
+          id: string
+          job_type: string
+          progress: number
+          source_id: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["knowledge_job_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_summary?: string | null
+          finished_at?: string | null
+          id?: string
+          job_type: string
+          progress?: number
+          source_id: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["knowledge_job_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_summary?: string | null
+          finished_at?: string | null
+          id?: string
+          job_type?: string
+          progress?: number
+          source_id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["knowledge_job_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_jobs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingestion_jobs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interpretation_templates: {
         Row: {
           created_at: string
           id: string
           language: string
           limitations_text: string
+          locale: string
           published_at: string | null
           required_citation_fields: string[]
           rule_id: string
+          rule_type: Database["public"]["Enums"]["astrology_rule_type"] | null
+          safety_level: string
           status: Database["public"]["Enums"]["kb_workflow_status"]
+          system_id: string | null
+          template_code: string | null
           template_key: string
           template_text: string
           updated_at: string
@@ -427,10 +884,15 @@ export type Database = {
           id?: string
           language?: string
           limitations_text: string
+          locale?: string
           published_at?: string | null
           required_citation_fields?: string[]
           rule_id: string
+          rule_type?: Database["public"]["Enums"]["astrology_rule_type"] | null
+          safety_level?: string
           status?: Database["public"]["Enums"]["kb_workflow_status"]
+          system_id?: string | null
+          template_code?: string | null
           template_key: string
           template_text: string
           updated_at?: string
@@ -441,10 +903,15 @@ export type Database = {
           id?: string
           language?: string
           limitations_text?: string
+          locale?: string
           published_at?: string | null
           required_citation_fields?: string[]
           rule_id?: string
+          rule_type?: Database["public"]["Enums"]["astrology_rule_type"] | null
+          safety_level?: string
           status?: Database["public"]["Enums"]["kb_workflow_status"]
+          system_id?: string | null
+          template_code?: string | null
           template_key?: string
           template_text?: string
           updated_at?: string
@@ -456,6 +923,13 @@ export type Database = {
             columns: ["rule_id"]
             isOneToOne: false
             referencedRelation: "kb_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interpretation_templates_system_id_fkey"
+            columns: ["system_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_systems"
             referencedColumns: ["id"]
           },
         ]
@@ -1216,6 +1690,77 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          after_json: Json | null
+          before_json: Json | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          after_json?: Json | null
+          before_json?: Json | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_releases: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          published_at: string | null
+          release_code: string
+          status: Database["public"]["Enums"]["knowledge_release_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          published_at?: string | null
+          release_code: string
+          status?: Database["public"]["Enums"]["knowledge_release_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          published_at?: string | null
+          release_code?: string
+          status?: Database["public"]["Enums"]["knowledge_release_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       natal_charts: {
         Row: {
           activated_rule_ids: string[]
@@ -1543,6 +2088,154 @@ export type Database = {
           },
         ]
       }
+      personal_interpretations: {
+        Row: {
+          citation_snapshot_json: Json
+          created_at: string
+          facts_json: Json
+          generated_text: string
+          id: string
+          model_name: string | null
+          natal_chart_id: string
+          prompt_version: string | null
+          rule_id: string
+          status: string
+          transit_event_id: string | null
+          user_id: string
+        }
+        Insert: {
+          citation_snapshot_json: Json
+          created_at?: string
+          facts_json: Json
+          generated_text: string
+          id?: string
+          model_name?: string | null
+          natal_chart_id: string
+          prompt_version?: string | null
+          rule_id: string
+          status?: string
+          transit_event_id?: string | null
+          user_id: string
+        }
+        Update: {
+          citation_snapshot_json?: Json
+          created_at?: string
+          facts_json?: Json
+          generated_text?: string
+          id?: string
+          model_name?: string | null
+          natal_chart_id?: string
+          prompt_version?: string | null
+          rule_id?: string
+          status?: string
+          transit_event_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_interpretations_natal_chart_id_fkey"
+            columns: ["natal_chart_id"]
+            isOneToOne: false
+            referencedRelation: "natal_charts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_interpretations_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_interpretations_transit_event_id_fkey"
+            columns: ["transit_event_id"]
+            isOneToOne: false
+            referencedRelation: "transit_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_interpretations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personal_transit_matches: {
+        Row: {
+          confidence: number
+          created_at: string
+          explanation_status: string
+          facts_json: Json
+          id: string
+          impact_area: string
+          matched_rule_id: string
+          natal_chart_id: string
+          natal_object_json: Json
+          strength: number
+          transit_event_id: string
+          user_id: string
+        }
+        Insert: {
+          confidence: number
+          created_at?: string
+          explanation_status?: string
+          facts_json: Json
+          id?: string
+          impact_area: string
+          matched_rule_id: string
+          natal_chart_id: string
+          natal_object_json: Json
+          strength: number
+          transit_event_id: string
+          user_id: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          explanation_status?: string
+          facts_json?: Json
+          id?: string
+          impact_area?: string
+          matched_rule_id?: string
+          natal_chart_id?: string
+          natal_object_json?: Json
+          strength?: number
+          transit_event_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_transit_matches_matched_rule_id_fkey"
+            columns: ["matched_rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_transit_matches_natal_chart_id_fkey"
+            columns: ["natal_chart_id"]
+            isOneToOne: false
+            referencedRelation: "natal_charts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_transit_matches_transit_event_id_fkey"
+            columns: ["transit_event_id"]
+            isOneToOne: false
+            referencedRelation: "transit_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_transit_matches_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1635,6 +2328,340 @@ export type Database = {
           },
         ]
       }
+      release_rules: {
+        Row: {
+          created_at: string
+          release_id: string
+          rule_id: string
+          rule_version: string
+        }
+        Insert: {
+          created_at?: string
+          release_id: string
+          rule_id: string
+          rule_version: string
+        }
+        Update: {
+          created_at?: string
+          release_id?: string
+          rule_id?: string
+          rule_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_rules_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_releases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "release_rules_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rule_citations: {
+        Row: {
+          citation_id: string
+          created_at: string
+          rule_id: string
+          support_type: Database["public"]["Enums"]["rule_support_type"]
+        }
+        Insert: {
+          citation_id: string
+          created_at?: string
+          rule_id: string
+          support_type: Database["public"]["Enums"]["rule_support_type"]
+        }
+        Update: {
+          citation_id?: string
+          created_at?: string
+          rule_id?: string
+          support_type?: Database["public"]["Enums"]["rule_support_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_citations_citation_id_fkey"
+            columns: ["citation_id"]
+            isOneToOne: false
+            referencedRelation: "source_citations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rule_citations_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rule_conflicts: {
+        Row: {
+          conflict_type: string
+          created_at: string
+          id: string
+          notes: string
+          resolution_status: string
+          rule_a_id: string
+          rule_b_id: string
+          updated_at: string
+        }
+        Insert: {
+          conflict_type: string
+          created_at?: string
+          id?: string
+          notes?: string
+          resolution_status?: string
+          rule_a_id: string
+          rule_b_id: string
+          updated_at?: string
+        }
+        Update: {
+          conflict_type?: string
+          created_at?: string
+          id?: string
+          notes?: string
+          resolution_status?: string
+          rule_a_id?: string
+          rule_b_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_conflicts_rule_a_id_fkey"
+            columns: ["rule_a_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rule_conflicts_rule_b_id_fkey"
+            columns: ["rule_b_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rule_tags: {
+        Row: {
+          concept_id: string
+          created_at: string
+          rule_id: string
+        }
+        Insert: {
+          concept_id: string
+          created_at?: string
+          rule_id: string
+        }
+        Update: {
+          concept_id?: string
+          created_at?: string
+          rule_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_tags_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rule_tags_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      source_citations: {
+        Row: {
+          citation_label: string
+          created_at: string
+          excerpt_hash: string | null
+          id: string
+          locator_text: string
+          page_end: number | null
+          page_start: number | null
+          section_id: string | null
+          source_id: string
+        }
+        Insert: {
+          citation_label: string
+          created_at?: string
+          excerpt_hash?: string | null
+          id?: string
+          locator_text: string
+          page_end?: number | null
+          page_start?: number | null
+          section_id?: string | null
+          source_id: string
+        }
+        Update: {
+          citation_label?: string
+          created_at?: string
+          excerpt_hash?: string | null
+          id?: string
+          locator_text?: string
+          page_end?: number | null
+          page_start?: number | null
+          section_id?: string | null
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "source_citations_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "source_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_citations_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      source_sections: {
+        Row: {
+          approved_at: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          normalized_text: string | null
+          page_end: number | null
+          page_start: number | null
+          parent_id: string | null
+          raw_text: string | null
+          reviewer_id: string | null
+          section_code: string
+          sequence: number
+          source_id: string
+          title: string
+          transcription_status: Database["public"]["Enums"]["transcription_status"]
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          normalized_text?: string | null
+          page_end?: number | null
+          page_start?: number | null
+          parent_id?: string | null
+          raw_text?: string | null
+          reviewer_id?: string | null
+          section_code: string
+          sequence?: number
+          source_id: string
+          title: string
+          transcription_status?: Database["public"]["Enums"]["transcription_status"]
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          normalized_text?: string | null
+          page_end?: number | null
+          page_start?: number | null
+          parent_id?: string | null
+          raw_text?: string | null
+          reviewer_id?: string | null
+          section_code?: string
+          sequence?: number
+          source_id?: string
+          title?: string
+          transcription_status?: Database["public"]["Enums"]["transcription_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "source_sections_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "source_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_sections_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_sections_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transit_event_definitions: {
+        Row: {
+          created_at: string
+          event_code: string
+          event_type: Database["public"]["Enums"]["transit_definition_type"]
+          id: string
+          orb_policy_json: Json
+          planet_concept_id: string | null
+          system_id: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          event_code: string
+          event_type: Database["public"]["Enums"]["transit_definition_type"]
+          id?: string
+          orb_policy_json?: Json
+          planet_concept_id?: string | null
+          system_id: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          created_at?: string
+          event_code?: string
+          event_type?: Database["public"]["Enums"]["transit_definition_type"]
+          id?: string
+          orb_policy_json?: Json
+          planet_concept_id?: string | null
+          system_id?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transit_event_definitions_planet_concept_id_fkey"
+            columns: ["planet_concept_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transit_event_definitions_system_id_fkey"
+            columns: ["system_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transit_event_passes: {
         Row: {
           created_at: string
@@ -1672,6 +2699,82 @@ export type Database = {
             columns: ["event_group_id"]
             isOneToOne: false
             referencedRelation: "astronomical_event_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transit_events: {
+        Row: {
+          calculation_engine: string
+          calculation_version: string
+          created_at: string
+          degree: number | null
+          event_definition_id: string
+          event_hash: string
+          event_time: string
+          from_sign_id: string | null
+          id: string
+          longitude: number | null
+          metadata: Json
+          retrograde: boolean
+          to_sign_id: string | null
+          window_end: string | null
+          window_start: string | null
+        }
+        Insert: {
+          calculation_engine: string
+          calculation_version: string
+          created_at?: string
+          degree?: number | null
+          event_definition_id: string
+          event_hash: string
+          event_time: string
+          from_sign_id?: string | null
+          id?: string
+          longitude?: number | null
+          metadata?: Json
+          retrograde?: boolean
+          to_sign_id?: string | null
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          calculation_engine?: string
+          calculation_version?: string
+          created_at?: string
+          degree?: number | null
+          event_definition_id?: string
+          event_hash?: string
+          event_time?: string
+          from_sign_id?: string | null
+          id?: string
+          longitude?: number | null
+          metadata?: Json
+          retrograde?: boolean
+          to_sign_id?: string | null
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transit_events_event_definition_id_fkey"
+            columns: ["event_definition_id"]
+            isOneToOne: false
+            referencedRelation: "transit_event_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transit_events_from_sign_id_fkey"
+            columns: ["from_sign_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transit_events_to_sign_id_fkey"
+            columns: ["to_sign_id"]
+            isOneToOne: false
+            referencedRelation: "astrology_concepts"
             referencedColumns: ["id"]
           },
         ]
@@ -1825,6 +2928,30 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "reviewer" | "user"
+      astrology_rule_status:
+        | "draft"
+        | "review"
+        | "approved"
+        | "published"
+        | "deprecated"
+        | "rejected"
+      astrology_rule_type:
+        | "natal"
+        | "transit"
+        | "dignity"
+        | "aspect"
+        | "yoga"
+        | "taksa"
+        | "timing"
+        | "compatibility"
+        | "interpretation"
+      astrology_source_type:
+        | "book"
+        | "manuscript"
+        | "article"
+        | "website"
+        | "research"
+        | "user_note"
       calculation_status:
         | "calculation_pending"
         | "calculated"
@@ -1850,6 +2977,51 @@ export type Database = {
         | "expert_reviewed"
         | "published"
         | "deprecated"
+      knowledge_issue_severity: "low" | "medium" | "high" | "critical"
+      knowledge_issue_status: "open" | "reviewing" | "resolved" | "wont_fix"
+      knowledge_job_status:
+        | "queued"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
+      knowledge_release_status: "draft" | "published" | "retired"
+      rule_evidence_level:
+        | "primary_source"
+        | "secondary_source"
+        | "editorial"
+        | "inference"
+        | "experimental"
+      rule_support_type: "direct" | "paraphrase" | "context" | "conflict"
+      source_ingestion_status:
+        | "registered"
+        | "queued"
+        | "extracted"
+        | "reviewing"
+        | "approved"
+        | "rejected"
+      source_rights_status:
+        | "public_domain"
+        | "open_license"
+        | "user_owned"
+        | "permission_granted"
+        | "review_required"
+        | "restricted"
+      transcription_status:
+        | "pending"
+        | "extracted"
+        | "reviewing"
+        | "approved"
+        | "rejected"
+      transit_definition_type:
+        | "sign_ingress"
+        | "house_ingress"
+        | "retrograde_start"
+        | "direct_start"
+        | "exact_aspect"
+        | "natal_contact"
+        | "eclipse"
+        | "lunation"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1978,6 +3150,33 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "reviewer", "user"],
+      astrology_rule_status: [
+        "draft",
+        "review",
+        "approved",
+        "published",
+        "deprecated",
+        "rejected",
+      ],
+      astrology_rule_type: [
+        "natal",
+        "transit",
+        "dignity",
+        "aspect",
+        "yoga",
+        "taksa",
+        "timing",
+        "compatibility",
+        "interpretation",
+      ],
+      astrology_source_type: [
+        "book",
+        "manuscript",
+        "article",
+        "website",
+        "research",
+        "user_note",
+      ],
       calculation_status: [
         "calculation_pending",
         "calculated",
@@ -2005,6 +3204,57 @@ export const Constants = {
         "expert_reviewed",
         "published",
         "deprecated",
+      ],
+      knowledge_issue_severity: ["low", "medium", "high", "critical"],
+      knowledge_issue_status: ["open", "reviewing", "resolved", "wont_fix"],
+      knowledge_job_status: [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+      knowledge_release_status: ["draft", "published", "retired"],
+      rule_evidence_level: [
+        "primary_source",
+        "secondary_source",
+        "editorial",
+        "inference",
+        "experimental",
+      ],
+      rule_support_type: ["direct", "paraphrase", "context", "conflict"],
+      source_ingestion_status: [
+        "registered",
+        "queued",
+        "extracted",
+        "reviewing",
+        "approved",
+        "rejected",
+      ],
+      source_rights_status: [
+        "public_domain",
+        "open_license",
+        "user_owned",
+        "permission_granted",
+        "review_required",
+        "restricted",
+      ],
+      transcription_status: [
+        "pending",
+        "extracted",
+        "reviewing",
+        "approved",
+        "rejected",
+      ],
+      transit_definition_type: [
+        "sign_ingress",
+        "house_ingress",
+        "retrograde_start",
+        "direct_start",
+        "exact_aspect",
+        "natal_contact",
+        "eclipse",
+        "lunation",
       ],
     },
   },
