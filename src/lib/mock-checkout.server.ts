@@ -42,3 +42,8 @@ export function assertMockCheckoutAllowed(): MockCheckoutMode {
   }
   return access.mode;
 }
+
+export async function withMockCheckoutAccess<T>(operation: () => Promise<T>): Promise<T> {
+  assertMockCheckoutAllowed();
+  return operation();
+}

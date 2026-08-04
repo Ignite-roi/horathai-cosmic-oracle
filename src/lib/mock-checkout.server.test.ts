@@ -46,4 +46,38 @@ describe("mock checkout server allowlist", () => {
       evaluateMockCheckoutAccess({ HORATHAI_MOCK_CHECKOUT_MODE: "review" }, "localhost"),
     ).toEqual({ allowed: false, reason: "missing_allowlist" });
   });
+
+  it.each(["development", "review"] as const)(
+    "denies a production hostname in %s mode before any mutation",
+    (mode) => {
+      let mutations = 0;
+      const access = evaluateMockCheckoutAccess(
+        {
+          HORATHAI_MOCK_CHECKOUT_MODE: mode,
+          HORATHAI_MOCK_CHECKOUT_ALLOWED_HOSTS: "localhost,id-preview--example.lovable.app",
+        },
+        "thaihora.app",
+      );
+      if (access.allowed) mutations += 1;
+      expect(access).toEqual({ allowed: false, reason: "host_denied" });
+      expect(mutations).toBe(0);
+    },
+  );
+
+  it.each(["development", "review"] as const)(
+    "allows exactly one mutation on an allowlisted host in %s mode",
+    (mode) => {
+      let mutations = 0;
+      const access = evaluateMockCheckoutAccess(
+        {
+          HORATHAI_MOCK_CHECKOUT_MODE: mode,
+          HORATHAI_MOCK_CHECKOUT_ALLOWED_HOSTS: "localhost,id-preview--example.lovable.app",
+        },
+        "id-preview--example.lovable.app",
+      );
+      if (access.allowed) mutations += 1;
+      expect(access.allowed).toBe(true);
+      expect(mutations).toBe(1);
+    },
+  );
 });

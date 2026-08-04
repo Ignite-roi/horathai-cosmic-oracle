@@ -20,4 +20,13 @@ describe("mock checkout input boundary", () => {
       MockCheckoutInput.parse({ packageCode: "orbit_30", pointsToUse: 0, ...injected }),
     ).toThrow();
   });
+
+  it.each([
+    "00000000-0000-0000-0000-000000000001",
+    "00000000-0000-0000-0000-000000000002",
+  ])("rejects ownership tampering for user %s", (userId) => {
+    expect(() =>
+      MockCheckoutInput.parse({ packageCode: "orbit_30", pointsToUse: 0, userId }),
+    ).toThrow();
+  });
 });

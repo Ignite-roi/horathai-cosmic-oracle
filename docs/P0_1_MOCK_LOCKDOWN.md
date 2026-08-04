@@ -33,3 +33,13 @@ authenticated server middleware has validated the user.
    table grants from the recorded pre-migration ACL. Never grant EXECUTE on
    `complete_mock_day_purchase`, `grant_user_days`, or `deduct_user_days` to
    browser roles.
+
+## Verification matrix
+
+- Production hostname: denied before the privileged mutation callback runs.
+- Direct RPC: `PUBLIC`, `anon`, and `authenticated` have no execute privilege.
+- Cross-user tampering: ownership fields are rejected by strict input validation;
+  the authenticated server context is the only source of `user_id`.
+- Review/development: allowed only for an exact hostname in the server allowlist.
+- Release checks: focused security tests, full tests, typecheck, and production
+  build must all pass before enabling mock checkout in any environment.

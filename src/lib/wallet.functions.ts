@@ -52,22 +52,22 @@ export const completeMockCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => MockCheckoutInput.parse(input))
   .handler(async ({ data, context }) => {
-    const { assertMockCheckoutAllowed } = await import("@/lib/mock-checkout.server");
-    assertMockCheckoutAllowed();
-
-    // The authenticated middleware is the sole source of ownership. Package
-    // days and price are loaded by the database RPC from the package code;
-    // client-supplied user IDs, prices, days, or payable amounts are rejected.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: result, error } = await supabaseAdmin.rpc("complete_mock_day_purchase", {
-      _user_id: context.userId,
-      _package_code: data.packageCode,
-      _points_to_use: data.pointsToUse,
+    const { withMockCheckoutAccess } = await import("@/lib/mock-checkout.server");
+    return withMockCheckoutAccess(async () => {
+      // The authenticated middleware is the sole source of ownership. Package
+      // days and price are loaded by the database RPC from the package code;
+      // client-supplied user IDs, prices, days, or payable amounts are rejected.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: result, error } = await supabaseAdmin.rpc("complete_mock_day_purchase", {
+        _user_id: context.userId,
+        _package_code: data.packageCode,
+        _points_to_use: data.pointsToUse,
+      });
+      if (error) throw new Error(error.message);
+      const row = Array.isArray(result) ? result[0] : result;
+      if (!row) throw new Error("ยืนยันการเติมวันไม่สำเร็จ");
+      return row;
     });
-    if (error) throw new Error(error.message);
-    const row = Array.isArray(result) ? result[0] : result;
-    if (!row) throw new Error("ยืนยันการเติมวันไม่สำเร็จ");
-    return row;
   });
 
 export const adjustUserDays = createServerFn({ method: "POST" })
