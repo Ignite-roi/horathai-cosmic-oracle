@@ -9,6 +9,31 @@ export const getLiffConfig = createServerFn({ method: "GET" }).handler(async () 
   return { liffId: process.env["LINE_LIFF_ID"] ?? null };
 });
 
+function maskId(value: string | undefined | null) {
+  if (!value) return null;
+  if (value.length <= 6) return "***";
+  return `${value.slice(0, 4)}***${value.slice(-3)}`;
+}
+
+/**
+ * Development-only configuration diagnostic. Returns booleans and a masked id
+ * only — never a secret value, token or full credential.
+ */
+export const getLiffDiagnostics = createServerFn({ method: "GET" }).handler(async () => {
+  const { APP_ACCESS_MODE } = await import("@/config/access");
+  if (APP_ACCESS_MODE !== "development_unlocked") return null;
+  const liffId = process.env["LINE_LIFF_ID"] ?? null;
+  return {
+    accessMode: APP_ACCESS_MODE,
+    hasLiffId: Boolean(liffId),
+    maskedLiffId: maskId(liffId),
+    liffIdLooksValid: Boolean(liffId && /^\d{10}-[0-9a-zA-Z]{8}$/.test(liffId)),
+    hasLoginChannelId: Boolean(process.env["LINE_LOGIN_CHANNEL_ID"]),
+    hasChannelSecret: Boolean(process.env["LINE_CHANNEL_SECRET"]),
+    hasBridgeSecret: Boolean(process.env["LINE_AUTH_BRIDGE_SECRET"]),
+  };
+});
+
 type LineVerified = { sub: string; name?: string; picture?: string };
 
 const MAX_ATTEMPTS_PER_WINDOW = 10;
