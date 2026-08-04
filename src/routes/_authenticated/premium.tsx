@@ -157,6 +157,58 @@ function PremiumPage() {
             ชวนเลย
           </button>
         </div>
+
+        <AnimatePresence>
+          {confirmOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-4 pb-8 backdrop-blur-sm"
+              onClick={() => !pending && setConfirmOpen(false)}
+            >
+              <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 40, opacity: 0 }}
+                transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                onClick={(e) => e.stopPropagation()}
+                className="surface-card w-full max-w-sm rounded-[26px] p-6 text-center"
+                role="dialog"
+                aria-modal="true"
+                aria-label="ยืนยันการเริ่มทดลองใช้พรีเมียม"
+              >
+                <Crown className="mx-auto h-6 w-6 text-primary" />
+                <h2 className="mt-3 text-[17px] font-semibold text-foreground">
+                  เริ่มทดลองใช้พรีเมียม 30 วัน?
+                </h2>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">
+                  ระบบจะเริ่มนับ 30 วันตั้งแต่ตอนนี้ ไม่มีการเรียกเก็บเงิน และยกเลิกได้ทุกเมื่อ
+                  {access.unlockedForEveryone
+                    ? " ในช่วงพัฒนานี้คุณใช้ทุกฟีเจอร์ได้อยู่แล้วแม้ไม่กดเริ่มทดลอง"
+                    : ""}
+                </p>
+                {trialError && <p className="mt-3 text-[12px] text-destructive">{trialError}</p>}
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setConfirmOpen(false)}
+                    disabled={pending}
+                    className="press surface-inset rounded-2xl py-3 text-[13px] text-muted-foreground disabled:opacity-50"
+                  >
+                    ยังก่อน
+                  </button>
+                  <button
+                    onClick={confirmTrial}
+                    disabled={pending}
+                    className="press btn-gold rounded-2xl py-3 text-[13px] font-semibold text-primary-foreground disabled:opacity-60"
+                  >
+                    {pending ? "กำลังเริ่ม…" : "ยืนยันเริ่มทดลอง"}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </PageTransition>
     </AppShell>
   );
