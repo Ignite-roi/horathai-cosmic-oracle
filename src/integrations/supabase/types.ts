@@ -664,6 +664,36 @@ export type Database = {
           },
         ]
       }
+      credit_transactions: {
+        Row: {
+          created_at: string
+          days: number
+          id: string
+          note: string | null
+          points_used: number
+          type: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days: number
+          id?: string
+          note?: string | null
+          points_used?: number
+          type: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: number
+          id?: string
+          note?: string | null
+          points_used?: number
+          type?: Database["public"]["Enums"]["credit_transaction_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       entitlements: {
         Row: {
           created_at: string
@@ -2088,6 +2118,36 @@ export type Database = {
           },
         ]
       }
+      packages: {
+        Row: {
+          bonus_days: number
+          code: string
+          days: number
+          is_popular: boolean
+          name_th: string
+          price_thb: number
+          sort_order: number
+        }
+        Insert: {
+          bonus_days?: number
+          code: string
+          days: number
+          is_popular?: boolean
+          name_th: string
+          price_thb: number
+          sort_order?: number
+        }
+        Update: {
+          bonus_days?: number
+          code?: string
+          days?: number
+          is_popular?: boolean
+          name_th?: string
+          price_thb?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
       personal_interpretations: {
         Row: {
           citation_snapshot_json: Json
@@ -2327,6 +2387,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          points_awarded: number
+          referee_id: string
+          referrer_id: string
+          status: Database["public"]["Enums"]["referral_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points_awarded?: number
+          referee_id: string
+          referrer_id: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points_awarded?: number
+          referee_id?: string
+          referrer_id?: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Relationships: []
       }
       release_rules: {
         Row: {
@@ -2814,6 +2919,42 @@ export type Database = {
           },
         ]
       }
+      user_credits: {
+        Row: {
+          days_remaining: number
+          expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          days_remaining?: number
+          expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          days_remaining?: number
+          expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_points: {
+        Row: {
+          balance: number
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2915,6 +3056,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_mock_day_purchase: {
+        Args: {
+          _package_code: string
+          _points_to_use?: number
+          _user_id: string
+        }
+        Returns: {
+          days_added: number
+          days_remaining: number
+          expires_at: string
+          points_balance: number
+        }[]
+      }
       daily_check_in: {
         Args: { _user_id: string }
         Returns: {
@@ -2924,6 +3078,48 @@ export type Database = {
           reward: number
           streak: number
         }[]
+      }
+      deduct_user_days: {
+        Args: {
+          _days: number
+          _note?: string
+          _type?: Database["public"]["Enums"]["credit_transaction_type"]
+          _user_id: string
+        }
+        Returns: {
+          days_remaining: number
+          expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_credits"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      generate_referral_code: { Args: { _user_id: string }; Returns: string }
+      grant_user_days: {
+        Args: {
+          _days: number
+          _note?: string
+          _points_used?: number
+          _type: Database["public"]["Enums"]["credit_transaction_type"]
+          _user_id: string
+        }
+        Returns: {
+          days_remaining: number
+          expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_credits"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
@@ -2957,6 +3153,13 @@ export type Database = {
         | "calculated"
         | "benchmark_verified"
         | "failed"
+      credit_transaction_type:
+        | "purchase"
+        | "referral"
+        | "transfer_in"
+        | "transfer_out"
+        | "bonus"
+        | "admin"
       kb_review_action:
         | "created"
         | "verified"
@@ -2986,6 +3189,7 @@ export type Database = {
         | "failed"
         | "cancelled"
       knowledge_release_status: "draft" | "published" | "retired"
+      referral_status: "pending" | "qualified" | "awarded" | "cancelled"
       rule_evidence_level:
         | "primary_source"
         | "secondary_source"
@@ -3183,6 +3387,14 @@ export const Constants = {
         "benchmark_verified",
         "failed",
       ],
+      credit_transaction_type: [
+        "purchase",
+        "referral",
+        "transfer_in",
+        "transfer_out",
+        "bonus",
+        "admin",
+      ],
       kb_review_action: [
         "created",
         "verified",
@@ -3215,6 +3427,7 @@ export const Constants = {
         "cancelled",
       ],
       knowledge_release_status: ["draft", "published", "retired"],
+      referral_status: ["pending", "qualified", "awarded", "cancelled"],
       rule_evidence_level: [
         "primary_source",
         "secondary_source",
