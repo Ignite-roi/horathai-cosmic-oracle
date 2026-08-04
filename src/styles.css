@@ -455,6 +455,10 @@
 .orrery-asc-marker { fill: var(--gold-hot); }
 .orrery-asc-label { fill: var(--gold-hot); font-family: var(--font-thai); font-size: 9px; paint-order: stroke; stroke: var(--void); stroke-width: 4px; }
 .orrery-center-label { fill: color-mix(in oklab, var(--ivory) 72%, transparent); font-family: var(--font-serif-thai); font-size: 8px; }
+.orrery-center-title { fill: var(--gold-hot); font-family: var(--font-display); font-size: 9px; }
+.orrery-transit-boundary { stroke-dasharray: 3 4; }
+.orrery-transit-marker { fill: color-mix(in oklab, var(--accent) 58%, var(--void)); stroke: var(--gold-hot); stroke-width: 1; filter: drop-shadow(0 0 4px color-mix(in oklab, var(--accent) 65%, transparent)); }
+.orrery-transit-label { fill: color-mix(in oklab, var(--accent-foreground) 88%, var(--gold)); }
 .orrery-core { transform-origin: 240px 240px; animation: breathe 7s ease-in-out infinite; }
 .orrery-drift { transform-origin: 240px 240px; animation: orbit-spin 240s linear infinite; }
 .orrery-shell[data-motion="paused"] .orrery-drift,

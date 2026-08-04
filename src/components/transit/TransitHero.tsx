@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 
 import { KanokCorner } from "@/components/thai/Ornaments";
 import { PlanetGlyph, ThaiHouseNumber } from "@/components/thai/PlanetGlyph";
-import { ENGINE_LABEL, type PlanetShift } from "@/hooks/useTimeTravel";
+import type { PlanetShift } from "@/hooks/useTimeTravel";
+import type { ReadingResult } from "@/lib/astro";
 import { HOUSES, moonPhaseLabel, thaiDate, toThaiDigits } from "@/lib/astro";
 
 function thaiTime(d: Date) {
@@ -21,12 +22,14 @@ export function TransitHero({
   ascendantSign,
   moonPhase,
   children,
+  provenance,
 }: {
   date: Date;
   focus: PlanetShift | null;
   ascendantSign: string;
   moonPhase: number;
   children?: React.ReactNode;
+  provenance: ReadingResult["provenance"] | null;
 }) {
   const house = focus ? HOUSES.find((h) => h.n === focus.toHouse) : undefined;
 
@@ -88,8 +91,9 @@ export function TransitHero({
 
         <p className="mt-4 text-[10.5px] leading-relaxed text-muted-foreground">
           เครื่องคำนวณที่ใช้ขณะนี้:{" "}
-          <span className="numeral text-[var(--gold)]">{ENGINE_LABEL}</span> —
-          ตำแหน่งดาวคำนวณแบบนิรายนะ (Lahiri) และเป็นค่าที่สุ่มวัดตามเวลาที่เลือก
+          <span className="numeral text-[var(--gold)]">{provenance?.engine ?? "กำลังโหลด"}</span>
+          {provenance ? ` · ${provenance.calculationVersion}` : ""} — ตำแหน่งดาวนิรายนะ Lahiri
+          คำนวณตามเวลาที่เลือก
         </p>
       </div>
     </section>

@@ -10,6 +10,31 @@ export const GOLDEN_CHAIYAPHUM_24H = {
   activatedRuleIds: [] as string[],
 } as const;
 
+/**
+ * Owner-approved regression fixture from the earlier accepted binding-flow
+ * case, cross-checked against the documented analytic ascendant pipeline.
+ * This is literal 1988-05-05 00:00 local, not the separate 24:00 case.
+ */
+export const GOLDEN_CHAIYAPHUM_MIDNIGHT = {
+  benchmarkKey: "golden-chaiyaphum-1988-05-05-0000",
+  input: {
+    birthDate: "1988-05-05",
+    birthTime: "00:00",
+    birthTimeKnown: true,
+    latitude: 15.8068,
+    longitude: 102.0315,
+    timezone: "Asia/Bangkok",
+  },
+  expectedUtc: "1988-05-04T17:00:00.000Z",
+  expectedSiderealAscendant: 278.047959,
+  expectedSign: "มังกร",
+  expectedDegree: 8,
+  expectedMinute: 2,
+  provenance:
+    "Prior owner-approved Horathai acceptance case; Lahiri whole-sign analytic cross-check; independent external reproduction pending",
+  toleranceDegrees: 0.25,
+} as const;
+
 /** Normalizes the civil convention 24:00 to 00:00 on the following day. */
 export function normalizeCivil24Hour(date: string, time: string): { date: string; time: string } {
   if (time !== "24:00") return { date, time };

@@ -53,6 +53,7 @@ export function TransitExperience() {
             focus={focus}
             ascendantSign={target?.natal.ascendant.signTh ?? "—"}
             moonPhase={moonPhase}
+            provenance={target?.provenance ?? null}
           >
             {shifts.length > 0 && <TransitOrbit shifts={shifts} />}
           </TransitHero>

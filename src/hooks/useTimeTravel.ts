@@ -10,9 +10,6 @@ import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { useSession } from "@/hooks/useAuth";
 import { getPublicReviewReading } from "@/lib/public-review.functions";
 
-/** Label of the calculation model currently backing every number on screen. */
-export const ENGINE_LABEL = "sidereal_lahiri_dev";
-
 export const MIN_OFFSET = -180;
 export const MAX_OFFSET = 365;
 const DAY = 86_400_000;
@@ -173,5 +170,6 @@ export function useTimeTravel(offsetDays: number) {
     appliedOffset: debouncedOffset,
     shifts: base && target ? buildShifts(base, target) : [],
     scoreShifts: base && target ? buildScoreShifts(base, target) : [],
+    provenance: target?.provenance ?? null,
   };
 }

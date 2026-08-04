@@ -1,10 +1,8 @@
 /**
  * Server-side astronomy engine.
- * Geocentric ecliptic longitudes from Keplerian elements (JPL approximate,
- * Meeus low-precision Moon series), converted to the sidereal (นิรายนะ) zodiac
- * with the Lahiri ayanamsa used by Thai/Indian astrology.
- * Accuracy is in the arc-minute range for the years 1800-2200 — well within
- * what a whole-sign Thai chart requires.
+ * Geocentric apparent positions are produced by Astronomy Engine, whose
+ * numerical model is validated against JPL Horizons. They are converted to
+ * the sidereal zodiac with the explicitly versioned Lahiri approximation.
  */
 
 import {
@@ -22,6 +20,20 @@ import {
   type PlanetId,
   type ReadingResult,
 } from "./astro";
+import { Body, Ecliptic, GeoVector } from "astronomy-engine";
+import {
+  ASTROLOGY_AYANAMSA,
+  ASTROLOGY_CALCULATION_VERSION,
+  ASTROLOGY_ENGINE,
+  ASTROLOGY_ENGINE_VERSION,
+  ASTROLOGY_EPHEMERIS,
+  ASTROLOGY_HOUSE_SYSTEM,
+} from "./astrology-meta";
+
+export const EPHEMERIS_SOURCE = ASTROLOGY_EPHEMERIS;
+export const ENGINE_NAME = ASTROLOGY_ENGINE;
+export const ENGINE_VERSION = ASTROLOGY_ENGINE_VERSION;
+export const HOUSE_SYSTEM_NAME = ASTROLOGY_HOUSE_SYSTEM;
 
 const RAD = Math.PI / 180;
 const norm360 = (x: number) => ((x % 360) + 360) % 360;
@@ -31,96 +43,18 @@ export function julianDay(date: Date): number {
 }
 const centuries = (jd: number) => (jd - 2451545) / 36525;
 
-/* ---------- Keplerian elements (a, e, I, L, longPeri, longNode) + rates/century ---------- */
-type Elem = [number, number, number, number, number, number];
-const ELEMENTS: Record<string, { p: Elem; r: Elem }> = {
-  mercury: {
-    p: [0.38709927, 0.20563593, 7.00497902, 252.2503235, 77.45779628, 48.33076593],
-    r: [0.00000037, 0.00001906, -0.00594749, 149472.67411175, 0.16047689, -0.12534081],
-  },
-  venus: {
-    p: [0.72333566, 0.00677672, 3.39467605, 181.9790995, 131.60246718, 76.67984255],
-    r: [0.0000039, -0.00004107, -0.0007889, 58517.81538729, 0.00268329, -0.27769418],
-  },
-  earth: {
-    p: [1.00000261, 0.01671123, -0.00001531, 100.46457166, 102.93768193, 0],
-    r: [0.00000562, -0.00004392, -0.01294668, 35999.37244981, 0.32327364, 0],
-  },
-  mars: {
-    p: [1.52371034, 0.0933941, 1.84969142, -4.55343205, -23.94362959, 49.55953891],
-    r: [0.00001847, 0.00007882, -0.00813131, 19140.30268499, 0.44441088, -0.29257343],
-  },
-  jupiter: {
-    p: [5.202887, 0.04838624, 1.30439695, 34.39644051, 14.72847983, 100.47390909],
-    r: [-0.00011607, -0.00013253, -0.00183714, 3034.74612775, 0.21252668, 0.20469106],
-  },
-  saturn: {
-    p: [9.53667594, 0.05386179, 2.48599187, 49.95424423, 92.59887831, 113.66242448],
-    r: [-0.0012506, -0.00050991, 0.00193609, 1222.49362201, -0.41897216, -0.28867794],
-  },
+const BODY_BY_PLANET: Partial<Record<PlanetId, Body>> = {
+  1: Body.Sun,
+  2: Body.Moon,
+  3: Body.Mars,
+  4: Body.Mercury,
+  5: Body.Jupiter,
+  6: Body.Venus,
+  7: Body.Saturn,
 };
 
-/** heliocentric ecliptic rectangular coords (AU) */
-function helio(name: keyof typeof ELEMENTS, t: number) {
-  const e = ELEMENTS[name]!;
-  const a = e.p[0] + e.r[0] * t;
-  const ecc = e.p[1] + e.r[1] * t;
-  const inc = (e.p[2] + e.r[2] * t) * RAD;
-  const L = e.p[3] + e.r[3] * t;
-  const peri = e.p[4] + e.r[4] * t;
-  const node = e.p[5] + e.r[5] * t;
-
-  const M = norm360(L - peri) * RAD;
-  let E = M;
-  for (let i = 0; i < 8; i++) E -= (E - ecc * Math.sin(E) - M) / (1 - ecc * Math.cos(E));
-  const xv = a * (Math.cos(E) - ecc);
-  const yv = a * Math.sqrt(1 - ecc * ecc) * Math.sin(E);
-  const v = Math.atan2(yv, xv);
-  const r = Math.hypot(xv, yv);
-  const w = (peri - node) * RAD;
-  const n = node * RAD;
-  const u = v + w;
-  return {
-    x: r * (Math.cos(n) * Math.cos(u) - Math.sin(n) * Math.sin(u) * Math.cos(inc)),
-    y: r * (Math.sin(n) * Math.cos(u) + Math.cos(n) * Math.sin(u) * Math.cos(inc)),
-    z: r * (Math.sin(u) * Math.sin(inc)),
-  };
-}
-
-function geoLongitude(name: keyof typeof ELEMENTS, t: number) {
-  const p = helio(name, t);
-  const e = helio("earth", t);
-  return norm360(Math.atan2(p.y - e.y, p.x - e.x) / RAD);
-}
-
-function sunLongitude(t: number) {
-  const e = helio("earth", t);
-  return norm360(Math.atan2(-e.y, -e.x) / RAD);
-}
-
-/** Meeus low-precision lunar longitude */
-function moonLongitude(t: number) {
-  const Lp = 218.316 + 481267.8813 * t;
-  const M = 357.5291 + 35999.0503 * t;
-  const Mp = 134.963 + 477198.8676 * t;
-  const D = 297.8502 + 445267.1115 * t;
-  const F = 93.2721 + 483202.0175 * t;
-  const l =
-    Lp +
-    6.289 * Math.sin(Mp * RAD) -
-    1.274 * Math.sin((2 * D - Mp) * RAD) +
-    0.658 * Math.sin(2 * D * RAD) -
-    0.186 * Math.sin(M * RAD) -
-    0.059 * Math.sin((2 * Mp - 2 * D) * RAD) -
-    0.057 * Math.sin((Mp - 2 * D + M) * RAD) +
-    0.053 * Math.sin((Mp + 2 * D) * RAD) +
-    0.046 * Math.sin((2 * D - M) * RAD) +
-    0.041 * Math.sin((Mp - M) * RAD) -
-    0.035 * Math.sin(D * RAD) -
-    0.031 * Math.sin((Mp + M) * RAD) -
-    0.015 * Math.sin((2 * F - 2 * D) * RAD) +
-    0.011 * Math.sin((Mp - 4 * D) * RAD);
-  return norm360(l);
+function apparentTropicalLongitude(body: Body, date: Date): number {
+  return norm360(Ecliptic(GeoVector(body, date, true)).elon);
 }
 
 /** mean lunar ascending node = ราหู (always retrograde) */
@@ -133,18 +67,6 @@ export function ayanamsa(jd: number) {
   const t = centuries(jd);
   return 23.85 + 1.3969 * t + 0.0000305 * t * t;
 }
-
-const TROPICAL: Record<number, (t: number) => number> = {
-  1: sunLongitude,
-  2: moonLongitude,
-  3: (t) => geoLongitude("mars", t),
-  4: (t) => geoLongitude("mercury", t),
-  5: (t) => geoLongitude("jupiter", t),
-  6: (t) => geoLongitude("venus", t),
-  7: (t) => geoLongitude("saturn", t),
-  8: rahuLongitude,
-  9: (t) => norm360(rahuLongitude(t) + 180),
-};
 
 /** local sidereal time in degrees */
 function siderealDegrees(jd: number, longitudeEast: number) {
@@ -226,7 +148,6 @@ const BENEFIC = new Set<PlanetId>([2, 4, 5, 6]);
 export function computeChart(date: Date, latitude: number, longitudeEast: number): ChartResult {
   const jd = julianDay(date);
   const t = centuries(jd);
-  const tNext = centuries(jd + 1);
   const aya = ayanamsa(jd);
 
   const ascTropical = ascendantLongitude(jd, latitude, longitudeEast);
@@ -234,9 +155,18 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
   const ascSignIndex = Math.floor(ascSidereal / 30);
 
   const planets: PlacedPlanet[] = PLANETS.map((meta) => {
-    const fn = TROPICAL[meta.num]!;
-    const tropical = fn(t);
-    const nextTropical = fn(tNext);
+    const body = BODY_BY_PLANET[meta.num];
+    const tropical = body
+      ? apparentTropicalLongitude(body, date)
+      : meta.num === 8
+        ? rahuLongitude(t)
+        : norm360(rahuLongitude(t) + 180);
+    const nextDate = new Date(date.getTime() + 86_400_000);
+    const nextTropical = body
+      ? apparentTropicalLongitude(body, nextDate)
+      : meta.num === 8
+        ? rahuLongitude(centuries(jd + 1))
+        : norm360(rahuLongitude(centuries(jd + 1)) + 180);
     let delta = nextTropical - tropical;
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
@@ -317,6 +247,11 @@ export function computeChart(date: Date, latitude: number, longitudeEast: number
     ayanamsa: Math.round(aya * 1000) / 1000,
     julianDay: Math.round(jd * 100000) / 100000,
     isoDate: date.toISOString(),
+    engine: ENGINE_NAME,
+    calculationVersion: ASTROLOGY_CALCULATION_VERSION,
+    ephemerisSource: EPHEMERIS_SOURCE,
+    ayanamsaName: ASTROLOGY_AYANAMSA,
+    houseSystem: HOUSE_SYSTEM_NAME,
   };
 }
 
@@ -435,5 +370,20 @@ export function buildReading(natal: ChartResult, transit: ChartResult): ReadingR
     tone: "neutral",
   });
 
-  return { natal, transit, scores, overall, highlights };
+  return {
+    natal,
+    transit,
+    scores,
+    overall,
+    highlights,
+    provenance: {
+      engine: transit.engine,
+      calculationVersion: transit.calculationVersion,
+      ephemerisSource: transit.ephemerisSource,
+      ayanamsaName: transit.ayanamsaName,
+      houseSystem: transit.houseSystem,
+      natalInstant: natal.isoDate,
+      transitInstant: transit.isoDate,
+    },
+  };
 }

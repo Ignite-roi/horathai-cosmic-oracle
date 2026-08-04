@@ -1,18 +1,23 @@
 /**
- * Typed boundary for the Thai Astrology Engine (สุริยยาตร์).
+ * Typed boundary for the versioned sidereal Lahiri calculation engine.
  *
  * Everything the app consumes goes through `calculateNatal` / `calculateTransit`
  * so the underlying implementation can later be swapped for an external API
  * without touching routes. Production data only — no mock fallback.
  */
 import { HOUSES, PLANET_BY_NUM, ZODIACS, type PlacedPlanet } from "./astro";
+import {
+  ASTROLOGY_CALCULATION_VERSION,
+  ASTROLOGY_ENGINE,
+  ASTROLOGY_HOUSE_SYSTEM,
+} from "./astrology-meta";
 import { offsetLabel, zonedWallClockToUtc } from "./timezone";
 
 /** Bump when the calculation output changes; cached charts are recomputed. */
-export const CALCULATION_VERSION = "sidereal-lahiri-dev-2.0.0";
+export const CALCULATION_VERSION = ASTROLOGY_CALCULATION_VERSION;
 /** Honest label of what is actually implemented today. */
-export const ENGINE_LABEL = "sidereal_lahiri_dev";
-export const HOUSE_SYSTEM = "whole_sign";
+export const ENGINE_LABEL = ASTROLOGY_ENGINE;
+export const HOUSE_SYSTEM = ASTROLOGY_HOUSE_SYSTEM;
 
 export type BirthInput = {
   birthDate: string; // YYYY-MM-DD (Gregorian)
@@ -88,6 +93,7 @@ export type NatalChartPayload = {
   longitude: number;
   calculatedAt: string;
   birthTimeKnown: boolean;
+  ephemerisSource: string;
 };
 
 export type AscendantResult = {
@@ -185,7 +191,7 @@ export function birthMoment(input: BirthInput): Date {
 }
 
 export async function calculateNatal(input: BirthInput): Promise<NatalChartPayload> {
-  const { computeChart, ascendantDetail } = await import("./ephemeris.server");
+  const { computeChart, ascendantDetail, EPHEMERIS_SOURCE } = await import("./ephemeris.server");
   const utc = birthMoment(input);
   const chart = computeChart(utc, input.latitude, input.longitude);
   const planets = chart.planets.map(toPlanet);
@@ -228,6 +234,7 @@ export async function calculateNatal(input: BirthInput): Promise<NatalChartPaylo
     longitude: input.longitude,
     calculatedAt: new Date().toISOString(),
     birthTimeKnown: input.birthTimeKnown,
+    ephemerisSource: EPHEMERIS_SOURCE,
   };
 }
 
