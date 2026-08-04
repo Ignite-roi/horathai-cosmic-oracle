@@ -51,6 +51,11 @@ export type KnowledgeRule = {
   reviewerApproved?: boolean;
   testsPassed?: boolean;
   openBlockingConflict?: boolean;
+  evidenceGrade?: "A" | "B" | "C" | "D";
+  evidenceCoverage?: number;
+  conditionSpecificity?: number;
+  requiredFactKeys?: string[];
+  conclusionCode?: string;
 };
 
 export type RuleEngineInput = {
