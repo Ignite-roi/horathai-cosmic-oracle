@@ -48,10 +48,10 @@ export function HeroOrrery({
           return (
             <line
               key={i}
-              x1={C + Math.cos(a) * 82}
-              y1={C + Math.sin(a) * 82}
-              x2={C + Math.cos(a) * 92}
-              y2={C + Math.sin(a) * 92}
+              x1={(C + Math.cos(a) * 82).toFixed(3)}
+              y1={(C + Math.sin(a) * 82).toFixed(3)}
+              x2={(C + Math.cos(a) * 92).toFixed(3)}
+              y2={(C + Math.sin(a) * 92).toFixed(3)}
               stroke="var(--gold)"
               strokeOpacity="0.28"
               strokeWidth="0.7"
@@ -74,8 +74,8 @@ export function HeroOrrery({
       {planets.map((p, i) => {
         const r = rings[Math.min(i, rings.length - 1)]! + (i > 4 ? (i - 4) * 6 : 0);
         const a = angleOf(p.longitude);
-        const x = C + Math.cos(a) * r;
-        const y = C + Math.sin(a) * r;
+        const x = Number((C + Math.cos(a) * r).toFixed(3));
+        const y = Number((C + Math.sin(a) * r).toFixed(3));
         const meta = PLANET_BY_NUM.get(p.num);
         const active = activeNum === p.num;
         return (

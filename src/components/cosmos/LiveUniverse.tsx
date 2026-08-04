@@ -83,10 +83,10 @@ export function LiveUniverse({ moonPhase = 0.5, element = "น้ำ" }: SkyMood
           return (
             <line
               key={i}
-              x1={100 + Math.cos(a) * 54}
-              y1={100 + Math.sin(a) * 54}
-              x2={100 + Math.cos(a) * 96}
-              y2={100 + Math.sin(a) * 96}
+              x1={(100 + Math.cos(a) * 54).toFixed(3)}
+              y1={(100 + Math.sin(a) * 54).toFixed(3)}
+              x2={(100 + Math.cos(a) * 96).toFixed(3)}
+              y2={(100 + Math.sin(a) * 96).toFixed(3)}
               stroke="var(--gold)"
               strokeWidth="0.3"
             />
