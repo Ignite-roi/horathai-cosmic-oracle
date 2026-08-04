@@ -83,7 +83,9 @@ const EPOCHS = [
 
 const timeMatrix = THAI_PLACES.flatMap((placeKey, placeIndex) =>
   CIVIL_TIMES.map((localTime, timeIndex) => {
-    const [epoch, localDate] = EPOCHS[(placeIndex + timeIndex) % EPOCHS.length]!;
+    const epochEntry = EPOCHS[(placeIndex + timeIndex) % EPOCHS.length];
+    if (!epochEntry) throw new Error("Benchmark epoch matrix is incomplete");
+    const [epoch, localDate] = epochEntry;
     return unverified({
       id: `natal-${placeKey}-${localDate}-${localTime.replace(":", "")}`,
       kind: "natal",
@@ -129,26 +131,31 @@ const sensitivityCases: AccuracyBenchmarkCase[] = [
   ["zodiac-boundary-candidate-after", "2026-04-14", "00:00"],
 ].map(([id, localDate, localTime]) =>
   unverified({
-    id: id!,
+    id,
     kind: "natal",
-    coverage: ["boundary_candidate", id!.startsWith("asc") ? "ascendant" : "zodiac"],
-    input: { localDate: localDate!, localTime: localTime!, birthTimeKnown: true, ...PLACES.bangkok },
+    coverage: ["boundary_candidate", id.startsWith("asc") ? "ascendant" : "zodiac"],
+    input: { localDate, localTime, birthTimeKnown: true, ...PLACES.bangkok },
   }),
 );
 
 const unknownTimeCases = ["1950-06-15", "1988-05-05", "2000-02-29", "2026-08-04"].map(
   (localDate, index) =>
-    unverified({
+    {
+      const epochEntry = EPOCHS[index];
+      const placeKey = THAI_PLACES[index];
+      if (!epochEntry || !placeKey) throw new Error("Unknown-time benchmark matrix is incomplete");
+      return unverified({
       id: `unknown-time-${localDate}`,
       kind: "natal",
-      coverage: ["unknown_birth_time", `epoch_${EPOCHS[index]![0]}`],
+      coverage: ["unknown_birth_time", `epoch_${epochEntry[0]}`],
       input: {
         localDate,
         localTime: "12:00",
         birthTimeKnown: false,
-        ...PLACES[THAI_PLACES[index]!],
+        ...PLACES[placeKey],
       },
-    }),
+      });
+    },
 );
 
 const TRANSIT_SEEDS: ReadonlyArray<
@@ -165,12 +172,12 @@ const TRANSIT_SEEDS: ReadonlyArray<
 
 const transitCases = TRANSIT_SEEDS.map(([id, localDate, localTime, placeKey, transitAt]) =>
   unverified({
-    id: id!,
+    id,
     kind: "transit",
     coverage: ["transit", "natal", "multi_epoch"],
     input: {
-      localDate: localDate!,
-      localTime: localTime!,
+      localDate,
+      localTime,
       birthTimeKnown: true,
       transitAt: transitAt,
       ...PLACES[placeKey as keyof typeof PLACES],

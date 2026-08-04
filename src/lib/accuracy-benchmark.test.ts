@@ -44,8 +44,10 @@ describe("P1.1 astrology accuracy benchmark foundation", () => {
   it("keeps proposals separate and fails closed without approved thresholds", () => {
     expect(PROPOSED_ACCEPTANCE_THRESHOLDS.longitudeDegrees).toBeGreaterThan(0);
     expect(APPROVED_ACCEPTANCE_THRESHOLDS).toBeNull();
+    const firstCase = ACCURACY_BENCHMARK_MANIFEST[0];
+    if (!firstCase) throw new Error("Benchmark manifest must not be empty");
     const invalidValidated = {
-      ...ACCURACY_BENCHMARK_MANIFEST[0]!,
+      ...firstCase,
       status: "validated",
     } as AccuracyBenchmarkCase;
     expect(() => assertValidatedFixtureIsUsable(invalidValidated)).toThrow(/not approved/);

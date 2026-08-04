@@ -6,7 +6,7 @@ Environment: Preview only; no publish
 
 ## Scope and claim boundary
 
-P1.1 adds a deterministic benchmark manifest, runner, discrepancy model and readiness report. It does not alter astronomical formulas and does not claim accuracy certification, parity with another product, Swiss Ephemeris equivalence, JPL equivalence, or Thai Suriyayatra compatibility.
+P1.1 adds a deterministic benchmark manifest, runner, discrepancy model and readiness report. It does not alter astronomical formulas and makes no externally validated accuracy or cross-product equivalence claim.
 
 Current engine output is recorded only as `actual`. It is never copied into an independent `expected` field. Swiss/JPL/expert fields remain null until independently produced evidence is captured, licensed where necessary, reviewed, and attached with provenance.
 
@@ -65,7 +65,7 @@ The code contains **proposed** thresholds only:
 - Expert-reviewed ascendant/house fixtures: 0
 - Competitor observations remain `observed` and `usableAsTruthFixture=false`.
 
-Therefore the current state is an **accuracy-audit foundation**, not certified and not parity-tested.
+Therefore the current state is an **accuracy-audit foundation with external validation still pending**.
 
 ## Next evidence needed
 
