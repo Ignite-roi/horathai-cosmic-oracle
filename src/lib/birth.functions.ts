@@ -103,8 +103,10 @@ export const saveBirthProfile = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => BirthProfileInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { findProvince } = await import("./provinces");
-    const place = findProvince(data.province);
+    const { PROVINCES } = await import("./provinces");
+    // Never silently fall back to another city — wrong coordinates mean a wrong ลัคนา.
+    const place = PROVINCES.find((p) => p.th === data.province.trim());
+    if (!place) throw new Error(`ไม่พบพิกัดของจังหวัด "${data.province}" กรุณาเลือกจากรายการ`);
 
     const birthDate = new Date(`${data.birth_date}T00:00:00+07:00`);
     if (Number.isNaN(birthDate.getTime())) throw new Error("วันเกิดไม่ถูกต้อง");
