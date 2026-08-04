@@ -6,6 +6,8 @@ import { Send, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AppShell, EmptyBirthData, PageTransition } from "@/components/AppShell";
+import { DayPaywall } from "@/components/wallet/DayPaywall";
+import { Button } from "@/components/ui/button";
 import { useReading } from "@/hooks/useReading";
 import { askAstrologer } from "@/lib/ai.functions";
 import {
@@ -19,6 +21,7 @@ import {
 import { useProfile } from "@/store/useProfile";
 import { PUBLIC_REVIEW_MODE } from "@/config/public-review";
 import { useLineAuth } from "@/context/LineAuthContext";
+import { useWallet } from "@/hooks/useWallet";
 
 export const Route = createFileRoute("/_authenticated/ai-astrologer")({
   head: () => ({
@@ -79,6 +82,8 @@ function AiPage() {
   const birthDate = useProfile((s) => s.birthDate);
   const { data } = useReading();
   const { isSignedIn, login } = useLineAuth();
+  const wallet = useWallet();
+  const [paywallOpen, setPaywallOpen] = useState(false);
   const reviewGuest = PUBLIC_REVIEW_MODE && !isSignedIn;
   const ask = useServerFn(askAstrologer);
   const endRef = useRef<HTMLDivElement>(null);
@@ -119,6 +124,10 @@ function AiPage() {
             "โหมดตรวจสอบแสดงดวงตัวอย่างแบบอ่านอย่างเดียว จึงยังไม่ส่งคำถามไปยัง AI กรุณาเข้าสู่ระบบด้วย LINE เพื่อถามจากดวงของคุณ",
         },
       ]);
+      return;
+    }
+    if (wallet.data.daysRemaining <= 0) {
+      setPaywallOpen(true);
       return;
     }
     mutation.mutate(q);
@@ -188,22 +197,24 @@ function AiPage() {
 
         <div className="sticky bottom-24 mt-5">
           {reviewGuest && (
-            <button
+            <Button
               onClick={() => void login()}
-              className="press mb-3 flex h-11 w-full items-center justify-center rounded-xl border border-primary/30 text-[12px] text-primary"
+              variant="outline"
+              className="mb-3 h-11 w-full rounded-xl border-primary/30 text-[12px] text-primary"
             >
               เข้าสู่ระบบด้วย LINE เพื่อถามโหรา AI
-            </button>
+            </Button>
           )}
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {SUGGESTIONS.map((s) => (
-              <button
+              <Button
                 key={s}
                 onClick={() => send(s)}
-                className="press glass whitespace-nowrap rounded-full px-3 py-1.5 text-[11.5px] text-foreground/85"
+                variant="outline"
+                className="glass h-8 whitespace-nowrap rounded-full px-3 text-[11.5px] text-foreground/85"
               >
                 {s}
-              </button>
+              </Button>
             ))}
           </div>
           <form
@@ -219,16 +230,18 @@ function AiPage() {
               placeholder="ถามโหรา AI…"
               className="flex-1 bg-transparent px-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
             />
-            <button
+            <Button
               type="submit"
               disabled={mutation.isPending || !input.trim()}
-              className="press btn-gold flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-40"
+              size="icon"
+              className="btn-gold h-10 w-10 rounded-full disabled:opacity-40"
               aria-label="ส่งคำถาม"
             >
               <Send className="h-4 w-4 text-primary-foreground" />
-            </button>
+            </Button>
           </form>
         </div>
+        <DayPaywall open={paywallOpen} onOpenChange={setPaywallOpen} />
       </PageTransition>
     </AppShell>
   );

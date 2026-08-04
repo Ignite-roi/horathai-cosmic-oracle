@@ -55,3 +55,40 @@ export const completeMockCheckout = createServerFn({ method: "POST" })
     if (!row) throw new Error("ยืนยันการเติมวันไม่สำเร็จ");
     return row;
   });
+
+export const adjustUserDays = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      userId: z.string().uuid(),
+      days: z.number().int().refine((value) => value !== 0),
+      note: z.string().max(240).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin, error: roleError } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (roleError || !isAdmin) throw new Error("ไม่มีสิทธิ์ปรับวันใช้งาน");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.days > 0) {
+      const { data: result, error } = await supabaseAdmin.rpc("grant_user_days", {
+        _user_id: data.userId,
+        _days: data.days,
+        _type: "admin",
+        _points_used: 0,
+        _note: data.note ?? "ปรับยอดโดยผู้ดูแล",
+      });
+      if (error) throw new Error(error.message);
+      return result;
+    }
+    const { data: result, error } = await supabaseAdmin.rpc("deduct_user_days", {
+      _user_id: data.userId,
+      _days: Math.abs(data.days),
+      _type: "admin",
+      _note: data.note ?? "ปรับยอดโดยผู้ดูแล",
+    });
+    if (error) throw new Error(error.message);
+    return result;
+  });
