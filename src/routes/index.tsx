@@ -78,6 +78,10 @@ function Diagnostics() {
     ["Masked LIFF ID", server?.maskedLiffId ?? "—"],
     ["LIFF ID format valid", server ? (server.liffIdLooksValid ? "yes" : "no") : "—"],
     ["Login channel id", server ? (server.hasLoginChannelId ? "yes" : "no") : "—"],
+    [
+      "Login channel matches LIFF",
+      server ? (server.loginChannelMatchesLiffPrefix ? "yes" : "no") : "—",
+    ],
     ["Channel secret", server ? (server.hasChannelSecret ? "yes" : "no") : "—"],
     ["Bridge secret", server ? (server.hasBridgeSecret ? "yes" : "no") : "—"],
     ["Access mode", server?.accessMode ?? APP_ACCESS_MODE],
