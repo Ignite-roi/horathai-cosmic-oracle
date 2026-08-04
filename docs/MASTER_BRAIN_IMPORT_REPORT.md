@@ -55,7 +55,7 @@ No existing live entity was duplicated or rewritten.
 - Full test suite: **66/66 pass**, including all 9 P0.1 mock-checkout lockdown tests.
 - P0.1 production-deny/no-mutation and review/development allowlist behavior remains unchanged.
 - Offline boundary scan: no `fetch`, Gemini/Lovable AI key access, `eval`, or `new Function` in the imported calculation/rule/narrative path.
-- Lint command: blocked by pre-existing project-wide Prettier findings in unrelated UI files (for example `ScoreCard.tsx`, `AstrologerHero.tsx`, and `ChartDetails.tsx`). No lint failure shown was introduced in the Master Brain files.
+- Global lint command: blocked by existing project-wide Prettier findings, including unrelated UI files (`ScoreCard.tsx`, `AstrologerHero.tsx`, and `ChartDetails.tsx`) and formatting-only findings in the newly added knowledge files. Functional ESLint validation is reported separately from formatting.
 - Type/build verification is delegated to the project harness; no publish was performed.
 
 ## Changed files
