@@ -45,10 +45,10 @@ export function CinematicHero({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="surface-inset absolute left-3 top-4 flex items-center gap-2 px-2.5 py-2"
+            className="surface-inset absolute left-2.5 top-3 flex max-w-[42%] items-center gap-1.5 px-2 py-1.5"
           >
-            <PlanetGlyph num={activePlanet.num} size={30} active />
-            <span className="text-[11px] leading-tight text-foreground/85">
+            <PlanetGlyph num={activePlanet.num} size={26} active />
+            <span className="min-w-0 truncate text-[10.5px] leading-tight text-foreground/85">
               ดาว{activePlanet.th}
               <br />
               <span className="text-muted-foreground">ราศี{activePlanet.signTh}</span>
@@ -57,7 +57,7 @@ export function CinematicHero({
         )}
 
         {isDemo && (
-          <span className="gold-hairline absolute right-3 top-4 rounded-full px-2.5 py-1 text-[10px] tracking-wide text-[var(--gold)]">
+          <span className="gold-hairline absolute right-2.5 top-3 rounded-full px-2 py-1 text-[9.5px] tracking-wide text-[var(--gold)]">
             ตัวอย่างการแสดงผล
           </span>
         )}
