@@ -137,11 +137,24 @@ function Onboarding() {
                 โหราศาสตร์ไทยสุริยยาตร์ต้นตำรับ ผสานปัญญาประดิษฐ์ เข้าสู่ระบบด้วย LINE เพื่อเริ่มต้น
               </p>
               <button
-                onClick={() => setStep(1)}
-                className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#06C755] text-[15px] font-semibold text-white"
+                onClick={handleLineLogin}
+                disabled={signingIn || status === "signing-in"}
+                className="press mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#06C755] text-[15px] font-semibold text-white disabled:opacity-60"
               >
                 <MessageCircle className="h-5 w-5" />
-                เข้าสู่ระบบด้วย LINE
+                {signingIn || status === "signing-in" ? "กำลังเชื่อมต่อ LINE…" : "เข้าสู่ระบบด้วย LINE"}
+              </button>
+              {lineError && <p className="mt-2 text-[11px] text-destructive">{lineError}</p>}
+              {!configured && (
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  ยังไม่ได้ตั้งค่า LINE Login — ใช้งานแบบไม่เข้าสู่ระบบได้ก่อน
+                </p>
+              )}
+              <button
+                onClick={() => setStep(1)}
+                className="mt-3 w-full text-[12px] text-muted-foreground underline-offset-4 hover:underline"
+              >
+                ข้ามไปก่อน ใช้งานแบบไม่เข้าสู่ระบบ
               </button>
               <p className="mt-3 text-[11px] text-muted-foreground">ทดลองพรีเมียมฟรี 30 วัน · ไม่ต้องใช้บัตรเครดิต</p>
             </motion.div>
