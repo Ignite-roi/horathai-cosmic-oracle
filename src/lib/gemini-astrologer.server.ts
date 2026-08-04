@@ -53,7 +53,11 @@ export async function generateAstrologerAnswer(apiKey: string, data: AskAstrolog
 
   const payload = (await response.json().catch(() => ({}))) as GeminiResponse;
   if (response.status === 400 || response.status === 401 || response.status === 403) {
-    console.error("Gemini authentication/configuration failed", response.status, payload.error?.status);
+    console.error(
+      "Gemini authentication/configuration failed",
+      response.status,
+      payload.error?.status,
+    );
     throw new Error("การเชื่อมต่อ Gemini ไม่ถูกต้อง กรุณาตรวจสอบ API key และสิทธิ์การใช้งาน");
   }
   if (response.status === 429) {
