@@ -200,7 +200,7 @@ type ColorConfig = {
   scoring_policy: ScoringPolicy;
 };
 
-type ScoringPolicy = AspectPolicy & {
+export type ScoringPolicy = AspectPolicy & {
   base_score: number;
   minimum_score: number;
   maximum_score: number;
@@ -214,7 +214,7 @@ type ScoringPolicy = AspectPolicy & {
   reason_neutral: string;
 };
 
-function scoreFromPolicy(
+export function scoreFromPolicy(
   natal: ReturnType<typeof computeChart>,
   transit: ReturnType<typeof computeChart>,
   policy: ScoringPolicy,
