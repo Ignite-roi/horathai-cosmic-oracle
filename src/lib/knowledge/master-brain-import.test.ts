@@ -6,6 +6,7 @@ import { buildNatalFactSheet } from "./fact-sheet.server";
 import { dryRunMasterBrainImport, type KnowledgeBaselineSnapshot } from "./master-brain-import.server";
 import { masterBrainPackSchema } from "./master-brain-pack.schema";
 import { assertNarrativeSafety, renderThaiNarrative } from "./narrative.server";
+import { buildCandidateReleaseReport } from "./release-report.server";
 import { matchKnowledgeRules } from "./rule-engine.server";
 import type { CalculatedFact, KnowledgeRule, RuleEngineInput } from "./types";
 
@@ -103,5 +104,13 @@ describe("deterministic offline pipeline", () => {
     const sheet = await buildNatalFactSheet({ birthDate: "1988-05-05", birthTime: "12:00", birthTimeKnown: false, latitude: 15.8068, longitude: 102.0315, timezone: "Asia/Bangkok" });
     expect(sheet.facts.some((fact) => fact.key.startsWith("ascendant.") || fact.key.endsWith(".house"))).toBe(false);
     expect(() => assertNarrativeSafety("ลงทุนแล้วได้กำไรแน่นอน")).toThrow("PROHIBITED_NARRATIVE_PHRASE");
+  });
+
+  it("generates a deterministic blocked candidate release report for drafts", () => {
+    const draft: KnowledgeRule = { id: "draft-1", ruleCode: "DRAFT-1", systemId: "sidereal_lahiri", systemVersion: "3.0.0", ruleType: "natal", status: "draft", condition: { op: "exists", fact: "planet.1.longitude" }, outcome: {}, confidence: 0.5, priority: 1, citations: [], limitations: [], runtimeEligible: false };
+    const first = buildCandidateReleaseReport("sidereal_lahiri", "3.0.0", [draft]);
+    const second = buildCandidateReleaseReport("sidereal_lahiri", "3.0.0", [draft]);
+    expect(first).toEqual(second);
+    expect(first).toMatchObject({ status: "blocked", eligibleRuleIds: [], immutableReleaseCreated: false, blockedRules: [{ ruleId: "draft-1" }] });
   });
 });
