@@ -13,6 +13,13 @@ const BirthProfileInput = z.object({
   district: z.string().trim().max(60).optional().nullable(),
 });
 
+export type BindChartResult = {
+  birthProfile: BirthProfileRow;
+  chart: NatalChartRow;
+  ascendantKnown: boolean;
+  reused: boolean;
+};
+
 export type BirthProfileRow = {
   id: string;
   nickname: string;
@@ -39,12 +46,22 @@ export type NatalChartRow = {
   standards_json: Json;
   calculation_version: string;
   calculated_at: string;
+  ascendant_json: Json;
+  ascendant_known: boolean;
+  utc_birth_datetime: string | null;
+  timezone: string;
+  latitude: number | null;
+  longitude: number | null;
+  house_system: string;
+  ayanamsa: number | null;
+  engine_type: string;
+  input_hash: string | null;
 };
 
 const BIRTH_COLUMNS =
   "id, nickname, birth_date, birth_time, birth_time_known, country, province, district, latitude, longitude, timezone, calculation_system";
 const CHART_COLUMNS =
-  "id, ascendant_sign, ascendant_degree, planets_json, houses_json, standards_json, calculation_version, calculated_at";
+  "id, ascendant_sign, ascendant_degree, planets_json, houses_json, standards_json, calculation_version, calculated_at, ascendant_json, ascendant_known, utc_birth_datetime, timezone, latitude, longitude, house_system, ayanamsa, engine_type, input_hash";
 
 /** The user's saved birth profile plus its cached natal chart. */
 export const getMyBirthContext = createServerFn({ method: "GET" })
