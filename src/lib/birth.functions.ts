@@ -28,13 +28,15 @@ export type BirthProfileRow = {
   calculation_system: string;
 };
 
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
 export type NatalChartRow = {
   id: string;
   ascendant_sign: string;
   ascendant_degree: number;
-  planets_json: unknown;
-  houses_json: unknown;
-  standards_json: unknown;
+  planets_json: Json;
+  houses_json: Json;
+  standards_json: Json;
   calculation_version: string;
   calculated_at: string;
 };
@@ -166,9 +168,9 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       user_id: userId,
       ascendant_sign: payload.ascendant.signTh,
       ascendant_degree: payload.ascendant.degree,
-      planets_json: payload.planets,
-      houses_json: payload.houses,
-      standards_json: payload.standards,
+      planets_json: payload.planets as unknown as Json,
+      houses_json: payload.houses as unknown as Json,
+      standards_json: payload.standards as unknown as Json,
       calculation_version: CALCULATION_VERSION,
       calculated_at: payload.calculatedAt,
     };
@@ -187,19 +189,25 @@ export const calculateAndSaveChart = createServerFn({ method: "POST" })
       .eq("id", userId)
       .maybeSingle();
 
-    const patch: Record<string, unknown> = { onboarding_completed: true, onboarded: true };
+    const patch: {
+      onboarding_completed: boolean;
+      onboarded: boolean;
+      trial_started_at?: string;
+      trial_ends_at?: string;
+      subscription_status?: string;
+    } = { onboarding_completed: true, onboarded: true };
     if (!profile.data?.trial_started_at) {
-      patch["trial_started_at"] = now.toISOString();
-      patch["trial_ends_at"] = new Date(now.getTime() + 30 * 86400000).toISOString();
-      patch["subscription_status"] = "trialing";
+      patch.trial_started_at = now.toISOString();
+      patch.trial_ends_at = new Date(now.getTime() + 30 * 86400000).toISOString();
+      patch.subscription_status = "trialing";
     }
     await supabase.from("profiles").update(patch).eq("id", userId);
     await supabase
       .from("entitlements")
       .update({
         plan: "premium_trial",
-        trial_started_at: (patch["trial_started_at"] as string) ?? undefined,
-        expires_at: (patch["trial_ends_at"] as string) ?? undefined,
+        trial_started_at: patch.trial_started_at ?? now.toISOString(),
+        expires_at: patch.trial_ends_at ?? new Date(now.getTime() + 30 * 86400000).toISOString(),
       })
       .eq("user_id", userId)
       .is("trial_started_at", null);
