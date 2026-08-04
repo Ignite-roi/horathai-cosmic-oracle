@@ -168,8 +168,12 @@ function PremiumPage() {
         </div>
 
         <div className="mt-5 flex justify-center gap-4 text-[11px] text-muted-foreground">
-          <Link to="/terms" className="underline underline-offset-4">ข้อกำหนดการใช้งาน</Link>
-          <Link to="/privacy" className="underline underline-offset-4">นโยบายความเป็นส่วนตัว</Link>
+          <a href="/terms" className="underline underline-offset-4">
+            ข้อกำหนดการใช้งาน
+          </a>
+          <a href="/privacy" className="underline underline-offset-4">
+            นโยบายความเป็นส่วนตัว
+          </a>
         </div>
 
         <AnimatePresence>

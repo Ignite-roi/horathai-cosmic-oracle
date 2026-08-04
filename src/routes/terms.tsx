@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/terms")({
+export const Route = createFileRoute("/terms" as never)({
   head: () => ({
     meta: [
       { title: "ข้อกำหนดการใช้งาน | Horathai AI" },
@@ -17,7 +17,9 @@ export const Route = createFileRoute("/terms")({
 function TermsPage() {
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-5 py-12 text-foreground">
-      <Link to="/dashboard" className="text-sm text-primary">← กลับสู่แอป</Link>
+      <Link to="/dashboard" className="text-sm text-primary">
+        ← กลับสู่แอป
+      </Link>
       <h1 className="thai-heading mt-7 text-3xl">ข้อกำหนดการใช้งาน</h1>
       <div className="mt-6 space-y-5 text-sm leading-7 text-muted-foreground">
         <p>Horathai AI นำเสนอข้อมูลโหราศาสตร์ไทยเพื่อการสะท้อนตนเองและความบันเทิง ไม่ใช่หลักฐานทางวิทยาศาสตร์หรือคำรับรองเหตุการณ์ในชีวิต</p>

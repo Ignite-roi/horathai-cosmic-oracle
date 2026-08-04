@@ -125,7 +125,7 @@ export function DashboardHome() {
           />
         </div>
 
-        {isDemo && (
+        {isDemo && !PUBLIC_REVIEW_MODE && (
           <div className="mt-4">
             <DemoCallout />
           </div>

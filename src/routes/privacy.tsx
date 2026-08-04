@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/privacy")({
+export const Route = createFileRoute("/privacy" as never)({
   head: () => ({
     meta: [
       { title: "นโยบายความเป็นส่วนตัว | Horathai AI" },
@@ -17,7 +17,9 @@ export const Route = createFileRoute("/privacy")({
 function PrivacyPage() {
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-5 py-12 text-foreground">
-      <Link to="/dashboard" className="text-sm text-primary">← กลับสู่แอป</Link>
+      <Link to="/dashboard" className="text-sm text-primary">
+        ← กลับสู่แอป
+      </Link>
       <h1 className="thai-heading mt-7 text-3xl">นโยบายความเป็นส่วนตัว</h1>
       <div className="mt-6 space-y-5 text-sm leading-7 text-muted-foreground">
         <p>Horathai AI ใช้ข้อมูลบัญชี LINE และข้อมูลวัน เวลา สถานที่เกิด เมื่อผู้ใช้เข้าสู่ระบบและยินยอม เพื่อคำนวณดวงและให้บริการเฉพาะบัญชีของผู้ใช้</p>
