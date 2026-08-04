@@ -74,10 +74,15 @@ export function TimeTravelSlider({
         />
       </div>
 
-      <div className="numeral mt-2 flex justify-between text-[10px] text-muted-foreground">
-        <span>ย้อน ๑๘๐ วัน</span>
-        <span>วันนี้</span>
-        <span>อีก ๓๖๕ วัน</span>
+      <div className="numeral relative mt-1 h-4 text-[10px] text-muted-foreground">
+        <span className="absolute left-0">ย้อน ๑๘๐ วัน</span>
+        <span
+          className="absolute -translate-x-1/2 text-[var(--gold)]/70"
+          style={{ left: `${(-MIN_OFFSET / (MAX_OFFSET - MIN_OFFSET)) * 100}%` }}
+        >
+          วันนี้
+        </span>
+        <span className="absolute right-0">อีก ๓๖๕ วัน</span>
       </div>
 
       <div className="mt-4 grid grid-cols-5 gap-1.5">
