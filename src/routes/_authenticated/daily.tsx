@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ShareResultButton } from "@/components/social/ShareResultButton";
 import { useSession } from "@/hooks/useAuth";
 import { readGuestBirthContext } from "@/lib/guest-birth";
-import { buddhistDate, downloadCanvas, guestContextToBirth } from "@/lib/insights.client";
+import { buddhistDate, downloadCanvas, guestContextToBirth } from "@/lib/insights-browser";
 import { getGuestDailyInsight, getMyDailyInsight } from "@/lib/insights.functions";
 
 export const Route = createFileRoute("/_authenticated/daily")({
