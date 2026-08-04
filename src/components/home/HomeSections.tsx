@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ChevronRight, Clock3, Crown, MessageCircle, TrendingUp } from "lucide-react";
+import { ChevronRight, Clock3, Crown, MessageCircle, Sparkles, TrendingUp, Unlock } from "lucide-react";
 
 import { AstrologerHero } from "@/components/brand/AstrologerHero";
 import { CelestialDivider } from "@/components/thai/Ornaments";
@@ -151,5 +151,59 @@ export function PremiumStatus({ daysLeft }: { daysLeft: number | null }) {
       </div>
       <ChevronRight className="h-5 w-5 shrink-0 text-[var(--gold)]" />
     </Link>
+  );
+}
+
+/* ---------- Demo callout (no birth data yet) ---------- */
+
+export function DemoCallout() {
+  return (
+    <section className="surface-card grain relative overflow-hidden p-5">
+      <span
+        aria-hidden
+        className="absolute -left-8 -top-10 h-28 w-28 rounded-full blur-2xl"
+        style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--gold) 24%, transparent), transparent 70%)" }}
+      />
+      <div className="relative">
+        <span className="gold-hairline inline-flex rounded-full px-2 py-1 text-[9.5px] tracking-wide text-[var(--gold)]">
+          ดวงสาธิต
+        </span>
+        <h2 className="thai-heading mt-2 text-[16px] text-foreground">
+          นี่คือตัวอย่างการแสดงผล ยังไม่ใช่ดวงของคุณ
+        </h2>
+        <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">
+          ระบบไม่ได้บันทึกดวงสาธิตนี้ไว้ กรอกวัน เวลา และสถานที่เกิด
+          เพื่อคำนวณผังดวงจริงด้วยหลักสุริยยาตร์
+        </p>
+        <Link
+          to="/onboarding"
+          className="press gold-metal mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-[14px] font-semibold"
+        >
+          <Sparkles className="h-4 w-4" strokeWidth={2} />
+          สร้างดวงจริงของฉัน
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Development full access notice ---------- */
+
+export function DevAccessNotice() {
+  return (
+    <section className="surface-inset flex items-start gap-3 p-4">
+      <span className="mt-0.5 shrink-0 text-[var(--gold)]">
+        <Unlock className="h-4 w-4" strokeWidth={1.8} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[12.5px] font-medium text-foreground">
+          ช่วงพัฒนา เปิดใช้ทุกฟีเจอร์ฟรี
+        </p>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+          ผังดวง ดาวย้าย ย้อน–ไปข้างหน้า โหร AI และรายงานเชิงลึก
+          ใช้ได้เต็มรูปแบบทุกบัญชี โดยยังไม่ต้องเริ่มทดลองพรีเมียม
+        </p>
+      </div>
+    </section>
   );
 }
