@@ -85,12 +85,14 @@ export function PlanetMovement({ movements, days }: { movements: Movement[]; day
                   </span>
                 )}
               </div>
-              <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[11.5px]">
-                <span className="truncate text-muted-foreground">
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11.5px]">
+                <span className="whitespace-nowrap text-muted-foreground">
                   ราศี{m.fromSign} · {houseTh(m.fromHouse)}
                 </span>
                 <ArrowRight className="h-3 w-3 shrink-0 text-[var(--gold)]" />
-                <span className={`truncate ${m.changed ? "text-gold" : "text-foreground/80"}`}>
+                <span
+                  className={`whitespace-nowrap ${m.changed ? "text-gold" : "text-foreground/80"}`}
+                >
                   ราศี{m.toSign} · {houseTh(m.toHouse)}
                 </span>
               </div>
