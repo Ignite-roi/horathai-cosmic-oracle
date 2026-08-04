@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AdminKnowledgeShell } from "@/components/kb/AdminKnowledgeShell";
 import { getKbAccess } from "@/lib/kb.functions";
 
-export const Route = createFileRoute("/_authenticated/admin-kb")({
+export const Route = createFileRoute("/_authenticated/admin-kb-route")({
   head: () => ({ meta: [{ title: "Knowledge Governance | Horathai" }, { name: "description", content: "แดชบอร์ดกำกับแหล่งอ้างอิงและกฎโหราศาสตร์ไทย" }, { property: "og:title", content: "Knowledge Governance | Horathai" }, { property: "og:description", content: "ระบบตรวจสอบแหล่ง กฎ ความขัดแย้ง และ benchmark" }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: AdminKbLayout,
 });
