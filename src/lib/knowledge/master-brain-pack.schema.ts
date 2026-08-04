@@ -25,6 +25,7 @@ const benchmarkSchema = z.object({
 
 export const masterBrainPackSchema = z.object({
   schema: z.literal("horathai.master-knowledge-pack/v1"), packId: z.string().min(1), version: z.string().endsWith("-draft"),
+  createdAt: z.string().datetime(),
   runtimePolicy: z.object({ networkAllowed: z.literal(false), aiRequired: z.literal(false), failClosed: z.literal(true), unknownBirthTimePolicy: z.literal("omit_ascendant_houses_angles"), competitorMaterialPolicy: z.literal("observations_only") }).strict(),
   baseline: z.object({ conceptCountExpected: z.literal(49), existingPublishedEditorialRuleCountExpected: z.literal(5), knowledgeReleaseCountExpected: z.literal(0), strategy: z.literal("reference_then_promote"), abortOnMismatch: z.literal(true) }).strict(),
   activation: z.object({ mode: z.literal("dry_run_only"), productionEligible: z.literal(false), reason: z.string().min(1) }).strict(),
