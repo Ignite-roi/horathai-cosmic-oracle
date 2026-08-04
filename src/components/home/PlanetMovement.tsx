@@ -19,16 +19,12 @@ export type Movement = {
   degrees: number;
 };
 
-export function buildMovements(
-  past: ChartResult,
-  now: ChartResult,
-  ascendant: number,
-): Movement[] {
+export function buildMovements(past: ChartResult, now: ChartResult, ascendant: number): Movement[] {
   const items: Movement[] = [];
   for (const p of now.planets) {
     const before = past.planets.find((q) => q.num === p.num);
     if (!before) continue;
-    const delta = ((p.longitude - before.longitude) % 360 + 360) % 360;
+    const delta = (((p.longitude - before.longitude) % 360) + 360) % 360;
     items.push({
       num: p.num,
       th: p.th,
@@ -53,13 +49,7 @@ function houseTh(n: number) {
 }
 
 /** Before-and-after planet movement over the observed window. */
-export function PlanetMovement({
-  movements,
-  days,
-}: {
-  movements: Movement[];
-  days: number;
-}) {
+export function PlanetMovement({ movements, days }: { movements: Movement[]; days: number }) {
   if (movements.length === 0) return null;
 
   return (

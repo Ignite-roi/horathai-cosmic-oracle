@@ -1,6 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ChevronRight, Clock3, Crown, MessageCircle, Sparkles, TrendingUp, Unlock } from "lucide-react";
+import {
+  ChevronRight,
+  Clock3,
+  Crown,
+  MessageCircle,
+  Sparkles,
+  TrendingUp,
+  Unlock,
+} from "lucide-react";
 
 import { AstrologerHero } from "@/components/brand/AstrologerHero";
 import { CelestialDivider } from "@/components/thai/Ornaments";
@@ -89,7 +97,9 @@ export function DestinyTimeline({ points }: { points: DestinyPoint[] }) {
       <ol className="mt-4 space-y-3">
         {points.map((p, i) => (
           <li key={p.label} className="flex items-center gap-3">
-            <span className="numeral w-11 shrink-0 text-[11px] text-muted-foreground">{p.label}</span>
+            <span className="numeral w-11 shrink-0 text-[11px] text-muted-foreground">
+              {p.label}
+            </span>
             <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-[oklch(1_0_0/6%)]">
               <motion.span
                 initial={{ width: 0 }}
@@ -100,7 +110,9 @@ export function DestinyTimeline({ points }: { points: DestinyPoint[] }) {
                 style={{ background: "linear-gradient(90deg, var(--gold-deep), var(--gold-hot))" }}
               />
             </span>
-            <span className="w-24 shrink-0 truncate text-right text-[11px] text-foreground/75">{p.sub}</span>
+            <span className="w-24 shrink-0 truncate text-right text-[11px] text-foreground/75">
+              {p.sub}
+            </span>
           </li>
         ))}
       </ol>
@@ -114,12 +126,17 @@ export function DestinyTimeline({ points }: { points: DestinyPoint[] }) {
 
 export function AstrologerConsult({ question }: { question: string }) {
   return (
-    <Link to="/ai-astrologer" className="press surface-hero grain relative flex items-center gap-4 overflow-hidden p-5">
+    <Link
+      to="/ai-astrologer"
+      className="press surface-hero grain relative flex items-center gap-4 overflow-hidden p-5"
+    >
       <AstrologerHero variant="avatar" className="h-[74px] w-[74px] shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="eyebrow">AI Astrologer</p>
         <p className="thai-heading mt-1 text-[16px] text-gold">ปรึกษาโหราจารย์ส่วนตัว</p>
-        <p className="mt-1.5 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">“{question}”</p>
+        <p className="mt-1.5 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
+          “{question}”
+        </p>
       </div>
       <MessageCircle className="h-5 w-5 shrink-0 text-[var(--gold)]" strokeWidth={1.6} />
     </Link>
@@ -132,11 +149,17 @@ export function PremiumStatus({ daysLeft }: { daysLeft: number | null }) {
   const active = daysLeft !== null && daysLeft > 0;
 
   return (
-    <Link to="/premium" className="press surface-card relative flex items-center gap-4 overflow-hidden p-5">
+    <Link
+      to="/premium"
+      className="press surface-card relative flex items-center gap-4 overflow-hidden p-5"
+    >
       <span
         aria-hidden
         className="absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--gold) 34%, transparent), transparent 68%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in oklab, var(--gold) 34%, transparent), transparent 68%)",
+        }}
       />
       <span className="gold-metal flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
         <Crown className="relative h-5 w-5" strokeWidth={1.9} />
@@ -162,7 +185,10 @@ export function DemoCallout() {
       <span
         aria-hidden
         className="absolute -left-8 -top-10 h-28 w-28 rounded-full blur-2xl"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--gold) 24%, transparent), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in oklab, var(--gold) 24%, transparent), transparent 70%)",
+        }}
       />
       <div className="relative">
         <span className="gold-hairline inline-flex rounded-full px-2 py-1 text-[9.5px] tracking-wide text-[var(--gold)]">
@@ -196,12 +222,10 @@ export function DevAccessNotice() {
         <Unlock className="h-4 w-4" strokeWidth={1.8} />
       </span>
       <div className="min-w-0">
-        <p className="text-[12.5px] font-medium text-foreground">
-          ช่วงพัฒนา เปิดใช้ทุกฟีเจอร์ฟรี
-        </p>
+        <p className="text-[12.5px] font-medium text-foreground">ช่วงพัฒนา เปิดใช้ทุกฟีเจอร์ฟรี</p>
         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-          ผังดวง ดาวย้าย ย้อน–ไปข้างหน้า โหร AI และรายงานเชิงลึก
-          ใช้ได้เต็มรูปแบบทุกบัญชี โดยยังไม่ต้องเริ่มทดลองพรีเมียม
+          ผังดวง ดาวย้าย ย้อน–ไปข้างหน้า โหร AI และรายงานเชิงลึก ใช้ได้เต็มรูปแบบทุกบัญชี
+          โดยยังไม่ต้องเริ่มทดลองพรีเมียม
         </p>
       </div>
     </section>

@@ -101,7 +101,9 @@ function Index() {
               {profile.avatar ? (
                 <img src={profile.avatar} alt="" className="h-full w-full object-cover" />
               ) : (
-                <span className="text-sm font-semibold text-[var(--gold)]">{profile.name.slice(0, 1)}</span>
+                <span className="text-sm font-semibold text-[var(--gold)]">
+                  {profile.name.slice(0, 1)}
+                </span>
               )}
             </span>
             <div className="min-w-0">
@@ -117,10 +119,16 @@ function Index() {
             <span className="gold-hairline flex items-center gap-1.5 rounded-full px-2.5 py-1.5">
               <Flame className="h-3.5 w-3.5 text-[var(--gold)]" />
               <span className="numeral text-[11px] text-foreground">
-                {daysLeft !== null && daysLeft > 0 ? `${toThaiDigits(daysLeft)} วัน` : toThaiDigits(profile.points)}
+                {daysLeft !== null && daysLeft > 0
+                  ? `${toThaiDigits(daysLeft)} วัน`
+                  : toThaiDigits(profile.points)}
               </span>
             </span>
-            <Link to="/settings" className="press surface-inset rounded-full p-2" aria-label="ตั้งค่า">
+            <Link
+              to="/settings"
+              className="press surface-inset rounded-full p-2"
+              aria-label="ตั้งค่า"
+            >
               <Settings2 className="h-4 w-4 text-muted-foreground" />
             </Link>
           </div>
@@ -199,7 +207,9 @@ function Index() {
             <Gift className="h-4.5 w-4.5 text-[var(--gold)]" strokeWidth={1.8} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[13.5px] font-medium text-foreground">เช็คอินรับแต้มประจำวัน</span>
+            <span className="block text-[13.5px] font-medium text-foreground">
+              เช็คอินรับแต้มประจำวัน
+            </span>
             <span className="block text-[11.5px] text-muted-foreground">
               {reward
                 ? `ได้รับ ${toThaiDigits(reward)} แต้ม`
