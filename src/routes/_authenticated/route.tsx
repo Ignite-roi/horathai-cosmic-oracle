@@ -9,13 +9,11 @@ import { useEffect } from "react";
 
 import { LoadingSky } from "@/components/AppShell";
 import { APP_ACCESS_MODE } from "@/config/access";
+import { isPublicReviewRoute } from "@/config/public-review";
 import { useAccount, useSession } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useBirthContext } from "@/hooks/useHomeReading";
 import { useProfile } from "@/store/useProfile";
-
-/** Routes a guest may explore while the app runs in development_unlocked. */
-const GUEST_PATHS = ["/transits"];
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -23,7 +21,8 @@ export const Route = createFileRoute("/_authenticated")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
       const guestAllowed =
-        APP_ACCESS_MODE === "development_unlocked" && GUEST_PATHS.includes(location.pathname);
+        isPublicReviewRoute(location.pathname) ||
+        (APP_ACCESS_MODE === "development_unlocked" && location.pathname === "/transits");
       if (!guestAllowed) throw redirect({ to: "/" });
       return { user: null };
     }
