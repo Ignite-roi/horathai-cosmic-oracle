@@ -35,7 +35,7 @@ function InvitePage() {
       <span className="gold-metal mx-auto grid h-14 w-14 place-items-center rounded-2xl"><Gift className="h-6 w-6" /></span>
       <p className="mt-5 text-xs text-muted-foreground">โค้ดแนะนำเพื่อนของคุณ</p>
       <p className="numeral mt-2 text-3xl text-gold">{isSignedIn ? data.referralCode ?? "กำลังสร้าง…" : "••••••••••••"}</p>
-      {isSignedIn ? <div className="mt-5 grid grid-cols-2 gap-3"><Button variant="outline" className="h-12 rounded-2xl bg-background/45" onClick={() => void copy()}>{copied ? <CheckCircle2 /> : <Copy />} {copied ? "คัดลอกแล้ว" : "คัดลอกโค้ด"}</Button><Button className="h-12 rounded-2xl bg-[#06C755] text-white hover:bg-[#06C755]/90" onClick={() => void share()}><MessageCircle /> แชร์ผ่าน LINE</Button></div> : <Button className="btn-gold mt-5 h-12 w-full rounded-2xl" onClick={() => void login()}>เข้าสู่ระบบเพื่อรับโค้ด</Button>}
+      {isSignedIn ? <div className="mt-5 grid grid-cols-2 gap-3"><Button variant="outline" className="h-12 rounded-2xl bg-background/45" onClick={() => void copy()}>{copied ? <CheckCircle2 /> : <Copy />} {copied ? "คัดลอกแล้ว" : "คัดลอกโค้ด"}</Button><Button className="h-12 rounded-2xl bg-success text-primary-foreground hover:bg-success/90" onClick={() => void share()}><MessageCircle /> แชร์ผ่าน LINE</Button></div> : <Button className="btn-gold mt-5 h-12 w-full rounded-2xl" onClick={() => void login()}>เข้าสู่ระบบเพื่อรับโค้ด</Button>}
     </section>
     <SectionTitle kicker="How it works" title="ได้แต้มเมื่อไหร่" />
     <div className="space-y-3">{[

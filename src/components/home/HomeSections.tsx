@@ -225,7 +225,7 @@ export function DevAccessNotice() {
         <p className="text-[12.5px] font-medium text-foreground">ช่วงพัฒนา เปิดใช้ทุกฟีเจอร์ฟรี</p>
         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
           ผังดวง ดาวย้าย ย้อน–ไปข้างหน้า โหร AI และรายงานเชิงลึก ใช้ได้เต็มรูปแบบทุกบัญชี
-          โดยยังไม่ต้องเริ่มทดลองพรีเมียม
+          ทุกฟีเจอร์ยังเปิดให้ทดสอบ โดยระบบวันใช้งานพร้อมสำหรับช่วงเปิดบริการจริง
         </p>
       </div>
     </section>
