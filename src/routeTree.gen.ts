@@ -27,11 +27,14 @@ import { Route as AuthenticatedKnowledgeAdminRouteImport } from './routes/_authe
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedToolsRouteImport } from './routes/_authenticated/tools'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
+import { Route as AuthenticatedTransferTokenRouteImport } from './routes/_authenticated/transfer.$token'
 import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +128,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedToolsRoute = AuthenticatedToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedTransitsRoute = AuthenticatedTransitsRouteImport.update({
   id: '/transits',
   path: '/transits',
@@ -134,6 +142,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminKnowledgeRoute =
   AuthenticatedAdminKnowledgeRouteImport.update({
@@ -152,6 +165,12 @@ const AuthenticatedKnowledgeAdminEntityRoute =
     id: '/$entity',
     path: '/$entity',
     getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
+const AuthenticatedTransferTokenRoute =
+  AuthenticatedTransferTokenRouteImport.update({
+    id: '/transfer/$token',
+    path: '/transfer/$token',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedKnowledgeAdminSourcesSourceIdRoute =
   AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport.update({
@@ -178,10 +197,13 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/transfer/$token': typeof AuthenticatedTransferTokenRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -202,10 +224,13 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/premium': typeof AuthenticatedPremiumRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/transfer/$token': typeof AuthenticatedTransferTokenRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -229,10 +254,13 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/tools': typeof AuthenticatedToolsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/r/$token': typeof RTokenRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/_authenticated/transfer/$token': typeof AuthenticatedTransferTokenRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -256,10 +284,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/premium'
     | '/settings'
+    | '/tools'
     | '/transits'
     | '/wallet'
+    | '/r/$token'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/transfer/$token'
     | '/knowledge-admin/'
     | '/knowledge-admin/sources/$sourceId'
   fileRoutesByTo: FileRoutesByTo
@@ -280,10 +311,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/premium'
     | '/settings'
+    | '/tools'
     | '/transits'
     | '/wallet'
+    | '/r/$token'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/transfer/$token'
     | '/knowledge-admin'
     | '/knowledge-admin/sources/$sourceId'
   id:
@@ -306,10 +340,13 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/premium'
     | '/_authenticated/settings'
+    | '/_authenticated/tools'
     | '/_authenticated/transits'
     | '/_authenticated/wallet'
+    | '/r/$token'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
+    | '/_authenticated/transfer/$token'
     | '/_authenticated/knowledge-admin/'
     | '/_authenticated/knowledge-admin/sources/$sourceId'
   fileRoutesById: FileRoutesById
@@ -322,6 +359,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
+  RTokenRoute: typeof RTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -452,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/tools': {
+      id: '/_authenticated/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof AuthenticatedToolsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/transits': {
       id: '/_authenticated/transits'
       path: '/transits'
@@ -465,6 +510,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/wallet'
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/knowledge': {
       id: '/_authenticated/admin/knowledge'
@@ -486,6 +538,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/knowledge-admin/$entity'
       preLoaderRoute: typeof AuthenticatedKnowledgeAdminEntityRouteImport
       parentRoute: typeof AuthenticatedKnowledgeAdminRoute
+    }
+    '/_authenticated/transfer/$token': {
+      id: '/_authenticated/transfer/$token'
+      path: '/transfer/$token'
+      fullPath: '/transfer/$token'
+      preLoaderRoute: typeof AuthenticatedTransferTokenRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/knowledge-admin/sources/$sourceId': {
       id: '/_authenticated/knowledge-admin/sources/$sourceId'
@@ -530,9 +589,11 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedToolsRoute: typeof AuthenticatedToolsRoute
   AuthenticatedTransitsRoute: typeof AuthenticatedTransitsRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedAdminKnowledgeRoute: typeof AuthenticatedAdminKnowledgeRoute
+  AuthenticatedTransferTokenRoute: typeof AuthenticatedTransferTokenRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -548,9 +609,11 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedToolsRoute: AuthenticatedToolsRoute,
   AuthenticatedTransitsRoute: AuthenticatedTransitsRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedAdminKnowledgeRoute: AuthenticatedAdminKnowledgeRoute,
+  AuthenticatedTransferTokenRoute: AuthenticatedTransferTokenRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -565,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
+  RTokenRoute: RTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
