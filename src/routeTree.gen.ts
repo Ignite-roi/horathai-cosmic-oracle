@@ -33,6 +33,8 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedToolsRouteImport } from './routes/_authenticated/tools'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as TransferTokenRouteImport } from './routes/transfer.$token'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
@@ -162,6 +164,16 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RTokenRoute = RTokenRouteImport.update({
   id: '/r/$token',
   path: '/r/$token',
@@ -226,8 +238,10 @@ export interface FileRoutesByFullPath {
   '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog/': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
@@ -257,8 +271,10 @@ export interface FileRoutesByTo {
   '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
@@ -291,8 +307,10 @@ export interface FileRoutesById {
   '/_authenticated/tools': typeof AuthenticatedToolsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
@@ -325,8 +343,10 @@ export interface FileRouteTypes {
     | '/tools'
     | '/transits'
     | '/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog/'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/api/public/blog-ingest'
@@ -356,8 +376,10 @@ export interface FileRouteTypes {
     | '/tools'
     | '/transits'
     | '/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
     | '/api/public/blog-ingest'
@@ -389,8 +411,10 @@ export interface FileRouteTypes {
     | '/_authenticated/tools'
     | '/_authenticated/transits'
     | '/_authenticated/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog/'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
     | '/api/public/blog-ingest'
@@ -408,8 +432,10 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   RTokenRoute: typeof RTokenRoute
   TransferTokenRoute: typeof TransferTokenRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   ApiPublicBlogIngestRoute: typeof ApiPublicBlogIngestRoute
 }
 
@@ -583,6 +609,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/r/$token': {
       id: '/r/$token'
       path: '/r/$token'
@@ -709,8 +749,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
+  BlogSlugRoute: BlogSlugRoute,
   RTokenRoute: RTokenRoute,
   TransferTokenRoute: TransferTokenRoute,
+  BlogIndexRoute: BlogIndexRoute,
   ApiPublicBlogIngestRoute: ApiPublicBlogIngestRoute,
 }
 export const routeTree = rootRouteImport
