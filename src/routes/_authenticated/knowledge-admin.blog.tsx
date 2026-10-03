@@ -27,7 +27,7 @@ function BlogAdmin() {
   const posts = useQuery({ queryKey: ["admin-blog"], queryFn: () => list() });
   const [edit, setEdit] = useState<Row | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-blog"] });
-  const save = useMutation({ mutationFn: (d: Parameters<typeof update>[0]["data"]) => update({ data: d }), onSuccess: () => { setEdit(null); void refresh(); } });
+  const save = useMutation({ mutationFn: (d: { id: string; title?: string; meta_title?: string | null; meta_description?: string | null; content_md?: string; status?: "draft" | "published" | "archived" }) => update({ data: d }), onSuccess: () => { setEdit(null); void refresh(); } });
   const del = useMutation({ mutationFn: (id: string) => remove({ data: { id } }), onSuccess: refresh });
 
   return (
