@@ -12,3 +12,13 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
+
+Sitemap: https://thaihora.app/sitemap.xml
