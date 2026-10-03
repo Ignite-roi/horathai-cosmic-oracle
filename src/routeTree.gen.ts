@@ -40,6 +40,7 @@ import { Route as TransferTokenRouteImport } from './routes/transfer.$token'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
+import { Route as AuthenticatedKnowledgeAdminBlogRouteImport } from './routes/_authenticated/knowledge-admin.blog'
 import { Route as ApiPublicBlogIngestRouteImport } from './routes/api/public/blog-ingest'
 import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
 
@@ -202,6 +203,12 @@ const AuthenticatedKnowledgeAdminEntityRoute =
     path: '/$entity',
     getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
   } as any)
+const AuthenticatedKnowledgeAdminBlogRoute =
+  AuthenticatedKnowledgeAdminBlogRouteImport.update({
+    id: '/blog',
+    path: '/blog',
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
 const ApiPublicBlogIngestRoute = ApiPublicBlogIngestRouteImport.update({
   id: '/api/public/blog-ingest',
   path: '/api/public/blog-ingest',
@@ -244,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -313,6 +322,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/_authenticated/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
   '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/knowledge-admin/blog'
     | '/api/public/blog-ingest'
     | '/knowledge-admin/'
     | '/knowledge-admin/sources/$sourceId'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/knowledge-admin/blog'
     | '/api/public/blog-ingest'
     | '/knowledge-admin'
     | '/knowledge-admin/sources/$sourceId'
@@ -417,6 +429,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
+    | '/_authenticated/knowledge-admin/blog'
     | '/api/public/blog-ingest'
     | '/_authenticated/knowledge-admin/'
     | '/_authenticated/knowledge-admin/sources/$sourceId'
@@ -658,6 +671,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKnowledgeAdminEntityRouteImport
       parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
+    '/_authenticated/knowledge-admin/blog': {
+      id: '/_authenticated/knowledge-admin/blog'
+      path: '/blog'
+      fullPath: '/knowledge-admin/blog'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
+    }
     '/api/public/blog-ingest': {
       id: '/api/public/blog-ingest'
       path: '/api/public/blog-ingest'
@@ -677,6 +697,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedKnowledgeAdminRouteChildren {
   AuthenticatedKnowledgeAdminEntityRoute: typeof AuthenticatedKnowledgeAdminEntityRoute
+  AuthenticatedKnowledgeAdminBlogRoute: typeof AuthenticatedKnowledgeAdminBlogRoute
   AuthenticatedKnowledgeAdminIndexRoute: typeof AuthenticatedKnowledgeAdminIndexRoute
   AuthenticatedKnowledgeAdminSourcesSourceIdRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -685,6 +706,7 @@ const AuthenticatedKnowledgeAdminRouteChildren: AuthenticatedKnowledgeAdminRoute
   {
     AuthenticatedKnowledgeAdminEntityRoute:
       AuthenticatedKnowledgeAdminEntityRoute,
+    AuthenticatedKnowledgeAdminBlogRoute: AuthenticatedKnowledgeAdminBlogRoute,
     AuthenticatedKnowledgeAdminIndexRoute:
       AuthenticatedKnowledgeAdminIndexRoute,
     AuthenticatedKnowledgeAdminSourcesSourceIdRoute:

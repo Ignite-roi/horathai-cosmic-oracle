@@ -44,7 +44,7 @@ export const Route = createFileRoute("/blog/$slug")({
         ...(p.published_at ? [{ property: "article:published_time", content: p.published_at }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
-      scripts: p.schema_jsonld.map((s) => ({ type: "application/ld+json", children: JSON.stringify(s) })),
+      scripts: p.schema_jsonld.map((s) => ({ type: "application/ld+json", children: s })),
     };
   },
   notFoundComponent: NotFoundPost,

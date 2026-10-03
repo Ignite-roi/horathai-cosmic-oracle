@@ -84,7 +84,7 @@ export const getPublishedPost = createServerFn({ method: "GET" })
     );
     const schema = (Array.isArray(post.schema_jsonld) ? post.schema_jsonld : []).filter(
       (s) => !!s && typeof s === "object" && !Array.isArray(s),
-    ) as Record<string, unknown>[];
+    ).map((s) => JSON.stringify(s).replace(/</g, "\\u003c"));
     return { post: { ...post, faq, schema_jsonld: schema }, related };
   });
 
@@ -132,7 +132,7 @@ export const adminUpdateBlogPost = createServerFn({ method: "POST" })
     if (!existing) throw new Error("ไม่พบบทความ");
     const update: Record<string, unknown> = { ...patch, updated_at: new Date().toISOString() };
     if (patch.status === "published" && !existing.published_at) update["published_at"] = new Date().toISOString();
-    const { error } = await supabaseAdmin.from("blog_posts").update(update).eq("id", id);
+    const { error } = await supabaseAdmin.from("blog_posts").update(update as never).eq("id", id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
