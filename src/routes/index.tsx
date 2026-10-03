@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
 import { useAccount } from "@/hooks/useAuth";
 import { useLineAuth } from "@/context/LineAuthContext";
+import { LatestPosts } from "@/components/blog/LatestPosts";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-10">
       <LiveUniverse />
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -271,6 +272,13 @@ function Entry() {
       )}
 
       <Diagnostics />
+
+      {!inLine && <LatestPosts />}
+      <p className="mt-6 flex justify-center gap-4 text-[11px] text-muted-foreground">
+        <Link to="/blog">บทความ</Link>
+        <Link to="/service-info">ข้อมูลบริการ</Link>
+        <Link to="/terms">เงื่อนไข</Link>
+      </p>
     </Shell>
   );
 }

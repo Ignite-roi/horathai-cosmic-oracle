@@ -15,6 +15,7 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServiceInfoRouteImport } from './routes/service-info'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TransitRouteImport } from './routes/transit'
 import { Route as AuthenticatedAiAstrologerRouteImport } from './routes/_authenticated/ai-astrologer'
@@ -32,11 +33,15 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedToolsRouteImport } from './routes/_authenticated/tools'
 import { Route as AuthenticatedTransitsRouteImport } from './routes/_authenticated/transits'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as TransferTokenRouteImport } from './routes/transfer.$token'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedKnowledgeAdminIndexRouteImport } from './routes/_authenticated/knowledge-admin.index'
 import { Route as AuthenticatedKnowledgeAdminEntityRouteImport } from './routes/_authenticated/knowledge-admin.$entity'
+import { Route as AuthenticatedKnowledgeAdminBlogRouteImport } from './routes/_authenticated/knowledge-admin.blog'
+import { Route as ApiPublicBlogIngestRouteImport } from './routes/api/public/blog-ingest'
 import { Route as AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport } from './routes/_authenticated/knowledge-admin.sources.$sourceId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -66,6 +71,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ServiceInfoRoute = ServiceInfoRouteImport.update({
   id: '/service-info',
   path: '/service-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -155,6 +165,16 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RTokenRoute = RTokenRouteImport.update({
   id: '/r/$token',
   path: '/r/$token',
@@ -183,6 +203,17 @@ const AuthenticatedKnowledgeAdminEntityRoute =
     path: '/$entity',
     getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
   } as any)
+const AuthenticatedKnowledgeAdminBlogRoute =
+  AuthenticatedKnowledgeAdminBlogRouteImport.update({
+    id: '/blog',
+    path: '/blog',
+    getParentRoute: () => AuthenticatedKnowledgeAdminRoute,
+  } as any)
+const ApiPublicBlogIngestRoute = ApiPublicBlogIngestRouteImport.update({
+  id: '/api/public/blog-ingest',
+  path: '/api/public/blog-ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedKnowledgeAdminSourcesSourceIdRoute =
   AuthenticatedKnowledgeAdminSourcesSourceIdRouteImport.update({
     id: '/sources/$sourceId',
@@ -196,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
   '/service-info': typeof ServiceInfoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -213,10 +245,14 @@ export interface FileRoutesByFullPath {
   '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog/': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
+  '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -226,6 +262,7 @@ export interface FileRoutesByTo {
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
   '/service-info': typeof ServiceInfoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -242,10 +279,14 @@ export interface FileRoutesByTo {
   '/tools': typeof AuthenticatedToolsRoute
   '/transits': typeof AuthenticatedTransitsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog': typeof BlogIndexRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
+  '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/knowledge-admin': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -257,6 +298,7 @@ export interface FileRoutesById {
   '/chart': typeof ChartRoute
   '/privacy': typeof PrivacyRoute
   '/service-info': typeof ServiceInfoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/transit': typeof TransitRoute
   '/_authenticated/ai-astrologer': typeof AuthenticatedAiAstrologerRoute
@@ -274,10 +316,14 @@ export interface FileRoutesById {
   '/_authenticated/tools': typeof AuthenticatedToolsRoute
   '/_authenticated/transits': typeof AuthenticatedTransitsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/r/$token': typeof RTokenRoute
   '/transfer/$token': typeof TransferTokenRoute
+  '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/knowledge-admin/$entity': typeof AuthenticatedKnowledgeAdminEntityRoute
+  '/_authenticated/knowledge-admin/blog': typeof AuthenticatedKnowledgeAdminBlogRoute
+  '/api/public/blog-ingest': typeof ApiPublicBlogIngestRoute
   '/_authenticated/knowledge-admin/': typeof AuthenticatedKnowledgeAdminIndexRoute
   '/_authenticated/knowledge-admin/sources/$sourceId': typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -289,6 +335,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/privacy'
     | '/service-info'
+    | '/sitemap.xml'
     | '/terms'
     | '/transit'
     | '/ai-astrologer'
@@ -306,10 +353,14 @@ export interface FileRouteTypes {
     | '/tools'
     | '/transits'
     | '/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog/'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/knowledge-admin/blog'
+    | '/api/public/blog-ingest'
     | '/knowledge-admin/'
     | '/knowledge-admin/sources/$sourceId'
   fileRoutesByTo: FileRoutesByTo
@@ -319,6 +370,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/privacy'
     | '/service-info'
+    | '/sitemap.xml'
     | '/terms'
     | '/transit'
     | '/ai-astrologer'
@@ -335,10 +387,14 @@ export interface FileRouteTypes {
     | '/tools'
     | '/transits'
     | '/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog'
     | '/admin/knowledge'
     | '/knowledge-admin/$entity'
+    | '/knowledge-admin/blog'
+    | '/api/public/blog-ingest'
     | '/knowledge-admin'
     | '/knowledge-admin/sources/$sourceId'
   id:
@@ -349,6 +405,7 @@ export interface FileRouteTypes {
     | '/chart'
     | '/privacy'
     | '/service-info'
+    | '/sitemap.xml'
     | '/terms'
     | '/transit'
     | '/_authenticated/ai-astrologer'
@@ -366,10 +423,14 @@ export interface FileRouteTypes {
     | '/_authenticated/tools'
     | '/_authenticated/transits'
     | '/_authenticated/wallet'
+    | '/blog/$slug'
     | '/r/$token'
     | '/transfer/$token'
+    | '/blog/'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/knowledge-admin/$entity'
+    | '/_authenticated/knowledge-admin/blog'
+    | '/api/public/blog-ingest'
     | '/_authenticated/knowledge-admin/'
     | '/_authenticated/knowledge-admin/sources/$sourceId'
   fileRoutesById: FileRoutesById
@@ -381,10 +442,14 @@ export interface RootRouteChildren {
   ChartRoute: typeof ChartRoute
   PrivacyRoute: typeof PrivacyRoute
   ServiceInfoRoute: typeof ServiceInfoRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TransitRoute: typeof TransitRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   RTokenRoute: typeof RTokenRoute
   TransferTokenRoute: typeof TransferTokenRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  ApiPublicBlogIngestRoute: typeof ApiPublicBlogIngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -429,6 +494,13 @@ declare module '@tanstack/react-router' {
       path: '/service-info'
       fullPath: '/service-info'
       preLoaderRoute: typeof ServiceInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -550,6 +622,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/r/$token': {
       id: '/r/$token'
       path: '/r/$token'
@@ -585,6 +671,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKnowledgeAdminEntityRouteImport
       parentRoute: typeof AuthenticatedKnowledgeAdminRoute
     }
+    '/_authenticated/knowledge-admin/blog': {
+      id: '/_authenticated/knowledge-admin/blog'
+      path: '/blog'
+      fullPath: '/knowledge-admin/blog'
+      preLoaderRoute: typeof AuthenticatedKnowledgeAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedKnowledgeAdminRoute
+    }
+    '/api/public/blog-ingest': {
+      id: '/api/public/blog-ingest'
+      path: '/api/public/blog-ingest'
+      fullPath: '/api/public/blog-ingest'
+      preLoaderRoute: typeof ApiPublicBlogIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/knowledge-admin/sources/$sourceId': {
       id: '/_authenticated/knowledge-admin/sources/$sourceId'
       path: '/sources/$sourceId'
@@ -597,6 +697,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedKnowledgeAdminRouteChildren {
   AuthenticatedKnowledgeAdminEntityRoute: typeof AuthenticatedKnowledgeAdminEntityRoute
+  AuthenticatedKnowledgeAdminBlogRoute: typeof AuthenticatedKnowledgeAdminBlogRoute
   AuthenticatedKnowledgeAdminIndexRoute: typeof AuthenticatedKnowledgeAdminIndexRoute
   AuthenticatedKnowledgeAdminSourcesSourceIdRoute: typeof AuthenticatedKnowledgeAdminSourcesSourceIdRoute
 }
@@ -605,6 +706,7 @@ const AuthenticatedKnowledgeAdminRouteChildren: AuthenticatedKnowledgeAdminRoute
   {
     AuthenticatedKnowledgeAdminEntityRoute:
       AuthenticatedKnowledgeAdminEntityRoute,
+    AuthenticatedKnowledgeAdminBlogRoute: AuthenticatedKnowledgeAdminBlogRoute,
     AuthenticatedKnowledgeAdminIndexRoute:
       AuthenticatedKnowledgeAdminIndexRoute,
     AuthenticatedKnowledgeAdminSourcesSourceIdRoute:
@@ -666,10 +768,14 @@ const rootRouteChildren: RootRouteChildren = {
   ChartRoute: ChartRoute,
   PrivacyRoute: PrivacyRoute,
   ServiceInfoRoute: ServiceInfoRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TransitRoute: TransitRoute,
+  BlogSlugRoute: BlogSlugRoute,
   RTokenRoute: RTokenRoute,
   TransferTokenRoute: TransferTokenRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  ApiPublicBlogIngestRoute: ApiPublicBlogIngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

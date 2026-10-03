@@ -1,14 +1,56 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
 
 User-agent: Twitterbot
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
 
 User-agent: facebookexternalhit
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
 
 User-agent: *
 Allow: /
+Disallow: /knowledge-admin
+Disallow: /admin
+Disallow: /settings
+Disallow: /wallet
+Disallow: /invite
+Disallow: /gift-days
+Disallow: /onboarding
+Disallow: /api/
+
+Sitemap: https://thaihora.app/sitemap.xml
