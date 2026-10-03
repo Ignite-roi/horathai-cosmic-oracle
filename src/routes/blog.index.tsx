@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -18,7 +18,7 @@ const TITLE = "บทความโหราศาสตร์ไทย | Horat
 const DESC = "บทความโหราศาสตร์ไทย ลัคนา ดาวย้าย ดวงกำเนิด และวิธีอ่านดวงอย่างมีหลักการ จาก Horathai AI";
 
 export const Route = createFileRoute("/blog/")({
-  loader: ({ context }) => context.queryClient.prefetchQuery(blogListQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData(blogListQuery),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -37,7 +37,8 @@ export const Route = createFileRoute("/blog/")({
 });
 
 function BlogIndex() {
-  const { data, isLoading } = useQuery(blogListQuery);
+  const { data } = useSuspenseQuery(blogListQuery);
+  const isLoading = false;
   const [q, setQ] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [page, setPage] = useState(1);
