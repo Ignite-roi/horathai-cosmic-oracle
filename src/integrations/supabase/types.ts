@@ -664,6 +664,78 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author: string | null
+          content_md: string
+          cover_alt: string | null
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          faq: Json
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          primary_keyword: string | null
+          published_at: string | null
+          quality: Json | null
+          reading_minutes: number | null
+          schema_jsonld: Json
+          slug: string
+          source: string | null
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          content_md: string
+          cover_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          primary_keyword?: string | null
+          published_at?: string | null
+          quality?: Json | null
+          reading_minutes?: number | null
+          schema_jsonld?: Json
+          slug: string
+          source?: string | null
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          content_md?: string
+          cover_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          faq?: Json
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          primary_keyword?: string | null
+          published_at?: string | null
+          quality?: Json | null
+          reading_minutes?: number | null
+          schema_jsonld?: Json
+          slug?: string
+          source?: string | null
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       card_draws: {
         Row: {
           activated_rule_ids: string[]
