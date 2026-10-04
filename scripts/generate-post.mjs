@@ -95,7 +95,7 @@ async function callGemini(keyword) {
       }),
     });
     const text = await res.text();
-    if (res.status === 404 || res.status === 403) {
+    if (res.status === 404 || res.status === 403 || res.status === 429 || res.status >= 500) {
       lastErr = `${model}: HTTP ${res.status}`;
       console.log(`↪️  ${lastErr} — ลองรุ่นถัดไป`);
       continue;
@@ -104,6 +104,8 @@ async function callGemini(keyword) {
     const data = JSON.parse(text);
     const out = data.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
     console.log(`🤖 ใช้รุ่น ${model}`);
+    const u = data.usageMetadata || {};
+    console.log(`🧮 tokens: prompt=${u.promptTokenCount ?? "?"} output=${u.candidatesTokenCount ?? "?"} thinking=${u.thoughtsTokenCount ?? 0} total=${u.totalTokenCount ?? "?"}`);
     return JSON.parse(out);
   }
   throw new Error(`เรียก Gemini ไม่ได้ทุกรุ่น (${lastErr})`);
