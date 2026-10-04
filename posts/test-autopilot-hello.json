@@ -3,7 +3,7 @@
   "title": "ทดสอบระบบ Blog Autopilot",
   "meta_title": "ทดสอบระบบ Blog Autopilot | Horathai",
   "meta_description": "บทความทดสอบการเชื่อมต่อระบบส่งบทความอัตโนมัติ",
-  "excerpt": "บทความทดสอบ — ลบหรือเปลี่ยนเป็น archived หลังทดสอบเสร็จ",
+  "excerpt": "บทความทดสอบระบบ Autopilot — ลบได้หลังทดสอบผ่าน",
   "content_md": "## ทดสอบ\n\nถ้าเห็นบทความนี้ใน /knowledge-admin/blog แปลว่า API Ingest ทำงานแล้ว\n\n| รายการ | สถานะ |\n|---|---|\n| Secret | ✅ |\n| Upsert | ✅ |",
   "tags": ["ทดสอบ"],
   "primary_keyword": "ทดสอบ autopilot",
