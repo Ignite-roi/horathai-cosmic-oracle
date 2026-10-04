@@ -1,0 +1,52 @@
+name: Blog Autopilot
+
+on:
+  # รันทุกวัน 07:00 น. เวลาไทย (00:00 UTC)
+  schedule:
+    - cron: "0 0 * * *"
+  # รันเองจากแท็บ Actions ได้
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "ปลายทาง"
+        type: choice
+        options: [production, preview]
+        default: preview
+      force_update:
+        description: "อัปเดตบทความที่มี slug อยู่แล้วด้วย"
+        type: boolean
+        default: false
+      dry_run:
+        description: "ทดสอบโดยไม่ยิงจริง"
+        type: boolean
+        default: false
+  # รันอัตโนมัติเมื่อมีการเพิ่ม/แก้ไฟล์ใน posts/
+  push:
+    branches: [main]
+    paths: ["posts/**"]
+
+concurrency:
+  group: blog-autopilot
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # ── ถ้ามีขั้นตอน AI สร้างบทความ ให้วางไว้ตรงนี้ ──
+      # ให้มันเขียนไฟล์ JSON ลงโฟลเดอร์ posts/ (ดูตัวอย่าง posts/test-autopilot-hello.json)
+
+      - name: Ingest posts + ping IndexNow
+        env:
+          BLOG_BASE_URL: ${{ (github.event_name == 'workflow_dispatch' && inputs.target == 'preview') && vars.PREVIEW_URL || vars.PRODUCTION_URL }}
+          AUTOPILOT_SECRET: ${{ secrets.AUTOPILOT_SECRET }}
+          FORCE_UPDATE: ${{ inputs.force_update && '1' || '0' }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: node scripts/publish-posts.mjs
