@@ -11,7 +11,7 @@ on:
         description: "ปลายทาง"
         type: choice
         options: [production, preview]
-        default: preview
+        default: production
       force_update:
         description: "อัปเดตบทความที่มี slug อยู่แล้วด้วย"
         type: boolean
@@ -45,7 +45,7 @@ jobs:
 
       - name: Ingest posts + ping IndexNow
         env:
-          BLOG_BASE_URL: ${{ (github.event_name == 'workflow_dispatch' && inputs.target == 'preview') && vars.PREVIEW_URL || vars.PRODUCTION_URL }}
+          BLOG_BASE_URL: ${{ (github.event_name == 'workflow_dispatch' && inputs.target == 'preview') && (vars.PREVIEW_URL || 'https://project--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573-dev.lovable.app') || (vars.PRODUCTION_URL || 'https://thaihora.app') }}
           AUTOPILOT_SECRET: ${{ secrets.AUTOPILOT_SECRET }}
           FORCE_UPDATE: ${{ inputs.force_update && '1' || '0' }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
