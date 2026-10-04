@@ -1,12 +1,16 @@
 name: Blog Autopilot
 
 on:
-  # รันทุกวัน 07:00 น. เวลาไทย (00:00 UTC)
+  # ทุกวัน 07:00 น. เวลาไทย (00:00 UTC): AI เขียนบทความใหม่ → ลงเว็บ → แจ้ง IndexNow
   schedule:
     - cron: "0 0 * * *"
   # รันเองจากแท็บ Actions ได้
   workflow_dispatch:
     inputs:
+      generate:
+        description: "ให้ AI เขียนบทความใหม่ก่อนส่ง"
+        type: boolean
+        default: true
       target:
         description: "ปลายทาง"
         type: choice
@@ -20,10 +24,13 @@ on:
         description: "ทดสอบโดยไม่ยิงจริง"
         type: boolean
         default: false
-  # รันอัตโนมัติเมื่อมีการเพิ่ม/แก้ไฟล์ใน posts/
+  # เพิ่ม/แก้ไฟล์ใน posts/ เอง → ส่งขึ้นเว็บทันที (ไม่เรียก AI)
   push:
     branches: [main]
     paths: ["posts/**"]
+
+permissions:
+  contents: write
 
 concurrency:
   group: blog-autopilot
@@ -32,7 +39,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
 
@@ -40,8 +47,24 @@ jobs:
         with:
           node-version: 22
 
-      # ── ถ้ามีขั้นตอน AI สร้างบทความ ให้วางไว้ตรงนี้ ──
-      # ให้มันเขียนไฟล์ JSON ลงโฟลเดอร์ posts/ (ดูตัวอย่าง posts/test-autopilot-hello.json)
+      - name: AI writes new post(s)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          POSTS_PER_RUN: ${{ vars.POSTS_PER_RUN || '1' }}
+          POST_STATUS: ${{ vars.POST_STATUS || 'published' }}
+        run: node scripts/generate-post.mjs
+
+      - name: Save new post(s) to repo
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate)
+        run: |
+          git config user.name "horathai-autopilot"
+          git config user.email "autopilot@users.noreply.github.com"
+          git add posts/
+          if git diff --cached --quiet; then echo "ไม่มีไฟล์ใหม่"; exit 0; fi
+          git commit -m "blog: autopilot post $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
 
       - name: Ingest posts + ping IndexNow
         env:
