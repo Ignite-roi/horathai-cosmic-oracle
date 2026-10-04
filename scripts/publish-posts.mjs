@@ -19,8 +19,13 @@ const INDEXNOW_KEY = process.env.INDEXNOW_KEY || "7303c0391e1cbf898e1ef4c9034081
 const POSTS_DIR = process.env.POSTS_DIR || "posts";
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
+function fail(message) {
+  console.error(`❌ ${message}`);
+  console.log("::error::" + message);
+}
+
 if (!SECRET) {
-  console.error("❌ ไม่พบ AUTOPILOT_SECRET");
+  fail("ไม่พบ AUTOPILOT_SECRET (ตั้งใน GitHub → Settings → Secrets and variables → Actions)");
   process.exit(1);
 }
 
@@ -30,8 +35,15 @@ async function ingest(body) {
     headers: { "content-type": "application/json", "x-autopilot-secret": SECRET },
     body: JSON.stringify(body),
   });
-  const data = await res.json().catch(() => ({ ok: false, error: `HTTP ${res.status} (non-JSON)` }));
-  if (!res.ok || !data.ok) throw new Error(`${res.status} ${data.error || "unknown error"}`);
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    const snippet = text.slice(0, 200).replaceAll(SECRET, "***");
+    throw new Error(`HTTP ${res.status} non-JSON response from ${BASE}: ${snippet}`);
+  }
+  if (!res.ok || !data.ok) throw new Error(`HTTP ${res.status} ${data.error || "unknown error"}`);
   return data;
 }
 
