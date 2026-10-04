@@ -95,7 +95,7 @@ async function callGemini(keyword) {
       }),
     });
     const text = await res.text();
-    if (res.status === 404 || res.status === 403) {
+    if (res.status === 404 || res.status === 403 || res.status === 429 || res.status >= 500) {
       lastErr = `${model}: HTTP ${res.status}`;
       console.log(`↪️  ${lastErr} — ลองรุ่นถัดไป`);
       continue;
