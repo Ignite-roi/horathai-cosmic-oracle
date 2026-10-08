@@ -12,13 +12,10 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LineAuthProvider } from "../context/LineAuthContext";
-import { BRAND_NAME, DEFAULT_OG_IMAGE, SITE_LOCALE } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      {/* Unknown routes must not be indexed or inherit homepage metadata (React 19 hoists these into <head>). */}
-      <meta name="robots" content="noindex, nofollow" />
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
@@ -78,8 +75,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
-    // Site-wide defaults only. Each indexable page sets its own title/description/canonical
-    // via pageHead() in src/lib/seo.ts; app routes add noindex.
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -88,14 +83,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "description",
         content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
       },
-      { name: "author", content: BRAND_NAME },
+      { name: "author", content: "Horathai AI" },
       { name: "theme-color", content: "#12101f" },
-      { property: "og:site_name", content: BRAND_NAME },
-      { property: "og:locale", content: SITE_LOCALE },
+      { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
+      {
+        property: "og:description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: DEFAULT_OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: DEFAULT_OG_IMAGE },
+      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
+      {
+        name: "twitter:description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f7002dc-d294-4766-9be5-fefd41b05e93/id-preview-7292ccd7--ecf265fa-3f17-4a6f-bd0f-9ae9819e8573.lovable.app-1785822934901.png",
+      },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

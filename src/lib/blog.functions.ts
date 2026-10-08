@@ -5,10 +5,8 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
-import { SITE_URL, faqSchemaMatchesVisible } from "@/lib/seo";
 
-// Canonical host lives in src/lib/seo.ts; re-exported for existing imports.
-export { SITE_URL };
+export const SITE_URL = "https://thaihora.app";
 
 export type BlogCard = {
   slug: string;
@@ -84,11 +82,9 @@ export const getPublishedPost = createServerFn({ method: "GET" })
     const faq = (Array.isArray(post.faq) ? post.faq : []).filter(
       (f): f is FaqItem => !!f && typeof f === "object" && typeof (f as FaqItem).q === "string" && typeof (f as FaqItem).a === "string",
     );
-    // SEO OS hard gate: FAQPage schema must match the visible FAQ exactly, otherwise drop it.
-    const schema = (Array.isArray(post.schema_jsonld) ? post.schema_jsonld : [])
-      .filter((s) => !!s && typeof s === "object" && !Array.isArray(s))
-      .filter((s) => (s as { "@type"?: unknown })["@type"] !== "FAQPage" || faqSchemaMatchesVisible(s, faq))
-      .map((s) => JSON.stringify(s).replace(/</g, "\\u003c"));
+    const schema = (Array.isArray(post.schema_jsonld) ? post.schema_jsonld : []).filter(
+      (s) => !!s && typeof s === "object" && !Array.isArray(s),
+    ).map((s) => JSON.stringify(s).replace(/</g, "\\u003c"));
     return { post: { ...post, faq, schema_jsonld: schema }, related };
   });
 

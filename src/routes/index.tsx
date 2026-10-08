@@ -12,22 +12,23 @@ import { LiveUniverse } from "@/components/cosmos/LiveUniverse";
 import { useAccount } from "@/hooks/useAuth";
 import { useLineAuth } from "@/context/LineAuthContext";
 import { LatestPosts } from "@/components/blog/LatestPosts";
-import { listPublishedPosts, type BlogCard } from "@/lib/blog.functions";
-import { jsonLd, pageHead, siteEntitySchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  // Server-load the latest posts so the homepage HTML contains crawlable article links.
-  loader: async (): Promise<{ latest: BlogCard[] }> => {
-    const latest = await listPublishedPosts({ data: { limit: 3 } }).catch(() => [] as BlogCard[]);
-    return { latest };
-  },
   head: () => ({
-    ...pageHead({
-      path: "/",
-      title: "Horathai AI — โหราศาสตร์ไทยด้วย AI",
-      description: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
-    }),
-    scripts: [{ type: "application/ld+json", children: jsonLd(siteEntitySchema()) }],
+    meta: [
+      { title: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
+      {
+        name: "description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
+      { property: "og:title", content: "Horathai AI — โหราศาสตร์ไทยด้วย AI" },
+      {
+        property: "og:description",
+        content: "ผูกดวงกำเนิดด้วยโมเดล Lahiri แบบมีเวอร์ชัน ดูดาวย้าย และปรึกษาโหร AI ผ่าน LINE",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
   }),
   component: Entry,
 });
@@ -128,7 +129,6 @@ function Diagnostics() {
 
 function Entry() {
   const navigate = useNavigate();
-  const { latest } = Route.useLoaderData();
   const {
     status,
     error,
@@ -155,24 +155,22 @@ function Entry() {
       </Shell>
     );
 
-  // Loading states are what the server renders, so they keep the brand H1,
-  // a short factual intro and crawlable links (SEO OS: raw HTML must describe the page).
-  const loadingLabel =
-    status === "idle" || status === "loading_config"
-      ? "กำลังเริ่มระบบ…"
-      : status === "initializing"
-        ? "กำลังเชื่อมต่อ LINE…"
-        : status === "signing_in"
-          ? "กำลังยืนยันตัวตนกับ LINE…"
-          : null;
-  if (loadingLabel)
+  if (status === "idle" || status === "loading_config")
     return (
       <Shell>
-        <BrandHeading />
-        <div className="mt-8">
-          <Orb label={loadingLabel} />
-        </div>
-        <PublicFooter latest={latest} showPosts={!inLine} />
+        <Orb label="กำลังเริ่มระบบ…" />
+      </Shell>
+    );
+  if (status === "initializing")
+    return (
+      <Shell>
+        <Orb label="กำลังเชื่อมต่อ LINE…" />
+      </Shell>
+    );
+  if (status === "signing_in")
+    return (
+      <Shell>
+        <Orb label="กำลังยืนยันตัวตนกับ LINE…" />
       </Shell>
     );
 
@@ -217,7 +215,8 @@ function Entry() {
 
   return (
     <Shell>
-      <BrandHeading />
+      <h1 className="display text-2xl text-foreground">Horathai AI</h1>
+      <p className="mt-2 text-[12px] tracking-[0.2em] text-primary/80">โหราศาสตร์ไทยด้วย AI</p>
 
       {!inLine && (
         <p className="mt-5 flex items-center justify-center gap-2 text-[12px] leading-relaxed text-muted-foreground">
@@ -274,38 +273,12 @@ function Entry() {
 
       <Diagnostics />
 
-      <PublicFooter latest={latest} showPosts={!inLine} />
-    </Shell>
-  );
-}
-
-function BrandHeading() {
-  return (
-    <>
-      <h1 className="display text-2xl text-foreground">Horathai AI</h1>
-      <p className="mt-2 text-[12px] tracking-[0.2em] text-primary/80">โหราศาสตร์ไทยด้วย AI</p>
-    </>
-  );
-}
-
-/** Public, server-rendered links + intro. Facts only from /service-info and /terms. */
-function PublicFooter({ latest, showPosts }: { latest: BlogCard[]; showPosts: boolean }) {
-  return (
-    <>
-      {showPosts && <LatestPosts initialPosts={latest} />}
-      {showPosts && (
-        <p className="mt-6 text-[11px] leading-relaxed text-muted-foreground">
-          Horathai AI คำนวณผังดวงกำเนิดตามหลักโหราศาสตร์ไทยจากวัน เวลา และจังหวัดเกิด
-          ดูดาวจรที่มีผลต่อดวง และปรึกษาผู้ช่วยโหร AI ผ่าน LINE — เพื่อการสะท้อนตนเอง
-          ไม่ใช่คำแนะนำทางวิชาชีพ
-        </p>
-      )}
-      <nav aria-label="ลิงก์สาธารณะ" className="mt-6 flex justify-center gap-4 text-[11px] text-muted-foreground">
+      {!inLine && <LatestPosts />}
+      <p className="mt-6 flex justify-center gap-4 text-[11px] text-muted-foreground">
         <Link to="/blog">บทความ</Link>
         <Link to="/service-info">ข้อมูลบริการ</Link>
         <Link to="/terms">เงื่อนไข</Link>
-        <Link to="/privacy">ความเป็นส่วนตัว</Link>
-      </nav>
-    </>
+      </p>
+    </Shell>
   );
 }

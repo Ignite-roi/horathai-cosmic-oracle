@@ -1,14 +1,14 @@
-import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/service-info")({
-  head: () =>
-    pageHead({
-      path: "/service-info",
-      title: "ข้อมูลบริการและติดต่อ | Horathai AI",
-      description: "รายละเอียดบริการ แพ็กเกจ และสถานะช่องทางชำระเงินของ Horathai AI",
-      card: "summary",
-    }),
+  head: () => ({ meta: [
+    { title: "ข้อมูลบริการและติดต่อ | Horathai AI" },
+    { name: "description", content: "รายละเอียดบริการ แพ็กเกจ และสถานะช่องทางชำระเงินของ Horathai AI" },
+    { property: "og:title", content: "ข้อมูลบริการและติดต่อ | Horathai AI" },
+    { property: "og:description", content: "ข้อมูลสำหรับผู้ใช้และผู้ตรวจสอบบริการ Horathai AI" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: ServiceInfoPage,
 });
 

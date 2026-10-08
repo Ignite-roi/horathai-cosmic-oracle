@@ -1,13 +1,13 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { BlogLayout, PostCard, formatThaiDate } from "@/components/blog/BlogUI";
-import { getPublishedPost } from "@/lib/blog.functions";
-import { NOINDEX_META, breadcrumbSchema, canonicalHref, headingId, jsonLd, pageHead } from "@/lib/seo";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { SITE_URL, getPublishedPost } from "@/lib/blog.functions";
 
 const postQuery = (slug: string) =>
   queryOptions({ queryKey: ["blog", "post", slug], queryFn: () => getPublishedPost({ data: { slug } }), staleTime: 60_000 });
@@ -18,33 +18,33 @@ function textOf(node: ReactNode): string {
   if (isValidElement(node)) return textOf((node.props as { children?: ReactNode }).children);
   return "";
 }
+const headingId = (t: string) => t.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(postQuery(params.slug)),
   head: ({ loaderData, params }) => {
-    if (!loaderData) return { meta: [{ title: "ไม่พบบทความ | Horathai AI" }, NOINDEX_META] };
+    if (!loaderData) return { meta: [{ title: "ไม่พบบทความ | Horathai AI" }, { name: "robots", content: "noindex" }] };
     const p = loaderData.post;
     const title = p.meta_title || `${p.title} | Horathai AI`;
     const desc = p.meta_description || p.excerpt || "";
-    const path = `/blog/${params.slug}`;
-    const img = p.cover_image_url?.startsWith("https://") ? p.cover_image_url : undefined;
-    const base = pageHead({ path, title, description: desc, type: "article", image: img });
-    const crumbs = breadcrumbSchema([
-      { name: "หน้าแรก", path: "/" },
-      { name: "บทความ", path: "/blog" },
-      { name: p.title, path },
-    ]);
+    const url = `${SITE_URL}/blog/${params.slug}`;
+    const img = p.cover_image_url?.startsWith("https://") ? p.cover_image_url : null;
     return {
       meta: [
-        ...base.meta,
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
         ...(p.published_at ? [{ property: "article:published_time", content: p.published_at }] : []),
-        { property: "article:modified_time", content: p.updated_at },
       ],
-      links: base.links,
-      scripts: [
-        ...p.schema_jsonld.map((s) => ({ type: "application/ld+json", children: s })),
-        { type: "application/ld+json", children: jsonLd(crumbs) },
-      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: p.schema_jsonld.map((s) => ({ type: "application/ld+json", children: s })),
     };
   },
   notFoundComponent: NotFoundPost,
@@ -99,10 +99,9 @@ function PostPage() {
             components={{
               h1: ({ children }) => <h2 id={headingId(textOf(children))}>{children}</h2>,
               h2: ({ children }) => <h2 id={headingId(textOf(children))}>{children}</h2>,
-              // Internal links always resolve to canonical paths (legacy aliases like /chart redirect).
               a: ({ href, children }) =>
                 href?.startsWith("/") && !href.startsWith("//") ? (
-                  <Link to={canonicalHref(href)}>{children}</Link>
+                  <Link to={href}>{children}</Link>
                 ) : (
                   <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>
                 ),
@@ -116,18 +115,14 @@ function PostPage() {
         {post.faq.length > 0 && (
           <section className="mt-10">
             <h2 className="thai-heading text-xl text-foreground">คำถามที่พบบ่อย</h2>
-            {/* Native <details> keeps every answer in the server HTML so it matches FAQPage schema. */}
-            <div className="mt-3 divide-y divide-border border-b border-border">
+            <Accordion type="single" collapsible className="mt-3">
               {post.faq.map((f, i) => (
-                <details key={i} className="group py-1">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-3 text-left text-[14px] font-medium [&::-webkit-details-marker]:hidden">
-                    <h3 className="text-[14px] font-medium">{f.q}</h3>
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
-                  </summary>
-                  <p className="pb-4 text-[13px] leading-relaxed text-muted-foreground">{f.a}</p>
-                </details>
+                <AccordionItem key={i} value={`faq-${i}`}>
+                  <AccordionTrigger className="text-left text-[14px]">{f.q}</AccordionTrigger>
+                  <AccordionContent className="text-[13px] leading-relaxed text-muted-foreground">{f.a}</AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </section>
         )}
 

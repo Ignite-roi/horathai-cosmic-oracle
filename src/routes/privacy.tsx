@@ -1,14 +1,22 @@
-import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/privacy")({
-  head: () =>
-    pageHead({
-      path: "/privacy",
-      title: "นโยบายความเป็นส่วนตัว | Horathai AI",
-      description: "นโยบายการดูแลข้อมูลส่วนบุคคลและข้อมูลดวงกำเนิดของ Horathai AI",
-      card: "summary",
-    }),
+  head: () => ({
+    meta: [
+      { title: "นโยบายความเป็นส่วนตัว | Horathai AI" },
+      {
+        name: "description",
+        content: "นโยบายการดูแลข้อมูลส่วนบุคคลและข้อมูลดวงกำเนิดของ Horathai AI",
+      },
+      { property: "og:title", content: "นโยบายความเป็นส่วนตัว | Horathai AI" },
+      {
+        property: "og:description",
+        content: "รายละเอียดการเก็บ ใช้ และปกป้องข้อมูลของผู้ใช้ Horathai AI",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PrivacyPage,
 });
 

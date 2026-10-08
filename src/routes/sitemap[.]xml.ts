@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { listPublishedPosts } from "@/lib/blog.functions";
-import { INDEXABLE_STATIC_PATHS, SITE_URL, canonicalUrl } from "@/lib/seo";
+import { SITE_URL, listPublishedPosts } from "@/lib/blog.functions";
 
-// Only self-canonical, indexable pages. Redirect aliases (/chart, /transit, /ai) and
-// app routes are intentionally excluded — see src/lib/seo.ts.
-const STATIC_PATHS = INDEXABLE_STATIC_PATHS.filter((p) => p !== "/blog");
+const STATIC_PATHS = ["/", "/chart", "/transit", "/ai", "/service-info", "/terms", "/privacy"];
 
 function esc(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
@@ -17,7 +14,7 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const posts = await listPublishedPosts({ data: { limit: 500 } });
         const newest = posts.reduce<string | null>((m, p) => (!m || p.updated_at > m ? p.updated_at : m), null);
-        const urls: string[] = STATIC_PATHS.map((p) => `<url><loc>${canonicalUrl(p)}</loc></url>`);
+        const urls: string[] = STATIC_PATHS.map((p) => `<url><loc>${SITE_URL}${p === "/" ? "/" : p}</loc></url>`);
         urls.push(`<url><loc>${SITE_URL}/blog</loc>${newest ? `<lastmod>${newest}</lastmod>` : ""}</url>`);
         for (const p of posts) {
           const img = p.cover_image_url?.startsWith("http")

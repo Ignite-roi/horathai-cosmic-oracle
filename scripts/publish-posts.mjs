@@ -94,11 +94,6 @@ async function main() {
       const raw = JSON.parse(await readFile(path.join(POSTS_DIR, file), "utf8"));
       const post = raw.post ?? raw; // รองรับทั้ง {post:{...}} และ {...}
       validate(post, file);
-      // SEO OS fail-closed: a post whose recorded quality gate failed is never published.
-      if (post.quality && post.quality.passed === false && post.status === "published") {
-        console.log(`🛑 ${post.slug}: quality gate failed → ส่งเป็น draft`);
-        post.status = "draft";
-      }
 
       if (existingSlugs.has(post.slug) && !FORCE) {
         console.log(`⏭️  ข้าม ${post.slug} (มีอยู่แล้ว)`);
