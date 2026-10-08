@@ -1,0 +1,42 @@
+site:
+  url: ""
+  brand: ""
+  business_type: ""
+  languages: []
+  target_markets: []
+  stack: ""
+  cms: ""
+  database: ""
+
+conversions:
+  primary: ""
+  secondary: []
+  purchase_event: ""
+  lead_event: ""
+
+business:
+  products_services: []
+  locations: []
+  contact_channels: []
+  pricing_source: ""
+  shipping_source: ""
+  factual_claims_source: ""
+
+seo:
+  gsc_property: ""
+  sitemap: ""
+  robots: ""
+  primary_competitor_clusters: []
+  protected_urls: []
+  cooldown_days: 14
+
+priority_weights:
+  ranking_opportunity: 22
+  impression_opportunity: 18
+  ctr_gap: 12
+  buyer_intent: 12
+  product_coverage: 10
+  business_value: 10
+  trend: 6
+  existing_page_leverage: 5
+  content_gap: 5

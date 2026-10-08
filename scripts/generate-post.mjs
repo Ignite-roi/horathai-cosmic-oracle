@@ -4,6 +4,8 @@
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
+import { INTERNAL_DESTINATIONS, canonicalizeLinks, findKeywordCollision, qualityGate } from "./seo-gate.mjs";
+
 const KEY = process.env.GEMINI_API_KEY;
 const MODELS = [process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash"].filter(Boolean);
 const COUNT = Math.max(1, Math.min(3, Number(process.env.POSTS_PER_RUN || 1)));
@@ -36,7 +38,19 @@ async function pickKeywords(n) {
   const raw = await readFile(KEYWORDS_FILE, "utf8").catch(() => fail(`ไม่พบไฟล์ ${KEYWORDS_FILE}`));
   const all = raw.split("\n").map((s) => s.trim()).filter((s) => s && !s.startsWith("#"));
   const { used, slugs } = await usedKeywords();
-  const left = all.filter((k) => !used.has(k));
+  // SEO OS zero-LLM preflight: one owner per intent — skip exact/near-duplicate keywords
+  // before spending a Gemini call (SKIP_CANNIBALIZATION).
+  const owners = [...used];
+  const left = [];
+  for (const k of all) {
+    if (used.has(k)) continue;
+    const hit = findKeywordCollision(k, owners);
+    if (hit) {
+      console.log(`⏭️  SKIP_CANNIBALIZATION: "${k}" ทับเจตนากับ "${hit.keyword}" (${hit.score.toFixed(2)})`);
+      continue;
+    }
+    left.push(k);
+  }
   if (!left.length) fail(`คีย์เวิร์ดใน ${KEYWORDS_FILE} ถูกใช้หมดแล้ว — เพิ่มบรรทัดใหม่ได้เลย`);
   console.log(`🔑 เหลือคีย์เวิร์ดที่ยังไม่เขียน ${left.length} คำ`);
   return { picks: left.slice(0, n), slugs };
@@ -71,11 +85,12 @@ function prompt(keyword) {
 - ความยาว content_md 1,200-1,800 คำ เป็น Markdown ใช้ ## และ ### เป็นหัวข้อ (ห้ามใช้ # ระดับ 1)
 - ใส่คีย์เวิร์ดหลักใน 100 คำแรก, ในหัวข้อ ## อย่างน้อย 1 หัวข้อ และกระจายอย่างเป็นธรรมชาติ
 - มีตารางสรุปอย่างน้อย 1 ตาราง และ bullet list ที่อ่านง่าย
-- ลิงก์ภายในอย่างน้อย 2 ลิงก์ เลือกจาก: [ดูดวงกำเนิดฟรี](/chart), [ดาวจรวันนี้](/transit), [ถามหมอดู AI](/ai), [บทความทั้งหมด](/blog)
+- ลิงก์ภายในอย่างน้อย 2 ลิงก์ เลือกจากรายการนี้เท่านั้น: ${INTERNAL_DESTINATIONS.map((d) => `[${d.label}](${d.href})`).join(", ")}
 - ปิดท้ายด้วยหัวข้อ "## สรุป" และชวนให้ลองดูดวงกำเนิดของตัวเองที่ Horathai
 - น้ำเสียง: อบอุ่น น่าเชื่อถือ อธิบายตามหลักโหราศาสตร์ไทย (ราศี ลัคนา ดาวนพเคราะห์ ภพ) ไม่ฟันธงเกินจริง
 - ห้ามให้คำแนะนำทางการแพทย์ การเงิน หรือกฎหมายแบบรับประกันผล ห้ามสร้างคำพูดของบุคคลจริง
-- ห้ามแต่งสถิติหรือแหล่งอ้างอิงที่ไม่มีจริง
+- ห้ามแต่งสถิติ ตัวเลขเปอร์เซ็นต์ หรือแหล่งอ้างอิงที่ไม่มีจริง ห้ามอ้างความแม่นยำ ห้ามใช้คำว่า "รับประกัน" หรือ "การันตี" กับผลทำนาย
+- ห้ามอ้างข้อมูลราคา แพ็กเกจ โปรโมชัน รีวิว หรือจำนวนผู้ใช้ของ Horathai
 - faq: 3-5 ข้อ คำถามที่คนค้นหาจริงเกี่ยวกับ "${keyword}"
 - tags: 3-5 แท็กภาษาไทย
 - slug: ภาษาอังกฤษ ตัวพิมพ์เล็ก คั่นด้วย - เท่านั้น
@@ -117,13 +132,20 @@ function clean(post, keyword, slugs) {
   if (!SLUG_RE.test(slug)) slug = `horathai-${Date.now()}`;
   if (slugs.has(slug)) slug = `${slug}-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}`;
 
-  const content = String(post.content_md || "").replace(/^# .*\n/m, "");
+  // Deterministic repair (no LLM): drop stray H1, point alias links at canonical paths.
+  const content = canonicalizeLinks(String(post.content_md || "").replace(/^# .*\n/m, ""));
   const words = content.split(/\s+/).length;
   if (content.length < 2500) throw new Error(`เนื้อหาสั้นเกินไป (${content.length} ตัวอักษร)`);
 
   const faq = (post.faq || []).filter((f) => f.q && f.a).slice(0, 6);
   const url = `https://thaihora.app/blog/${slug}`;
   const today = new Date().toISOString();
+
+  // SEO OS quality gate: hard failure → quarantine as draft (fail closed, no regeneration loop).
+  const gate = qualityGate({ ...post, content_md: content, faq }, keyword);
+  const status = gate.passed ? STATUS : "draft";
+  if (!gate.passed) console.log(`🛑 QUARANTINE → draft: ${gate.hard.join("; ")}`);
+  if (gate.soft.length) console.log(`⚠️  soft: ${gate.soft.join("; ")}`);
 
   return {
     slug,
@@ -135,7 +157,8 @@ function clean(post, keyword, slugs) {
     cover_alt: post.cover_alt || post.title,
     tags: (post.tags || []).slice(0, 6),
     primary_keyword: keyword,
-    status: STATUS,
+    status,
+    quality: { gate: "seo-os-v1", checked_at: today, passed: gate.passed, hard: gate.hard, soft: gate.soft },
     reading_minutes: post.reading_minutes || Math.max(3, Math.round(words / 200)),
     author: "Horathai Editorial",
     source: "autopilot-gemini",
@@ -150,8 +173,9 @@ function clean(post, keyword, slugs) {
         datePublished: today,
         dateModified: today,
         author: { "@type": "Organization", name: "Horathai Editorial" },
-        publisher: { "@type": "Organization", name: "Horathai", url: "https://thaihora.app" },
+        publisher: { "@type": "Organization", "@id": "https://thaihora.app/#organization", name: "Horathai AI", url: "https://thaihora.app/" },
         mainEntityOfPage: url,
+        url,
         keywords: keyword,
       },
       ...(faq.length

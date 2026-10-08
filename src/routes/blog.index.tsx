@@ -5,7 +5,8 @@ import { useMemo, useState } from "react";
 
 import { BlogLayout, PostCard } from "@/components/blog/BlogUI";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SITE_URL, listPublishedPosts } from "@/lib/blog.functions";
+import { listPublishedPosts } from "@/lib/blog.functions";
+import { breadcrumbSchema, jsonLd, pageHead } from "@/lib/seo";
 
 const PAGE = 12;
 export const blogListQuery = queryOptions({
@@ -20,18 +21,13 @@ const DESC = "บทความโหราศาสตร์ไทย ลั�
 export const Route = createFileRoute("/blog/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(blogListQuery),
   head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: `${SITE_URL}/blog` },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESC },
+    ...pageHead({ path: "/blog", title: TITLE, description: DESC }),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: jsonLd(breadcrumbSchema([{ name: "หน้าแรก", path: "/" }, { name: "บทความ", path: "/blog" }])),
+      },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/blog` }],
   }),
   component: BlogIndex,
 });

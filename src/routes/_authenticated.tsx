@@ -13,9 +13,12 @@ import { isPublicReviewRoute } from "@/config/public-review";
 import { useAccount, useSession } from "@/hooks/useAuth";
 import { useBirthContext } from "@/hooks/useHomeReading";
 import { supabase } from "@/integrations/supabase/client";
+import { NOINDEX_META } from "@/lib/seo";
 import { useProfile } from "@/store/useProfile";
 
 export const Route = createFileRoute("/_authenticated")({
+  // App screens are client-only and personalised: never index them (SEO OS hard gate).
+  head: () => ({ meta: [NOINDEX_META] }),
   ssr: false,
   beforeLoad: async ({ location }) => {
     const { data, error } = await supabase.auth.getUser();

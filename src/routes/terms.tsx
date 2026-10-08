@@ -1,16 +1,14 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "ข้อกำหนดการใช้งาน | Horathai AI" },
-      { name: "description", content: "ข้อกำหนดการใช้บริการโหราศาสตร์ไทย Horathai AI" },
-      { property: "og:title", content: "ข้อกำหนดการใช้งาน | Horathai AI" },
-      { property: "og:description", content: "เงื่อนไขและข้อจำกัดของบริการ Horathai AI" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      path: "/terms",
+      title: "ข้อกำหนดการใช้งาน | Horathai AI",
+      description: "ข้อกำหนดการใช้บริการโหราศาสตร์ไทย Horathai AI",
+      card: "summary",
+    }),
   component: TermsPage,
 });
 

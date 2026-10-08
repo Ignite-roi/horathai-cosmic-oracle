@@ -9,6 +9,7 @@ import { useLineAuth } from "@/context/LineAuthContext";
 import type { PublicShare } from "@/lib/social.features";
 import { getPublicResultShare } from "@/lib/social.functions";
 import { formatThaiDateTime } from "@/lib/civil-time";
+import { NOINDEX_META } from "@/lib/seo";
 
 export const Route = createFileRoute("/r/$token")({
   head: () => ({ meta: [
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/r/$token")({
     { property: "og:description", content: "เปิดผลอ่านโหราศาสตร์ที่แชร์อย่างปลอดภัย" },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
+    NOINDEX_META,
   ] }),
   component: SharedResultPage,
 });
